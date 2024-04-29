@@ -18,7 +18,19 @@ import {
 import { Input } from "@/components/ui/input"
 
 const formSchema = z.object({
-  username: z.string().min(2, {
+  fullName: z.string().min(2, {
+    message: "Username must be at least 2 characters.",
+  }),
+  email: z.string().min(2, {
+    message: "Username must be at least 2 characters.",
+  }),
+  password: z.string().min(2, {
+    message: "Username must be at least 2 characters.",
+  }),
+  phone: z.string().min(2, {
+    message: "Username must be at least 2 characters.",
+  }),
+  passwordConfirmation: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
 })
@@ -29,7 +41,12 @@ export function SignUpForm() {
    const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      fullName: "",
+      email: "",
+      phone: "",
+      password: "",
+      passwordConfirmation: "",
+
     },
   })
  
@@ -48,7 +65,7 @@ export function SignUpForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-full">
         <FormField
           control={form.control}
-          name="FullName"
+          name="fullName"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Full Name </FormLabel>
@@ -59,7 +76,7 @@ export function SignUpForm() {
             </FormItem>
           )}
         />
-        <div className=" grid grid-cols-2 gap-4">
+        <div className=" grid grid-cols-2 gap-2">
         <FormField
           control={form.control}
           name="email"
@@ -88,10 +105,10 @@ export function SignUpForm() {
         />
 
         </div>
-       <div className="grid grid-cols-2 gap-4">
+       <div className="grid grid-cols-2 gap-2">
        <FormField
           control={form.control}
-          name="Password"
+          name="password"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Password</FormLabel>
@@ -105,7 +122,7 @@ export function SignUpForm() {
         />
          <FormField
           control={form.control}
-          name="Password Confirmation"
+          name="passwordConfirmation"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Password Confirmation</FormLabel>
@@ -122,9 +139,9 @@ export function SignUpForm() {
     </Form>
    <div className=" py-6">
    <fieldset className=" border-t-2 flex flex-col text-center items-center align-middle justify-center">
-      <legend className=" self-center flex px-2 text-sm text-gray-800" >Or Log in with</legend>
+      <legend className=" self-center flex px-2 text-sm text-gray-600" >or log in with</legend>
       <div className=" py-4 w-full ">
-        <button className=" rounded-md flex space-x-3 items-center justify-center bg-white py-2 border-2  border-gray-300 w-full ">
+        <button className=" rounded-md hover:bg-gray-100 transition-all ease-in-out flex space-x-3 items-center justify-center bg-white py-2 border-2  border-gray-300 w-full ">
          <p className=" text-md"> Log in with Google</p>
          <FcGoogle size={23} />
         </button>
@@ -134,3 +151,4 @@ export function SignUpForm() {
     </div>
   )
 }
+
