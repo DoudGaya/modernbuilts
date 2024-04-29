@@ -3,25 +3,26 @@ import Link from 'next/link'
 
 export const PublicNavigations = () => {
   return (
-    <div className=' w-full bg-white border-b fixed top-0 py-4'>
-    <nav className=" max-w-6xl mx-auto flex justify-between">
+<>
+<div className=' w-full bg-white hidden lg:flex border-b fixed left-0 top-0 py-4'>
+    <nav className=" max-w-6xl mx-auto w-full flex justify-between">
       <div className="">HElLO </div>
           <div className=" flex divide-x-2 divide-yellow-500 items-center">  
                 <div className=" mx-2">
                     <Link
-                        href={'dashboard'}
+                        href={'/'}
                         className="rounded-md font-poppins font-semibold px-3 py-2 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:hover:text-white/80 dark:focus-visible:ring-white"
                     >
                         Home
                     </Link>
                     <Link
-                        href={'login'}
+                        href={'about'}
                         className="rounded-md font-poppins font-semibold px-3 py-2 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:hover:text-white/80 dark:focus-visible:ring-white"
                     >
                         About
                     </Link>
                     <Link
-                        href={'register'}
+                        href={'contact'}
                         className="rounded-md font-poppins font-semibold px-3 py-2 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:hover:text-white/80 dark:focus-visible:ring-white"
                     >
                         Contact
@@ -33,13 +34,13 @@ export const PublicNavigations = () => {
                         </svg>
                        <div className="">
                        <Link
-                            href={'register'}
+                            href={'signup'}
                             className="rounded-md font-poppins font-semibold px-2 py-2 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:hover:text-white/80 dark:focus-visible:ring-white"
                         >
                         Register
                         </Link>
                         <Link
-                            href={'register'}
+                            href={'login'}
                             className="rounded-md font-poppins font-semibold px-2 py-2 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:hover:text-white/80 dark:focus-visible:ring-white"
                         >
                            Log In
@@ -49,5 +50,16 @@ export const PublicNavigations = () => {
           </div>
   </nav>
 </div>
+<div className=" w-full bg-white px-10 py-3">
+    <div className=" flex justify-between">
+        <button>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
+            </svg>
+        </button>
+    </div>
+
+</div>
+</>
   )
 }
