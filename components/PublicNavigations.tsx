@@ -50,7 +50,7 @@ export const PublicNavigations = () => {
           </div>
   </nav>
 </div>
-<div className=" w-full bg-white px-10 py-3">
+<div className=" w-full border-b shadow-sm bg-white px-10 py-3">
     <div className=" flex justify-between">
         <button>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
@@ -58,7 +58,6 @@ export const PublicNavigations = () => {
             </svg>
         </button>
     </div>
-
 </div>
 </>
   )

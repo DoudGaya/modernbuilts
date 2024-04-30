@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { FcGoogle } from "react-icons/fc";
+import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox"
 
 import { Button } from "@/components/ui/button"
@@ -20,25 +21,35 @@ import { Input } from "@/components/ui/input"
 
 const formSchema = z.object({
   fullName: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+    message: "Please provide your Full Name",
   }),
-  email: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+  email: z.string().min(3, {
+    message: "Email address must be less than 2 characters",
   }),
-  password: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+  password: z.string().min(6, {
+    message: "Password must be at least 6 characters",
   }),
   phone: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+    message: "Password confirmation must match characters.",
   }),
-  passwordConfirmation: z.string().min(2, {
+  passwordConfirmation: z.string().min(6, {
     message: "Username must be at least 2 characters.",
   }),
 })
 
 export function SignUpForm() {
-  // ...
-   // 1. Define your form.
+
+  const [terms, setTerms] = useState<boolean> (false)
+
+
+  const changeTerms = () => {
+    return setTerms((prev: boolean): boolean => {
+      return !prev
+    })
+    console.log(terms)
+  }
+  // 
+   // 
    const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,15 +57,13 @@ export function SignUpForm() {
       email: "",
       phone: "",
       password: "",
-      passwordConfirmation: "",
-
+      passwordConfirmation: ""
     },
   })
  
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+  
     console.log(values)
   }
 
@@ -136,7 +145,10 @@ export function SignUpForm() {
         />
        </div>
        <div className="flex items-center space-x-2">
-      <Checkbox id="terms" />
+      <Checkbox id="terms" 
+       checked={terms}
+       onCheckedChange={changeTerms}
+      />
       <label
         htmlFor="terms"
         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -153,7 +165,7 @@ export function SignUpForm() {
       <legend className=" self-center flex px-2 text-sm text-gray-600" >or log in with</legend>
       <div className=" py-4 w-full ">
         <button className=" rounded-md hover:bg-gray-100 transition-all ease-in-out flex space-x-3 items-center justify-center bg-white py-2 border-2  border-gray-300 w-full ">
-         <p className=" text-md"> Log in with Google</p>
+         <p className=" text-md"> Sign Up with Google</p>
          <FcGoogle size={23} />
         </button>
       </div>
