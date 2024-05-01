@@ -2,8 +2,9 @@ import { Banner } from "@/components/Banner";
 import { HomeAbout } from "@/components/HomeAbout";
 import { HomeCarousel } from "@/components/HomeCarousel";
 import { HomeMarketing1 } from "@/components/HomeMarketing1";
-import { Icons } from "@/components/Icons";
+import { HomeIcons } from "@/components/HomeIcons";
 import { Metrics } from "@/components/Metrics";
+import { TheTeam } from "@/components/TheTeam";
 
 export default function Home() {
   return (
@@ -18,7 +19,10 @@ export default function Home() {
         <HomeMarketing1 />
         </div>
        <div className="">
-       <Icons />
+       <HomeIcons />
+       </div>
+       <div className="">
+        <TheTeam />
        </div>
     </div>
   </div>

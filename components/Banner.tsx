@@ -8,7 +8,7 @@ import Link from 'next/link'
 export const Banner = () => {
   return (
     <>  
-    <div className=" h-[100vh] bg-white overflow-hidden bg-blend-multiply" style={{
+    <div className=" h-[100vh] bg-white overflow-hidden bg-no-repeat bg-cover bg-center bg-blend-multiply" style={{
         backgroundImage: `url(${bannerImage.src})`
     }} >
         <div className=" h-full w-full grid grid-cols-1 lg:grid-cols-2 px-8 pt-20 lg:py-0 max-w-6xl mx-auto ">

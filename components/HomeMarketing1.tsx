@@ -8,11 +8,11 @@ export const HomeMarketing1 = () => {
     <div style={{
         backgroundImage: `url(${badAss.src})`
       }} className=" bg-fixed bg-cover  w-full h-full bg-stone-600/40 bg-blend-multiply">
-       <div className="grid grid-cols-2 max-w-5xl mx-auto w-full ">
+       <div className="grid lg:grid-cols-2 max-w-5xl grid-cols-1 mx-auto w-full ">
         <div className="">
 
         </div>
-          <div className=" flex flex-col bg py-20 bg-black/80 space-y-6 px-10 text-white">
+          <div className=" flex flex-col bg py-20 bg-black/70 lg:bg-black/80 space-y-6 px-10 text-white">
            <div className=" space-y-2 ">
             <h1 className=" font-bold text-3xl ">The <span className=" text-yellow-400">secret</span> of <span className=" text-yellow-400">success</span> is doing it right</h1>
               <p className=" ">Make the right choice <span>Invest With US</span> </p>

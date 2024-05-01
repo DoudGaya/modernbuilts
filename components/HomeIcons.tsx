@@ -2,8 +2,9 @@ import React, { ReactElement } from 'react'
 import icon1 from '@/public/img/icons/create-an-account.svg'
 import icon2 from '@/public/img/icons/select-a-project.svg'
 import icon3 from '@/public/img/icons/fund-a-project.svg'
-import icon4 from '@/public/img/icons/wait-for-roi.svg'
+import icon4 from '@/public/img/icons/wait-for-a-return.svg'
 import Image, { StaticImageData } from 'next/image'
+import Link from 'next/link'
 
 
 interface Icons {
@@ -41,13 +42,15 @@ const icons = [
 
 ]
 
-export const Icons = () => {
+export const HomeIcons = () => {
   return (
-    <div className=' w-full flex flex-col py-20'>
-        <div className=" text-center w-full">
-           <h1> </h1>
+    <div className=' w-full flex flex-col py-20 px-10 lg:px-0'>
+
+        <div className=" text-center items-center flex flex-col justify-center py-6 max-w-4xl mx-auto w-full">
+           <h1 className=' text-2xl font-semibold'> Follow these Easy Steps to get Started </h1>
+           <hr className=' w-2/12 border-b-2 border-black my-4' />
         </div>
-        <div className=" mx-auto grid grid-cols-4 gap-10 max-w-6xl">
+        <div className=" mx-auto grid grid-cols-1 lg:grid-cols-4 gap-10 max-w-6xl">
             {
                 icons.map(( icon: Icons ) => {
                     return (
@@ -60,6 +63,11 @@ export const Icons = () => {
                 })
             }
         </div>
+       <div className=" flex items-center justify-center py-10">
+            <div className=" py-3 font-poppin font-semibold ">
+                <Link href={'/about'} className=' px-8 bg-yellow-400 rounded-md py-3'> Learn More </Link>
+            </div>
+       </div>
     </div>
   )
 }
