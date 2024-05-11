@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-white`}>
+      <body className={`${inter.className} text-gray-950 bg-white`}>
       <ThemeProvider
             attribute="class"
             defaultTheme="system"

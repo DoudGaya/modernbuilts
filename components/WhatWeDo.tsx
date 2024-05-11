@@ -42,8 +42,8 @@ export const HomeWhatWeDo = () => {
                       choose the projects that resonate with you, and buy shares. Your investment grows 
                       alongside the property value, and you receive dividends once the project is complete.
                       </p>
-                      <div className=" py-3 font-poppin w-full font-semibold ">
-                          <Link href={'/signup'} className=' px-6 bg-yellow-400 w-full rounded-md py-2'> Get Started  </Link>
+                      <div className=" py-3 font-poppin w-full flex max-w-max font-semibold ">
+                          <Link href={'/register'} className=' px-6 bg-yellow-400 w-full rounded-md py-2'> Get Started  </Link>
                       </div>
                   </div>
                  
@@ -61,8 +61,8 @@ export const HomeWhatWeDo = () => {
                         sustainability, and innovation. When you invest in a StableBricks project, you’re 
                         investing in a vision that adds value to the community.
                         </p>
-                        <div className=" py-3 font-poppin font-semibold ">
-                            <Link href={'/signup'} className=' px-6 bg-yellow-400 rounded-md py-2'> Get Started  </Link>
+                        <div className=" py-3 font-poppin w-full max-w-max font-semibold ">
+                            <Link href={'/register'} className=' px-6 bg-yellow-400 rounded-md py-2'> Get Started  </Link>
                         </div>
                     </div>
                     <div className=" grid grid-cols-2 gap-3 md:gap-6 px-3 h-[400px] rounded-2xl ">

@@ -57,7 +57,7 @@ import {
 export const PublicNavigations = () => {
   return (
 <>
-    <div className=' w-full bg-white hidden lg:flex border-b fixed left-0 top-0 py-4'>
+    <div className=' w-full bg-white hidden lg:flex border-b fixed z-10 left-0 top-0 py-4'>
         <nav className=" max-w-6xl mx-auto w-full flex justify-between">
         <Link href={'/'} className="">
             <Image src={logo} alt='stable Bricks Logo' className=' h-10 object-left object-contain' />
@@ -66,19 +66,19 @@ export const PublicNavigations = () => {
                     <div className=" mx-2">
                         <Link
                             href={'/'}
-                            className="rounded-md font-poppins font-semibold px-3 py-2 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:hover:text-white/80 dark:focus-visible:ring-white"
+                            className="rounded-md font-poppins font-semibold px-3 py-2 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]"
                         >
                             Home
                         </Link>
                         <Link
                             href={'about'}
-                            className="rounded-md font-poppins font-semibold px-3 py-2 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:hover:text-white/80 dark:focus-visible:ring-white"
+                            className="rounded-md font-poppins font-semibold px-3 py-2 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]"
                         >
                             About
                         </Link>
                         <Link
                             href={'contact'}
-                            className="rounded-md font-poppins font-semibold px-3 py-2 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:hover:text-white/80 dark:focus-visible:ring-white"
+                            className="rounded-md font-poppins font-semibold px-3 py-2 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]"
                         >
                             Contact
                         </Link>
@@ -89,15 +89,14 @@ export const PublicNavigations = () => {
                             </svg>
                         <div className="">
                         <Link
-                                href={'signup'}
-                                className="rounded-md font-poppins font-semibold px-2 py-2 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:hover:text-white/80 dark:focus-visible:ring-white"
+                                href={'register'}
+                                className="rounded-md font-poppins font-semibold px-2 py-2 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]"
                             >
                             Register
                             </Link>
-                            <Link
-                                href={'login'}
-                                className="rounded-md font-poppins font-semibold px-2 py-2 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:hover:text-white/80 dark:focus-visible:ring-white"
-                            >
+                            <Link href={'login'}
+                                className="rounded-md font-poppins font-semibold px-2 py-2 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]"
+                                >
                             Log In
                             </Link>
                         </div>
@@ -139,8 +138,12 @@ export const PublicNavigations = () => {
                     })
                 }
                 <div className=" flex flex-col space-y-4 border-t-2 py-3 w-full ">
-                    <Link href={'/signup'} className=" py-2 font-poppins font-semibold text-lg w-full rounded-lg bg-yellow-500 text-black">Resiter</Link>
-                    <Link href={'/login'} className=" py-2 font-poppins font-semibold text-lg w-full rounded-lg border-2 border-yellow-500 text-black">Lon In</Link>
+                    <Link href={'/register'} className=" py-2 font-poppins font-semibold text-lg w-full rounded-lg bg-yellow-500 text-black">
+                        <SheetTrigger>Resiter</SheetTrigger>
+                    </Link>
+                    <Link href={'/login'} className=" py-2 font-poppins font-semibold text-lg w-full rounded-lg border-2 border-yellow-500 text-black">
+                        <SheetTrigger>Lon In</SheetTrigger>
+                    </Link>
                 </div>
               </div>
             </SheetDescription>
