@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import badAss from '@/public/img/female-engineer-standing-like-a-baddass.jpg'
 
-export const HomeMarketing1 = () => {
+export const HomeMarketing2 = () => {
   return (
     <div style={{
         backgroundImage: `url(${badAss.src})`

@@ -26,15 +26,22 @@ export const HomeAbout = () => {
           <div className=" max-w-6xl mx-auto">
               <div className=" grid grid-cols-1 gap-6 py-10 lg:grid-cols-2">
                   <div className=" flex justify-center px-10 flex-col space-y-4">
-                      <h1 className=' text-2xl lg:text-3xl font-poppins border-b-2 w-1/2 py-1 border-yellow-500 font-semibold'> Who We Are </h1>
+                      <h1 className=' text-2xl lg:text-3xl font-poppins py-1  font-semibold'> Welcome to StableBricks </h1>
                       <p className=' text-justify text-lg'>
-                      We are Nigeria’s top and most reliable construction company with over 10,000 
-                      happy customers across the nation. We are now venturing into constructional 
-                      crowdfunding business model to give our customers the ability to own a share assets of a big projects 
-                      with their little capital and receive large investment return. 
+                          {/* We are Nigeria’s top and most reliable construction company with over 10,000 
+                          happy customers across the nation. We are now venturing into constructional 
+                          crowdfunding business model to give our customers the ability to own a share assets of a big projects 
+                          with their little capital and receive large investment return.  */}
+
+                          At StableBricks, we believe in democratizing real estate investment. 
+                          Our mission is to empower individuals by giving them the opportunity to own a 
+                          share of prime real estate projects. Whether you’re an experienced investor or a 
+                          first-time buyer, we’re here to make property ownership accessible, 
+                          transparent, and rewarding.
+
                       </p>
-                      <div className=" py-3 font-poppin font-semibold ">
-                          <Link href={'/about'} className=' px-6 bg-yellow-400 rounded-md py-2'> Learn More </Link>
+                      <div className=" py-3 font-poppin flex w-full text-center font-semibold ">
+                          <Link href={'/about'} className=' w-full lg:max-w-max px-6 bg-yellow-400 rounded-md py-2'> Learn More </Link>
                       </div>
                   </div>
                   <div className="">

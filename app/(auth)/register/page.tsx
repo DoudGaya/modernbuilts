@@ -2,7 +2,7 @@ import React from 'react'
 import loginBannerImage from '@/public/img/another-banner.jpg'
 import { SignUpForm } from '@/components/auth/signUpForm'
 import Image from 'next/image'
-import authImage from '@/public/img/auth-image.jpg'
+import authImage from '@/public/img/home-yellow.svg'
 
 const page = () => {
   return (

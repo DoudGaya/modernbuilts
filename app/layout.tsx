@@ -3,12 +3,13 @@ import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider"
 import "./globals.css";
 import { PublicNavigations } from "@/components/PublicNavigations";
+import { Footer } from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "MZEE Contruction Services",
-  description: "Nigerian Top Rated construction company",
+  title: "Stable Bricks",
+  description: "Nigerian's most reliable construction company",
 };
 
 export default function RootLayout({
@@ -27,6 +28,7 @@ export default function RootLayout({
           >
         <PublicNavigations />
         {children}
+        <Footer />
       </ThemeProvider>
       </body>
     </html>

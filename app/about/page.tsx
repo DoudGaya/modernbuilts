@@ -1,41 +1,37 @@
-import { PageProps } from '@/.next/types/app/layout'
+import { AboutBanner } from '@/components/about/AboutBanner'
+import { AboutWelcome } from '@/components/about/AboutWelcome'
 import React from 'react'
+import stablebricks from '@/public/stablebricks.png'
+import Image from 'next/image'
 import Link from 'next/link'
+import { TheTeam } from '@/components/TheTeam'
+import { WhatWeDoAbout } from '@/components/about/WhatWeDoAbout'
 
-const page = ( {params}: any ) => {
+
+
+
+const page = ({ params }: any ) => {
   return (
     <div>
-      <div className=" bg-yellow-500 w-full">
-        <div className=" mx-auto w-full max-w-6xl py-20 px-10">
-           <div className=" flex spacve-x-3 ">
-           <h1>
-              <Link href={""}  className=" font-semibold">{"HOME"}</Link> 
-            </h1>
-           <p className=' mx-2'> {" < "} </p>
-            <h1 className=" font-semibold">
-              {"ABOUT"}
-            </h1>
-           </div>
+      <AboutBanner />
+      <div className=" w-full flex flex-col py-20 border">
+        <div className=" flex flex-col space-y-4 mx-auto max-w-4xl w-full px-10 items-center text-center ">
+         <div className=" flex ">
+          <Image src={stablebricks} className=' h-20 object-contain object-center' alt='Stable Bricks Logo ' />
+         </div>
+          <p className=' text-lg'>
+            We envisions a world where everyone can participate in real estate growth. 
+            We’re committed to transparency, integrity, and sustainable development. 
+            Join us on this exciting journey!
+          </p>
+          <Link href={'/signup'} className=' w-full font-semibold lg:max-w-max px-6 bg-primary py-2 rounded-lg'>Sign Up Now</Link>
         </div>
       </div>
-
-      <div className=" w-full py-10">
-      <div className=" mx-auto w-full gap-6 grid grid-cols-2 max-w-4xl ">
-       <div className=" space-y-3">
-        <h1 className=' text-2xl font-bold '>
-            We are <span className=' text-yellow-600'>Reliable</span> We are  <span className=' text-yellow-600'> Trustworthy</span> and we get things done. 
-          </h1>
-          <p>
-          Our team of experts is dedicated to ensuring that each project is planned and executed to the highest standards, with a focus on quality and safety. We are committed to providing our investors with a 
-          transparent and reliable investment experience, so you can feel 
-          confident in your decision to invest with us.
-          </p>
+      <AboutWelcome />
+      <WhatWeDoAbout />
+      <div className="">
+        <TheTeam />
        </div>
-       <div className="">
-        
-       </div>
-      </div>
-      </div>
     </div>
   )
 }
