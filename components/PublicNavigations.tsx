@@ -138,6 +138,10 @@ export const PublicNavigations = () => {
                         )
                     })
                 }
+                <div className=" flex flex-col space-y-4 border-t-2 py-3 w-full ">
+                    <Link href={'/signup'} className=" py-2 font-poppins font-semibold text-lg w-full rounded-lg bg-yellow-500 text-black">Resiter</Link>
+                    <Link href={'/login'} className=" py-2 font-poppins font-semibold text-lg w-full rounded-lg border-2 border-yellow-500 text-black">Lon In</Link>
+                </div>
               </div>
             </SheetDescription>
             </SheetHeader>
