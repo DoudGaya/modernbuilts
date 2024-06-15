@@ -8,6 +8,7 @@ import { db } from '@/lib/db'
 import { getUserByEmail } from '@/data/user'
 import { User } from '@prisma/client'
 import { generateVerificationToken } from '@/lib/tokens'
+import { sendVrificationEmail } from '@/lib/mail'
 
 export const login = async (values: z.infer<typeof loginSchema>) => {
     const fieldValidation = loginSchema.safeParse(values);
@@ -30,7 +31,9 @@ export const login = async (values: z.infer<typeof loginSchema>) => {
     }
 
     if (!existingUser.emailVerified) {
-         await generateVerificationToken(existingUser.email)
+        await generateVerificationToken(existingUser.email)
+        const verificationToken = generateVerificationToken(existingUser.email)
+        await sendVrificationEmail( (await verificationToken).email, (await verificationToken).token)
         return {success: "Check your email to verify your account!"}
     }
     

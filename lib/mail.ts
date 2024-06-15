@@ -1,6 +1,5 @@
 import { Resend } from 'resend'
 
-import { EmailTemplate } from '@/app/(auth)/(emails)/EmailTemplate'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
