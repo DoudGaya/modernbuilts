@@ -1,8 +1,9 @@
 import React from 'react'
-import zaks from '@/public/img/founder.jpg'
+import zaks from '@/public/img/ceo-zaks.jpeg'
 import daddy from '@/public/img/founder1.jpg'
-import mejarks from '@/public/img/mejarks.jpg'
+import mejarks from '@/public/img/mejarks-works.jpg'
 import Image, { StaticImageData } from 'next/image'
+
 
 interface Founder {
     id: number
@@ -43,7 +44,7 @@ export const TheTeam = () => {
   return (
     <div className=' w-full bg-white py-10'>
     <div className=" flex flex-col justify-center mx-auto py-10 space-y-10  max-w-7xl">
-        <h1 className=' text-2xl font-poppins text-center '>Meet the Team</h1>
+        <h1 className=' text-2xl font-poppins text-center '>Meet the Founders</h1>
         <div className=" w-full grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-3  py-3">
                 {
                     founders.map(( founder: Founder ) => {
@@ -60,9 +61,6 @@ export const TheTeam = () => {
                         )
                     })
                 }
-                <div className="">
-
-                </div>
         </div>
     </div>
     </div>

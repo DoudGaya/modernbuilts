@@ -6,6 +6,9 @@ import { z } from "zod"
 import { FcGoogle } from "react-icons/fc";
 import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox"
+import { useTransition } from "react";
+import Link from "next/link";
+import { signUpSchema } from "@/lib/schema";
 
 import { Button } from "@/components/ui/button"
 import {
@@ -18,28 +21,18 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+// import { register, regsiter } from "@/actions/regsiter";
+import { FormSuccess } from "../FormSuccess";
+import { FormError } from "../FormError";
+import { regsiter } from "@/actions/register";
 
-const formSchema = z.object({
-  fullName: z.string().min(2, {
-    message: "Please provide your Full Name",
-  }),
-  email: z.string().min(3, {
-    message: "Email address must be less than 2 characters",
-  }),
-  password: z.string().min(6, {
-    message: "Password must be at least 6 characters",
-  }),
-  phone: z.string().min(2, {
-    message: "Password confirmation must match characters.",
-  }),
-  passwordConfirmation: z.string().min(6, {
-    message: "Username must be at least 2 characters.",
-  }),
-})
 
 export function SignUpForm() {
 
   const [terms, setTerms] = useState<boolean> (false)
+  const [isPending, startTransition] = useTransition()
+  const [error, setError] = useState<string | undefined>('')
+  const [success, setSuccess] = useState < string | undefined>('')
 
 
   const changeTerms = () => {
@@ -50,8 +43,8 @@ export function SignUpForm() {
   }
   // 
    // 
-   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+   const form = useForm<z.infer<typeof signUpSchema>>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
       fullName: "",
       email: "",
@@ -62,15 +55,30 @@ export function SignUpForm() {
   })
  
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-  
-    console.log(values)
+  function onSubmit(values: z.infer<typeof signUpSchema>) {
+    setError('')
+    setSuccess('')
+
+
+    startTransition(() => {
+      if(values.password !== values.passwordConfirmation) {
+        setError('Password does not matched')
+      }
+      
+      regsiter(values)
+      .then((data) => {
+        setError(data.error)
+        setSuccess(data.success)
+      })
+    })
+
   }
 
 
 
   return (
-    <div className=" flex flex-col">
+    <div className=" flex mt-20 flex-col">
+     
       <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-full">
         <FormField
@@ -80,7 +88,7 @@ export function SignUpForm() {
             <FormItem>
               <FormLabel>Full Name </FormLabel>
               <FormControl>
-                <Input className=" outline-yellow-500" placeholder="Full Name" {...field} />
+                <Input disabled={isPending} className=" outline-yellow-500" placeholder="Full Name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -94,7 +102,7 @@ export function SignUpForm() {
             <FormItem>
               <FormLabel>Email Address</FormLabel>
               <FormControl>
-                <Input className=" outline-yellow-500" placeholder="Email Address" {...field} />
+                <Input disabled={isPending} className=" outline-yellow-500" placeholder="Email Address" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -107,7 +115,7 @@ export function SignUpForm() {
             <FormItem>
               <FormLabel>Phone Number</FormLabel>
               <FormControl>
-                <Input className=" outline-yellow-500" placeholder="(234) 000 000 000" {...field} />
+                <Input disabled={isPending} className=" outline-yellow-500" placeholder="(234) 000 000 000" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -115,15 +123,15 @@ export function SignUpForm() {
         />
 
         </div>
-       <div className="grid grid-cols-2 gap-2">
-       <FormField
+       <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
+       <FormField 
           control={form.control}
           name="password"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" className=" outline-yellow-500" placeholder="Passsord" {...field} />
+                <Input type="password" disabled={isPending} className=" outline-yellow-500" placeholder="Passsord" {...field} />
               </FormControl>
 
               <FormMessage />
@@ -137,7 +145,7 @@ export function SignUpForm() {
             <FormItem>
               <FormLabel>Password Confirmation</FormLabel>
               <FormControl>
-                <Input type="password" className=" outline-yellow-500" placeholder="Confirm Password" {...field} />
+                <Input type="password"disabled={isPending} className=" outline-yellow-500" placeholder="Confirm Password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -156,11 +164,16 @@ export function SignUpForm() {
         Accept terms and conditions
       </label>
     </div>
-
-       <Button type="submit" className=" w-full">Submit</Button>
+          <FormSuccess message={success} />
+          <FormError message={error} />
+       <Button type="submit" disabled={isPending} className=" w-full">Create an Account</Button>
       </form>
     </Form>
-   <div className=" py-6">
+   <div className=" flex flex-col space-y-4 py-6">
+    <Link href="/login" className=" flex space-x-2">
+        <p className=""> Already have an account ? </p>
+        <span className=" font-semibold">Log In</span>
+    </Link>
    <fieldset className=" border-t-2 flex flex-col text-center items-center align-middle justify-center">
       <legend className=" self-center flex px-2 text-sm text-gray-600" >or log in with</legend>
       <div className=" py-4 w-full ">

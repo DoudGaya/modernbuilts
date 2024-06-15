@@ -7,9 +7,13 @@ import { HomeIcons } from "@/components/HomeIcons";
 import { Metrics } from "@/components/Metrics";
 import { TheTeam } from "@/components/TheTeam";
 import { HomeSales } from "@/components/HomeSales";
+import { PublicNavigations } from "@/components/PublicNavigations";
+import { Footer } from "@/components/Footer";
 
 export default function Home() {
   return (
+  <>
+  <PublicNavigations />
   <div className=" flex flex-col bg-white">
     <Banner />
     <HomeAbout />
@@ -29,9 +33,10 @@ export default function Home() {
        <div className="">
        <HomeIcons />
        </div>
-       
     </div>
   </div>
+  <Footer />
+  </>
   );
 }
 

@@ -1,9 +1,18 @@
 import React from 'react'
+import { PublicNavigations
+ } from '@/components/PublicNavigations'
+import { Footer } from '@/components/Footer'
 
-const Layout = () => {
+const PagesLayout = ({ children }: {
+  children: React.ReactNode 
+}) => {
   return (
-    <div>Layout</div>
+    <div>
+      <PublicNavigations />
+      {children}
+      <Footer />
+    </div>
   )
 }
 
-export default Layout
+export default PagesLayout
