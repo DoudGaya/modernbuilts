@@ -5,6 +5,7 @@ generator client {
 }
 
 
+
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
@@ -75,7 +76,6 @@ model Project {
     roi Int
     @@map("project")
 }
-
 
 model Investment {
   id String @id @default(auto()) @map("_id") @db.ObjectId
