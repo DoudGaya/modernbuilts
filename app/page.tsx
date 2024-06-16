@@ -1,6 +1,5 @@
 import { Banner } from "@/components/Banner";
 import { HomeAbout } from "@/components/HomeAbout";
-import { HomeCarousel } from "@/components/HomeCarousel";
 import { HomeWhatWeDo } from "@/components/WhatWeDo";
 import { HomeMarketing2} from "@/components/HomeMarketing2";
 import { HomeIcons } from "@/components/HomeIcons";
@@ -19,7 +18,6 @@ export default function Home() {
     <HomeAbout />
     <div className="w-full flex-col flex">
       <div className=" max-w-7xl  mx-auto">
-        <HomeCarousel />
       </div>
         <div className="">
         <HomeWhatWeDo />
