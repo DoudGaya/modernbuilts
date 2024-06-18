@@ -6,7 +6,7 @@ const loading = () => {
   return (
     <div className=' h-screen w-full flex justify-center items-center'>
         <div className="">
-            <Image src={logoicon} className=' h-10 w-10 animate-pulse' alt='' />    
+            <Image src={logoicon} className=' h-16 w-16 animate-pulse' alt='' />    
         </div>
     </div>
   )
