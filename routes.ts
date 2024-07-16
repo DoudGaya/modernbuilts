@@ -33,4 +33,4 @@ export const authRoutes = [
 export const apiRoutesPrefix = '/api/auth'
 
 
-export const DEFAULT_LOGGED_IN_REDIRRECT = '/user'
+export const DEFAULT_LOGGED_IN_REDIRRECT = '/user/dashboard'

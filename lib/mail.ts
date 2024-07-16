@@ -17,7 +17,7 @@ export const sendTwoFactorEmail = async (email: string, token: string) => {
     await resend.emails.send({
         from: "Stablebricks <noreply@stablebricks.com>",
         to: email,
-        subject: "2-Factor Authentication",
+        subject: "Confirm Your Email",
         html: `<p> Your 2FA code is ${token}`
     })
 }
