@@ -38,5 +38,5 @@ export const regsiter = async (values: z.infer<typeof signUpSchema>) => {
 
     const verificationToken = await generateVerificationToken(email)
     await sendVrificationEmail(verificationToken.email, verificationToken.token)
-    return {success: "Verification Email Sent"}
+    return {success: "Check your email to verify your account!"}
 }

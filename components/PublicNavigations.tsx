@@ -140,7 +140,7 @@ export const PublicNavigations = () => {
                 {
                     navLinks.map((nav) => {
                         return ( 
-                            <Link href={nav.url} className=' font-poppins font-semibold text-lg text-black hover:text-yellow-500'> 
+                            <Link href={nav.url} key={ nav.id } className=' font-poppins font-semibold text-lg text-black hover:text-yellow-500'> 
                                 <SheetTrigger>{nav.name}</SheetTrigger>
                             </Link>
                         )

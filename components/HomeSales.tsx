@@ -45,7 +45,7 @@ export const HomeSales = () => {
                 {
                     homes.map((home) => {
                         return (
-                            <div className=" relative overflow-hidden group cursor-pointer rounded-md">
+                            <div key={ home.id} className=" relative overflow-hidden group cursor-pointer rounded-md">
                                 <Image src={home.img} className=' h-[250px] group-hover:scale-125 duration-300 transform ease-in-out delay-150 w-full object-cover' alt='' />
                             </div>
                         )

@@ -57,7 +57,7 @@ export const WhatWeDoAbout = () => {
         {
             contents.map(( con ) => {
                 return (
-                    <div className=" flex items-center space-y-4 text-center flex-col">
+                    <div key={ con.id } className=" flex items-center space-y-4 text-center flex-col">
                         {
                             con.icon
                         }

@@ -54,7 +54,7 @@ export const HomeIcons = () => {
             {
                 icons.map(( icon: Icons ) => {
                     return (
-                        <div className=" flex items-center space-y-4 justify-center text-center flex-col">
+                        <div key={icon.id} className=" flex items-center space-y-4 justify-center text-center flex-col">
                             <Image className=' h-20' src={ icon.icon } alt='' height={1000} width={1000} />
                             <p className=' font-semibold'>{ icon.title }</p>
                             <p className=' text-sm'> {icon.message}</p>

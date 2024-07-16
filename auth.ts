@@ -8,6 +8,8 @@ import { User } from "@prisma/client"
 import { UserRole } from "@prisma/client"
 
 
+                                                                                                                                                                
+
 type ExtendedUser = DefaultSession['user'] & {
     role: UserRole
 }

@@ -21,9 +21,6 @@ export const login = async (values: z.infer<typeof loginSchema>) => {
 
 
     const existingUser = await getUserByEmail(email) as User
-
-
-    // if (!existingUser.email)
  
    
     if (!existingUser || !existingUser.email || !existingUser.password) {

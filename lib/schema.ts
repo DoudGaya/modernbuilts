@@ -10,6 +10,22 @@ export const loginSchema = z.object({
   })
   
 
+  export const newPasswordSchema = z.object({
+    password: z.string().min(6, {
+      message: "Min of 6 Characters required"
+    }),
+    passwordConfirmation: z.string().min(6, {
+      message: "Min of 6 Characters required"
+    }),
+  })
+
+  export const ResetSchema = z.object({
+    email: z.string().email({
+      message: "Email must be of type email"
+    }),
+  })
+  
+
   export const signUpSchema = z.object({
     fullName: z.string().min(2, {
       message: "Please provide your Full Name",

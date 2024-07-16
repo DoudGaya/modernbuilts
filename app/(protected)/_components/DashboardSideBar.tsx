@@ -176,7 +176,7 @@ export const DashboardSideBar = ( { session }: any ) => {
                 {
                     privateLinks.map((nav) => {
                         return ( 
-                            <Link href={nav.url} className=' font-poppins font-semibold text-lg text-black hover:text-yellow-500'> 
+                            <Link href={nav.url} key={ nav.id } className=' font-poppins font-semibold text-lg text-black hover:text-yellow-500'> 
                                 <SheetTrigger>
                                     <div className=" flex space-x-4 w-full flex-row">
                                        <span> {nav.icon}</span>
@@ -193,7 +193,7 @@ export const DashboardSideBar = ( { session }: any ) => {
                 {
                     publicLinks.map((nav) => {
                         return ( 
-                            <Link href={nav.url} className=' font-poppins font-semibold text-lg text-black hover:text-yellow-500'> 
+                            <Link href={nav.url} key={ nav.id } className=' font-poppins font-semibold text-lg text-black hover:text-yellow-500'> 
                                 <SheetTrigger>
                                     <div className=" flex space-x-4 w-full flex-row">
                                        <span> {nav.icon}</span>

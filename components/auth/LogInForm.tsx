@@ -54,10 +54,8 @@ export function LoginForm() {
 
 
   function onSubmit(values: z.infer<typeof loginSchema>) {
-
     setError('')
     setSuccess('')
-
     startTransition(() => {
       login(values)
       .then((data) => {
@@ -96,13 +94,16 @@ export function LoginForm() {
               <FormControl>
                 <Input type="password" disabled={isPending} className=" outline-yellow-500" placeholder="Password" {...field} />
               </FormControl>
+              <Button asChild size={'sm'} variant={'link'} className=" px-0 font-normal text-sm text-black ">
+                <Link href={'/forgot-password'}>Forgot Password</Link>
+              </Button>
               <FormMessage />
             </FormItem>
           )}
         />
         <FormError message={error ||  urlError} />
         <FormSuccess message={success} />
-       <Button type="submit" disabled={isPending} className=" w-full">Log In</Button>
+       <Button type="submit" disabled={isPending} className=" bg-black text-primary hover:bg-black/90 w-full">Log In</Button>
       </form>
 
     </Form>

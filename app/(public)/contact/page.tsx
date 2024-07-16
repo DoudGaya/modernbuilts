@@ -91,7 +91,7 @@ const page = () => {
                     {
                       socials.map((social) => {
                           return (
-                              <a target='_blank' className=' p-2 bg-yellow-50 ease-in-out transition-all hover:bg-yellow-500 rounded-md' 
+                              <a target='_blank' key={social.url} className=' p-2 bg-yellow-50 ease-in-out transition-all hover:bg-yellow-500 rounded-md' 
                               href={ social.name == 'call' ? `tel:${social.url}` : social.url}
                               > {social.icon} </a>
                           )

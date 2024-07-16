@@ -23,7 +23,7 @@ const EmailVerification = () => {
     if (success || error) return;
 
     if (!token){
-      setError("Please generate a new token!")
+      setError("Missing token")
       return;
     }
     emailVerification(token)

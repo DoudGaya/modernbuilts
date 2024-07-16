@@ -49,7 +49,7 @@ export const TheTeam = () => {
                 {
                     founders.map(( founder: Founder ) => {
                         return (
-                            <div className=" flex flex-col space-y-6 md:space-y-0 items-center text-center space-x-4 ">
+                            <div key={ founder.id} className=" flex flex-col space-y-6 md:space-y-0 items-center text-center space-x-4 ">
                                 <div className=" h-[120px] w-[120px] rounded-full my-6 ">
                                     <Image src={founder.img} className=' h-[120px] w-[120px] object-cover rounded-full shadow-inner' alt='Stable Bricks CEO' />
                                 </div>
