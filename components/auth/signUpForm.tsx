@@ -166,7 +166,7 @@ export function SignUpForm() {
     </div>
           <FormSuccess message={success} />
           <FormError message={error} />
-       <Button type="submit" disabled={isPending} className=" w-full">Create an Account</Button>
+       <Button type="submit" disabled={isPending} className=" bg-black hover:bg-black/80 text-primary w-full">Create an Account</Button>
       </form>
     </Form>
    <div className=" flex flex-col space-y-4 py-6">

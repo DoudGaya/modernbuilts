@@ -7,8 +7,12 @@ import { AuthError } from 'next-auth'
 import { db } from '@/lib/db'
 import { getUserByEmail } from '@/data/user'
 import { User } from '@prisma/client'
-import { generateVerificationToken } from '@/lib/tokens'
-import { sendVrificationEmail } from '@/lib/mail'
+import { getTwoFactorTokenByEmail } from '@/data/two-factor-token'
+import { generateVerificationToken, 
+        generateTwoFactorToken 
+    } from '@/lib/tokens'
+import { sendVrificationEmail, sendTwoFactorEmail } from '@/lib/mail'
+import { getTwoFactorConfirmationByUserId } from '@/data/two-factor-confirmation'
 
 export const login = async (values: z.infer<typeof loginSchema>) => {
     const fieldValidation = loginSchema.safeParse(values);
@@ -16,11 +20,10 @@ export const login = async (values: z.infer<typeof loginSchema>) => {
          return {error: "field Validation failed "}
     }
  
-    const { email, password } = fieldValidation.data
+    const { email, password, code } = fieldValidation.data
 
 
-
-    const existingUser = await getUserByEmail(email) as User
+    const existingUser = await getUserByEmail(email) 
  
    
     if (!existingUser || !existingUser.email || !existingUser.password) {
@@ -32,7 +35,60 @@ export const login = async (values: z.infer<typeof loginSchema>) => {
         await sendVrificationEmail((await verificationToken).email, (await verificationToken).token)
         return {success: "Check your email to verify your account!"}
     }
-    
+
+    if (existingUser.isTwoFactorEnabled && existingUser.email) {
+
+        if (code) {
+            const twoFactorToken = await getTwoFactorTokenByEmail(existingUser.email)
+
+            console.log(code, twoFactorToken)
+
+            if (!twoFactorToken) { 
+                return {error: "Invalid OTP Code"}
+            }
+
+            if (twoFactorToken.token !== code) {
+                return {error: "Invalid OTP Code"}
+            }
+            const hasExpired = new Date(twoFactorToken.expires) < new Date()
+
+            if (hasExpired) {
+                return {error: " OTP Code Expired"}
+            }
+
+
+            await db.twoFactorToken.delete({
+                where: {id: twoFactorToken.id}
+            })
+
+            const existingConfirmation = await getTwoFactorConfirmationByUserId(existingUser.id)
+
+            if (existingConfirmation) {
+                await db.twoFactorConfirmation.delete({
+                    where: {
+                        id: existingConfirmation.id
+                    }
+                })
+            }
+
+            await db.twoFactorConfirmation.create({
+                data: {
+                    userId: existingUser.id,
+                }
+            })
+
+             
+        } else {
+
+            const twoFactorToken = await generateTwoFactorToken(existingUser.email )
+            await sendTwoFactorEmail(existingUser.email, twoFactorToken.token)
+            return {twoFactor: true}
+        }
+        
+
+
+    }
+
     try {
         await signIn("credentials", {
             email, 

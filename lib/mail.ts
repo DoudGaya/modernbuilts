@@ -12,6 +12,16 @@ if (env === 'production') {
     baseUrl = 'http://localhost:3000'
 }
 
+
+export const sendTwoFactorEmail = async (email: string, token: string) => {
+    await resend.emails.send({
+        from: "Stablebricks <noreply@stablebricks.com>",
+        to: email,
+        subject: "2-Factor Authentication",
+        html: `<p> Your 2FA code is ${token}`
+    })
+}
+
 export const sendPasswordResetEmail = async ( email: string, token: string) => {
     const resetLink =  `${baseUrl}/new-password?token=${token}`
 

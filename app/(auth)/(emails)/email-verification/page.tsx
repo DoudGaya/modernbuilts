@@ -1,5 +1,4 @@
 "use client"
-
 import React, { useEffect, useCallback, useState } from 'react'
 import Link from 'next/link'
 import { BeatLoader } from 'react-spinners'
@@ -42,22 +41,27 @@ const EmailVerification = () => {
     <div>
       <div className=" max-w-3xl flex items-center space-y-2 justify-center flex-col text-center bg-white">
         <h1 className=' text-2xl font-semibold'>Welcome to StableBricks</h1>
-        <p>Confirming your Email</p>
           {!success && !error && (
-            <div className=" flex py-6">
-              <BeatLoader loading={true} size={12} color='#ffda48'  />
+            <div className=" flex space-y-2 items-center text-center flex-col py-3">
+              <p>Confirming your Email</p>
+              <BeatLoader loading={true} size={8} className='' color='#ffda48'  />
             </div>
           )}
 
           {
             success ? (
               <FormError message={error} />
-              ) : 
-            <FormSuccess message={success}/>
+              ) : (
+                <>
+                  <FormSuccess message={success}/>
+                    <Link href={'/login'} className=' bg-primary px-6 py-2 rounded-md'>
+                        Back to Log In
+                    </Link>
+             </>
+              )
+          
           }
-        <Link href={'/login'} className=' bg-primary px-6 py-2 rounded-md'>
-            Back to Log In
-        </Link>
+       
       </div>
     </div>
   )

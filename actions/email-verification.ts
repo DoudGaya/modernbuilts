@@ -6,7 +6,6 @@ import { getVerificationTokenByToken } from "@/data/verification-token"
 
 
 export const emailVerification = async (token: string) => {
-    // @ts-ignore
     const existingToken = await getVerificationTokenByToken(token)
     if (!existingToken) {
         return {error: "Token does not exist"}
@@ -38,7 +37,6 @@ export const emailVerification = async (token: string) => {
         where: {id: existingToken.id}
     })
  
-
-    return { success: 'Your Email has been Verified'}
+    return {success: 'Your Email has been Verified'}
 
 }
