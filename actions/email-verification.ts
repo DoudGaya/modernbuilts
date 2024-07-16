@@ -26,7 +26,6 @@ export const emailVerification = async (token: string) => {
 
     await db.user.update({
         where: {
-            // @ts-ignore
             id: existingUser.id,
         },
         data: {
@@ -40,6 +39,6 @@ export const emailVerification = async (token: string) => {
     })
  
 
-    return { success: 'Email Verified'}
+    return { success: 'Your Email has been Verified'}
 
 }

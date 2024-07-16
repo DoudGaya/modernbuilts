@@ -20,7 +20,6 @@ const EmailVerification = () => {
 
   const onSubmit = useCallback(() => {
 
-    if (success || error) return;
 
     if (!token){
       setError("Missing token")
