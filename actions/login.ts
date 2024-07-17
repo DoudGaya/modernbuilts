@@ -2,17 +2,17 @@
 import { loginSchema } from '@/lib/schema'
 import * as z from 'zod' 
 import { signIn } from '@/auth'
-import { DEFAULT_LOGGED_IN_REDIRRECT } from '@/routes'
+import { DEFAULT_LOGGED_IN_REDIRRECT, ADMIN_LOGGED_IN_REDIRRECT } from '@/routes'
 import { AuthError } from 'next-auth'
 import { db } from '@/lib/db'
 import { getUserByEmail } from '@/data/user'
-import { User } from '@prisma/client'
 import { getTwoFactorTokenByEmail } from '@/data/two-factor-token'
 import { generateVerificationToken, 
         generateTwoFactorToken 
     } from '@/lib/tokens'
 import { sendVrificationEmail, sendTwoFactorEmail } from '@/lib/mail'
 import { getTwoFactorConfirmationByUserId } from '@/data/two-factor-confirmation'
+import { redirect } from 'next/navigation'
 
 export const login = async (values: z.infer<typeof loginSchema>) => {
     const fieldValidation = loginSchema.safeParse(values);
@@ -24,7 +24,7 @@ export const login = async (values: z.infer<typeof loginSchema>) => {
 
 
     const existingUser = await getUserByEmail(email) 
- 
+
    
     if (!existingUser || !existingUser.email || !existingUser.password) {
         return {error: "Email does not exist!" }
@@ -41,8 +41,6 @@ export const login = async (values: z.infer<typeof loginSchema>) => {
         if (code) {
             const twoFactorToken = await getTwoFactorTokenByEmail(existingUser.email)
 
-            console.log(code, twoFactorToken)
-
             if (!twoFactorToken) { 
                 return {error: "Invalid OTP Code"}
             }
@@ -55,7 +53,6 @@ export const login = async (values: z.infer<typeof loginSchema>) => {
             if (hasExpired) {
                 return {error: " OTP Code Expired"}
             }
-
 
             await db.twoFactorToken.delete({
                 where: {id: twoFactorToken.id}
@@ -77,6 +74,7 @@ export const login = async (values: z.infer<typeof loginSchema>) => {
                 }
             })
 
+
              
         } else {
 
@@ -86,14 +84,14 @@ export const login = async (values: z.infer<typeof loginSchema>) => {
         }
         
 
-
     }
+
 
     try {
         await signIn("credentials", {
             email, 
             password,
-            redirrectTo: DEFAULT_LOGGED_IN_REDIRRECT
+            redirrectTo: DEFAULT_LOGGED_IN_REDIRRECT,
         })
     } catch (error) {
         if (error instanceof AuthError) {
@@ -107,5 +105,13 @@ export const login = async (values: z.infer<typeof loginSchema>) => {
 
         throw error;
     }
+
+    //     if (existingUser.role == "ADMIN") {
+    //         return ADMIN_LOGGED_IN_REDIRRECT
+    //     } 
+
+    //     if (existingUser.role === "USER") {
+    //         return DEFAULT_LOGGED_IN_REDIRRECT
+    //     }
 
 }

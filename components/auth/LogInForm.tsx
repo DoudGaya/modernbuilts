@@ -58,6 +58,11 @@ export function LoginForm() {
     })
   }
 
+
+  function requestNewOTP (values: z.infer<typeof loginSchema>) {
+    console.log(values)
+  }
+
   function onSubmit(values: z.infer<typeof loginSchema>) {
     setError('')
     setSuccess('')
@@ -110,6 +115,7 @@ export function LoginForm() {
              </FormItem>
            )}
          />
+         {/* <Button className="" onClick={onSubmit}> Request New OTP</Button> */}
           </div>
         )
 

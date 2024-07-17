@@ -1,12 +1,11 @@
 import NextAuth, { type DefaultSession } from "next-auth"
-import Google from "next-auth/providers/google"
 import { db } from "./lib/db"
 import authConfig from "./auth.config"
 import {PrismaAdapter } from '@auth/prisma-adapter'
 import { getUserById } from "./data/user"
-import { User } from "@prisma/client"
 import { UserRole } from "@prisma/client"
 import { getTwoFactorConfirmationByUserId } from "./data/two-factor-confirmation"
+import { redirect } from "next/navigation"
 
 
 
@@ -54,6 +53,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                     where: {id: twofactorConfirmation.id }
                 })
             }
+
+
             return true
         }, 
         async jwt({ token}) {

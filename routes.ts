@@ -8,7 +8,6 @@ export const publicRoutes = [
     '/contact',
     '/blog/:slug',
     '/email-verification'
-    
 ]
 
 
@@ -29,8 +28,10 @@ export const authRoutes = [
 /**
  * Public Routes: Routes that are accessible to the public 
  * @type {String}
+ * 
  */
 export const apiRoutesPrefix = '/api/auth'
 
 
 export const DEFAULT_LOGGED_IN_REDIRRECT = '/user/dashboard'
+export const ADMIN_LOGGED_IN_REDIRRECT = '/admin/dashboard'

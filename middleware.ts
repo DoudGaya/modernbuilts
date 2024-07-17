@@ -3,6 +3,8 @@ import authConfig from "./auth.config";
 import NextAuth from "next-auth";
 import { DEFAULT_LOGGED_IN_REDIRRECT, publicRoutes, apiRoutesPrefix, authRoutes } from "./routes"
 const { auth } = NextAuth(authConfig)
+import { NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 
 
 // @ts-ignore
@@ -31,6 +33,36 @@ export default auth((req) => {
    }
 })
 
+
+// export async function middleware(request: any) {
+//   const token = await getToken({ req: request, secret: process.env.AUTH_SECRET });
+
+//   if (!token) return NextResponse.redirect(new URL("/login", request.url));
+
+//   // Check the role and redirect based on the role
+
+//   console.log(token)
+//   switch (token.role) {
+//     case "ADMIN":
+//       if (!request.nextUrl.pathname.startsWith("/admin")) {
+//         return NextResponse.redirect(new URL("/admin", request.url));
+//       }
+//       break;
+//     case "USER":
+//       if (!request.nextUrl.pathname.startsWith("/user") ) {
+//         return NextResponse.redirect(new URL("/user", request.url));
+//       }
+//       break;
+   
+//       // Add the paths that the pathologist can access here
+//       if (!request.nextUrl.pathname.startsWith("/image")) {
+//         return NextResponse.redirect(new URL("/image", request.url));
+//       }
+//       break;
+//     default:
+//       return NextResponse.redirect(new URL("/login", request.url));
+//   }
+// }
 
 
 // Optionally, don't invoke Middleware on some paths 09039441148
