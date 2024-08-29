@@ -7,7 +7,6 @@ export async function POST(req: any) {
     try {
         const {name, email, password} = await req.json()
 
-        console.log(`name: ${name} - email: ${email} - password ${password}`)
 
         return NextResponse.json(
             {

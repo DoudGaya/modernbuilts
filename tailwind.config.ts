@@ -1,12 +1,18 @@
 import type { Config } from "tailwindcss"
+import { withUt } from "uploadthing/tw";
+// const config = {
 
-const config = {
+// }
+
+ 
+export default withUt({
   darkMode: ["class"],
   content: [
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
+    "./src/**/*.{ts,tsx,mdx}"
 	],
   prefix: "",
   theme: {
@@ -20,15 +26,12 @@ const config = {
     extend: {
       colors: {
         "stablebrick-black": "#343434",
+        primary: "#FF9700",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
@@ -70,7 +73,7 @@ const config = {
         },
         
       },
-      animation: {
+      animation: {  
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
@@ -80,6 +83,10 @@ const config = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config
+  
+})  satisfies Config;
 
-export default config
+
+
+
+// export default config

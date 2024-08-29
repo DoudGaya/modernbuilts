@@ -118,7 +118,7 @@ export const AdminDashboardSideBar = ( ) => {
 
   return (
 <>
-    <div className=' w-full hidden md:flex flex-col md:w-[18rem] py-6 drop-shadow-sm px-4 bg-white'>
+    <div className=' w-full hidden border-r dark:border-gray-700 dark:bg-black/80 dark:text-white md:flex flex-col md:w-[18rem] py-6 drop-shadow-sm px-4 bg-white'>
     <div className=" divide-y-2 pb-2 border-b border-yellow-500">
         <Image src={logo} alt='Stablebricks logo' className=' h-10 object-contain' />
     </div>
@@ -126,7 +126,7 @@ export const AdminDashboardSideBar = ( ) => {
         {
             privateLinks.map((single) => {
                 return (
-                    <Link href={single.url} key={single.id} className={`hover:bg-yellow-500/30 ${single.url == pathname && ' bg-yellow-500' } rounded-md space-x-2 w-full py-3 px-4 flex flex-row`}>
+                    <Link href={single.url} key={single.id} className={`hover:bg-yellow-500/30 ${single.url == pathname && ' bg-yellow-500 text-white dark:text-black' } rounded-md space-x-2 w-full py-3 px-4 flex flex-row`}>
                         <span> {single.icon} </span>
                         <span> { single.name} </span>
                     </Link>
@@ -139,7 +139,7 @@ export const AdminDashboardSideBar = ( ) => {
         {
             publicLinks.map((single) => {
                 return (
-                    <Link href={single.url} key={single.id} className={`hover:bg-yellow-500/30 ${single.url == pathname && ' bg-yellow-500' } rounded-md space-x-2 w-full py-3 px-4 flex flex-row`}>
+                    <Link href={single.url} key={single.id} className={`hover:bg-yellow-500/30 ${single.url == pathname && ' bg-yellow-500 text-white dark:text-black' } rounded-md space-x-2 w-full py-3 px-4 flex flex-row`}>
                         <span> {single.icon} </span>
                         <span> { single.name} </span>
                     </Link>

@@ -2,7 +2,7 @@
 import { loginSchema } from '@/lib/schema'
 import * as z from 'zod' 
 import { signIn } from '@/auth'
-import { DEFAULT_LOGGED_IN_REDIRRECT, ADMIN_LOGGED_IN_REDIRRECT } from '@/routes'
+import { DEFAULT_LOGGED_IN_REDIRRECT} from '@/routes'
 import { AuthError } from 'next-auth'
 import { db } from '@/lib/db'
 import { getUserByEmail } from '@/data/user'
@@ -73,17 +73,12 @@ export const login = async (values: z.infer<typeof loginSchema>) => {
                     userId: existingUser.id,
                 }
             })
-
-
-             
         } else {
 
             const twoFactorToken = await generateTwoFactorToken(existingUser.email )
             await sendTwoFactorEmail(existingUser.email, twoFactorToken.token)
             return {twoFactor: true}
         }
-        
-
     }
 
 
@@ -91,7 +86,8 @@ export const login = async (values: z.infer<typeof loginSchema>) => {
         await signIn("credentials", {
             email, 
             password,
-            redirrectTo: DEFAULT_LOGGED_IN_REDIRRECT,
+            redirect: true,
+            redirectTo: DEFAULT_LOGGED_IN_REDIRRECT,
         })
     } catch (error) {
         if (error instanceof AuthError) {
@@ -106,12 +102,5 @@ export const login = async (values: z.infer<typeof loginSchema>) => {
         throw error;
     }
 
-    //     if (existingUser.role == "ADMIN") {
-    //         return ADMIN_LOGGED_IN_REDIRRECT
-    //     } 
-
-    //     if (existingUser.role === "USER") {
-    //         return DEFAULT_LOGGED_IN_REDIRRECT
-    //     }
 
 }

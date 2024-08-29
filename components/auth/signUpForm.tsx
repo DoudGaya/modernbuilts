@@ -9,6 +9,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { useTransition } from "react";
 import Link from "next/link";
 import { signUpSchema } from "@/lib/schema";
+import { signIn } from "@/auth";
+import { DEFAULT_LOGGED_IN_REDIRRECT } from "@/routes";
 
 import { Button } from "@/components/ui/button"
 import {
@@ -35,14 +37,19 @@ export function SignUpForm() {
   const [success, setSuccess] = useState < string | undefined>('')
 
 
+  const googleSignIn = (provider: "google") => {
+    signIn(provider, {
+      callbackUrl: DEFAULT_LOGGED_IN_REDIRRECT
+    })
+  }
+
+
   const changeTerms = () => {
     return setTerms((prev: boolean): boolean => {
       return !prev
     })
-    console.log(terms)
   }
-  // 
-   // 
+
    const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -58,7 +65,6 @@ export function SignUpForm() {
   function onSubmit(values: z.infer<typeof signUpSchema>) {
     setError('')
     setSuccess('')
-
 
     startTransition(() => {
       if(values.password !== values.passwordConfirmation) {
@@ -177,7 +183,7 @@ export function SignUpForm() {
    <fieldset className=" border-t-2 flex flex-col text-center items-center align-middle justify-center">
       <legend className=" self-center flex px-2 text-sm text-gray-600" >or log in with</legend>
       <div className=" py-4 w-full ">
-        <button className=" rounded-md hover:bg-gray-100 transition-all ease-in-out flex space-x-3 items-center justify-center bg-white py-2 border-2  border-gray-300 w-full ">
+        <button onClick={() => googleSignIn("google")} className=" rounded-md hover:bg-gray-100 transition-all ease-in-out flex space-x-3 items-center justify-center bg-white py-2 border-2  border-gray-300 w-full ">
          <p className=" text-md"> Sign Up with Google</p>
          <FcGoogle size={23} />
         </button>

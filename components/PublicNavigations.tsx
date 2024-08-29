@@ -15,6 +15,7 @@ import {
     SheetTitle,
     SheetTrigger,
   } from "@/components/ui/sheet"
+import { DarkButton } from './DarkButton'
 
 
   const navLinks = [
@@ -53,15 +54,9 @@ import {
     },
   ]
 
-  
-
-
 export const PublicNavigations = () => {
-
     const session = useSession()
     const user = session.data?.user.name
-
-    
   return (
 <>
     <div className=' w-full bg-white hidden lg:flex border-b fixed z-10 left-0 top-0 py-4'>
@@ -99,7 +94,7 @@ export const PublicNavigations = () => {
 
                     <div className="">
                     <Link
-                            href={'register'}
+                            href={'/user/dashboard'}
                             className="rounded-md font-poppins font-semibold px-2 py-2 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]"
                         >
                         Dashboard
@@ -163,20 +158,39 @@ export const PublicNavigations = () => {
                         )
                     })
                 }
-                <div className=" flex flex-col space-y-4 border-t-2 py-3 w-full ">
-                    <Link href={'/register'} className="">
-                        <SheetTrigger className='py-2 font-poppins font-semibold text-lg w-full rounded-lg bg-yellow-500 text-black'>Register</SheetTrigger>
+                <div className=" flex h-full flex-col space-y-4 border-t-2 py-3 w-full ">
+                   { user ? (
+                    <div className=" flex flex-col h-full justify-between space-y-4">
+                     <Link href={'/user/dashboard'} className="">
+                        <SheetTrigger className='py-2 font-poppins flex items-center space-x-3 font-semibold text-lg w-full text-black'>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="size-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                        </svg>
+                           <p className=' font-poppins'>Dashboard</p>
+                        </SheetTrigger>
+                    </Link>
+
+                        <div className="py-2 font-poppins items-center flex space-x-3 font-semibold text-lg w-full  text-black">
+                            <DarkButton />
+                            {/* <p className='font-poppins font-semibold'>Dark Mode</p> */}
+                        </div>
+                    </div>
+                   ) :
+                  <div className=" flex flex-col space-y-3">
+                     <Link href={'/register'} className="">
+                        <SheetTrigger className='py-2 font-poppins font-semibold text-lg w-full rounded-lg bg-black text-primary '>Register</SheetTrigger>
                     </Link>
                     <Link href={'/login'} className="">
-                        <SheetTrigger className='py-2 font-poppins font-semibold text-lg w-full rounded-lg border-2 border-yellow-500 text-black'>Lon In</SheetTrigger>
+                        <SheetTrigger className='py-2 font-poppins font-semibold text-lg w-full rounded-lg border-2 border-black text-black'>Log In</SheetTrigger>
                     </Link>
+                  </div>
+                   }
                 </div>
               </div>
             </SheetDescription>
             </SheetHeader>
         </SheetContent>
     </Sheet>
-
 </>
   )
 }

@@ -5,6 +5,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import logo from '@/public/stablebricks.png'
 import { usePathname } from 'next/navigation'
+import logoWhite from '@/public/img/stable-bricks-white.png'
+
+
 
 
 import {
@@ -15,6 +18,7 @@ import {
     SheetTitle,
     SheetTrigger,
   } from "@/components/ui/sheet"
+import { AuthMobileSignOut } from '../../_components/AuthMobileSignOut'
 
 
   const privateLinks = [
@@ -48,7 +52,6 @@ import {
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
             </svg>
-
         )
     },
 
@@ -73,9 +76,9 @@ import {
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z" />
             </svg>
-
         )
     },
+
     {
         id: 2,
         name: 'Buy an Asset',
@@ -87,6 +90,7 @@ import {
 
         )
     },
+
     {
         id: 3,
         name: 'Consultation',
@@ -98,6 +102,7 @@ import {
 
         )
     },
+
     {
         id: 4,
         name: 'Enquiries',
@@ -110,41 +115,37 @@ import {
     },
   ]
 
-  
-
-
 export const UserDashboardSideBar = ( ) => {
 
     const pathname = usePathname()
 
-
-
   return (
 <>
-    <div className=' w-full hidden md:flex flex-col md:w-[18rem] py-6 drop-shadow-sm px-4 bg-white'>
-    <div className=" divide-y-2 pb-2 border-b border-yellow-500">
-        <Image src={logo} alt='Stablebricks logo' className=' h-10 object-contain' />
+    <div className=' w-full hidden md:flex flex-col border-r dark:border-gray-600 md:w-[16rem] py-6 drop-shadow-sm px-4 dark:text-white bg-white dark:bg-black'>
+    <div className=" pb-2">
+        <Image src={logo} alt='Stablebricks logo' className=' h-10 dark:hidden block object-contain' />
+        <Image src={logoWhite} alt='Stablebricks logo' className=' h-10 hidden dark:block object-contain' />
     </div>
     <div className=" flex flex-col py-4 px-2 space-y-3">
         {
             privateLinks.map((single) => {
                 return (
-                    <Link href={single.url} key={single.id} className={`hover:bg-yellow-500/30 ${single.url == pathname && ' bg-yellow-500' } rounded-md space-x-2 w-full py-3 px-4 flex flex-row`}>
-                        <span> {single.icon} </span>
-                        <span> { single.name} </span>
+                    <Link href={single.url} key={single.id} className={` hover:text-primary ${single.url == pathname && ' bg-black dark:bg-primary dark:text-black text-primary' } rounded-md text-sm space-x-2 w-full py-3 px-4 flex flex-row`}>
+                        <span>{single.icon}</span>
+                        <span>{single.name}</span>
                     </Link>
                 )
             })
         }
     </div>
 
-    <div className=" flex flex-col border-t border-yellow-500 py-4 px-2 space-y-3">
+    <div className=" flex flex-col border-t border-black py-4 px-2 space-y-3">
         {
             publicLinks.map((single) => {
                 return (
-                    <Link href={single.url} key={single.id} className={`hover:bg-yellow-500/30 ${single.url == pathname && ' bg-yellow-500' } rounded-md space-x-2 w-full py-3 px-4 flex flex-row`}>
+                    <Link href={single.url} key={single.id} className={`hover:text-primary ${single.url == pathname && ' bg-black dark:bg-primary text-primary' } rounded-md space-x-2 w-full py-3 text-sm px-4 flex flex-row`}>
                         <span> {single.icon} </span>
-                        <span> { single.name} </span>
+                        <span> {single.name} </span>
                     </Link>
                 )   
             })
@@ -208,6 +209,7 @@ export const UserDashboardSideBar = ( ) => {
               </div>
             </SheetDescription>
             </SheetHeader>
+          <AuthMobileSignOut />
         </SheetContent>
     </Sheet>
 </>

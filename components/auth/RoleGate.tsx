@@ -14,10 +14,8 @@ export const RoleGate = ({children, allowedRole}: RoleGateProps) => {
     const role = useCurrentRole()
 
 
-    console.log(allowedRole)
-
     if (role !== allowedRole) {
-        // return redirect('/admin')
+         
     } 
     return (
 

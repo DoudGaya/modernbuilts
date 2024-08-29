@@ -24,7 +24,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
      <SessionProvider session={session}>
-     <body className={`${inter.className} text-gray-950 bg-white`}>
+     <body className={`${inter.className} text-gray-950 dark:bg-black/80 bg-gray-50`}>
       <ThemeProvider
             attribute="class"
             defaultTheme="system"

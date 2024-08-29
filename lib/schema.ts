@@ -1,5 +1,21 @@
 import { z } from "zod"
 
+
+export const SettingsSchema = z.object({
+  name: z.optional(z.string()),
+  email: z.optional(z.string()),
+  phone: z.optional(z.string()),
+  image: z.optional(z.any())
+}) 
+
+export const settingsSecurityDetailsSchema = z.object({
+  oldPassword: z.optional(z.string()),
+  newPassword: z.optional(z.string()),
+  newPasswordConfirmation: z.optional(z.string()),
+  isTwoFactorEnabled: z.optional(z.boolean()),
+}) 
+
+
 export const loginSchema = z.object({
     email: z.string().email({
       message: "Email must be of type email"

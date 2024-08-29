@@ -1,0 +1,15 @@
+
+p {
+    color: black;
+}
+
+#logo {
+    background-image: url('/logo.png');
+    display: block;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

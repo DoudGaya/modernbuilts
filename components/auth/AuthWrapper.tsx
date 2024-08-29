@@ -15,6 +15,6 @@ export const AuthWrapper = ( {
     authButtonText, 
     showSocial }: AuthWrapper) => {
   return (
-    <div>{children} </div>
+    <div>{children}</div>
   )
 }

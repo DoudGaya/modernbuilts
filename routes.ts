@@ -15,8 +15,10 @@ export const publicRoutes = [
 /**
  * Public Routes: Routes that are used for authentication
  * routes will redirrect logged in users to dashbord 
- * @type {[String]}
+ * @type { [String] }
  */
+
+
 export const authRoutes = [
     '/login',
     '/register',

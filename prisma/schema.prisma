@@ -8,7 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
   id                  String @id @default(auto()) @map("_id") @db.ObjectId
   name                String? 
@@ -19,11 +18,39 @@ model User {
   image               String?
   role                UserRole @default(USER)
   accounts            Account[]
+  investments         Investment[]
+  accoutDetails       AccountDetails?
+  wallet              Wallet?
   isTwoFactorEnabled Boolean @default(false)
   TwoFactorConfirmation TwoFactorConfirmation?
   @@map("user")
 }
 
+
+model Wallet {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  balance         Int
+  user            User @relation(fields: [id], references: [id], onDelete: Cascade)
+  userId          String @unique @db.ObjectId
+  bonuses         Bonuses[]
+}
+
+model AccountDetails {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  accountName     String
+  accountNumber   String
+  bankName        String
+  user            User @relation(fields: [id], references: [id], onDelete: Cascade)
+  userId          String @unique @db.ObjectId
+}
+
+model Bonuses {
+    id            String @id @default(auto()) @map("_id") @db.ObjectId
+    name          String
+    amount        Int
+    wallet        Wallet @relation(fields: [id], references: [id], onDelete: Cascade)
+    walletId      String @db.ObjectId
+}
 
 model Account {
   id                 String  @id @default(auto()) @map("_id") @db.ObjectId
@@ -43,6 +70,12 @@ model Account {
   @@map("account")
 }
 
+enum ProjectStatus {
+  PENDING
+  ACTIVE
+  END
+  COMPLETED
+}
 
 enum UserRole {
   ADMIN
@@ -57,7 +90,6 @@ model VerificationToken {
   @@unique([email, token])
 }
 
-
 model Project {
     id          String @id @default(auto()) @map("_id") @db.ObjectId
     title       String
@@ -68,29 +100,31 @@ model Project {
     state       String
     city        String
     location    String
+    projectStatus ProjectStatus @default(PENDING)
     sharePrice  Int
     investment  Investment[]
     roi         Int
     @@map("project")
 }
 
-
 model Investment {
-  id              String @id @default(auto()) @map("_id") @db.ObjectId
-  amount          Int
-  investmentDate  DateTime
-  payday          DateTime
-  project         Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId       String @db.ObjectId
+  id                  String @id @default(auto()) @map("_id") @db.ObjectId
+  investmentAmount    Int
+  investmentReturn    Int
+  dateOfInvestment    DateTime
+  status              ProjectStatus @default(PENDING)
+  dateOfreturn        DateTime
+  user                User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project             Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId              String @db.ObjectId
+  projectId           String @db.ObjectId
 }
-
 
 model PasswordResetToken {
   id        String @id @default(auto()) @map("_id") @db.ObjectId
   email     String
   token     String @unique
   expires   DateTime
-
   @@unique([email, token])
 }
 
@@ -99,7 +133,6 @@ model twoFactorToken {
   email     String
   token     String @unique
   expires   DateTime
-
   @@unique([email, token])
 }
 
