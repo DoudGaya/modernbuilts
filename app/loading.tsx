@@ -4,7 +4,7 @@ import Image from 'next/image'
 
 const loading = () => {
   return (
-    <div className=' h-screen w-full flex justify-center items-center'>
+    <div className=' h-screen bg-gray-100 w-full flex justify-center items-center'>
         <div className="">
             <Image src={logoicon} className=' h-16 w-16 animate-pulse' alt='' />    
         </div>

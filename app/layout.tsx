@@ -5,10 +5,9 @@ import { PublicNavigations } from "@/components/PublicNavigations";
 import { Footer } from "@/components/Footer";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
+// import '/../public/fonts.css'
 import "./globals.css";
-
 const inter = Inter({ subsets: ["latin"] });
-
 export const metadata: Metadata = {
   title: "Stable Bricks",
   description: "The Nigeria's Real Estate Company. We are stable, We are Reliable",
@@ -22,9 +21,9 @@ export default async function RootLayout({
 
   const session = await auth()
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
      <SessionProvider session={session}>
-     <body className={`${inter.className} text-gray-950 dark:bg-black/80 bg-gray-50`}>
+     <body className={`${inter.className} text-gray-950 bg-gray-50`}>
       <ThemeProvider
             attribute="class"
             defaultTheme="system"

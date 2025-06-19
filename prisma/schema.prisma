@@ -2,7 +2,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
@@ -18,14 +17,22 @@ model User {
   image               String?
   role                UserRole @default(USER)
   accounts            Account[]
+  referralID          String?
   investments         Investment[]
   accoutDetails       AccountDetails?
   wallet              Wallet?
-  isTwoFactorEnabled Boolean @default(false)
+  isTwoFactorEnabled  Boolean @default(false)
   TwoFactorConfirmation TwoFactorConfirmation?
+  complaints          Complaint[]
+  landSubmissions     LandSubmission[]
   @@map("user")
 }
 
+enum UserRole {
+  ADMIN
+  USER
+  DEVELOPER
+}
 
 model Wallet {
   id              String @id @default(auto()) @map("_id") @db.ObjectId
@@ -77,11 +84,6 @@ enum ProjectStatus {
   COMPLETED
 }
 
-enum UserRole {
-  ADMIN
-  USER
-}
-
 model VerificationToken {
   id        String @id @default(auto()) @map("_id") @db.ObjectId
   email     String
@@ -91,19 +93,27 @@ model VerificationToken {
 }
 
 model Project {
-    id          String @id @default(auto()) @map("_id") @db.ObjectId
-    title       String
-    length      String
-    description String
-    duration    DateTime
-    valuation   String
-    state       String
-    city        String
-    location    String
+    id            String @id @default(auto()) @map("_id") @db.ObjectId
+    title         String
+    length        String
+    slug          String @unique  
+    coverImage    String
+    video         String
+    images        String[]
+    category      String
+    description   String
+    duration      DateTime
+    valuation     String
+    state         String
+    city          String
+    location      String
     projectStatus ProjectStatus @default(PENDING)
-    sharePrice  Int
-    investment  Investment[]
-    roi         Int
+    features      String[]
+    sharePrice    Int
+    investment    Investment[]
+    roi           Int
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
     @@map("project")
 }
 
@@ -118,6 +128,8 @@ model Investment {
   project             Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   userId              String @db.ObjectId
   projectId           String @db.ObjectId
+  certificateId       String? @unique
+  verificationToken   String? @unique
 }
 
 model PasswordResetToken {
@@ -142,3 +154,236 @@ model TwoFactorConfirmation {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@unique([userId])
 }
+
+// New models for the missing functionality
+
+model PropertyListing {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  title           String
+  description     String
+  price           Int
+  location        String
+  state           String
+  slug            String @unique
+  city            String
+  bedrooms        Int?
+  bathrooms       Int?
+  area            String?
+  type            String // For Sale, For Rent
+  category        String // Residential, Commercial, Industrial
+  features        String[]
+  images          String[]
+  coverImage      String
+  status          String @default("Active") // Active, Sold, Rented
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  @@map("listing")
+}
+
+model Contact {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  email           String
+  phone           String?
+  subject         String
+  message         String
+  status          String @default("Unread") // Unread, Read, Responded
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Complaint {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  subject         String
+  description     String
+  status          String @default("Open") // Open, In Progress, Resolved, Closed
+  user            User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String @db.ObjectId
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  response        String?
+  respondedAt     DateTime?
+}
+
+model LandSubmission {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  location        String
+  size            String
+  titleType       String
+  currentUse      String?
+  description     String
+  documents       String[] // URLs to uploaded documents
+  status          String @default("Pending") // Pending, Approved, Rejected
+  user            User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String @db.ObjectId
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  feedback        String?
+  plans           String[] // URLs to uploaded plans and designs
+}
+
+model DeveloperApplication {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  companyName     String?
+  experience      String
+  specialization  String
+  portfolio       String?
+  documents       String[] // URLs to uploaded documents
+  status          String @default("Pending") // Pending, Approved, Rejected
+  userId          String @db.ObjectId
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  feedback        String?
+}
+
+
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+
+// datasource db {
+//   provider = "mongodb"
+//   url      = env("DATABASE_URL")
+// }
+
+// model User {
+//   id                  String @id @default(auto()) @map("_id") @db.ObjectId
+//   name                String? 
+//   email               String? @unique
+//   password            String?
+//   phone               String?
+//   emailVerified       DateTime? @map("email_verified")
+//   image               String?
+//   role                UserRole @default(USER)
+//   accounts            Account[]
+//   referralID          String?
+//   investments         Investment[]
+//   accoutDetails       AccountDetails?
+//   wallet              Wallet?
+//   // referralCode        String? @unique
+//   isTwoFactorEnabled Boolean @default(false)
+//   TwoFactorConfirmation TwoFactorConfirmation?
+//   @@map("user")
+// }
+
+
+// model Wallet {
+//   id              String @id @default(auto()) @map("_id") @db.ObjectId
+//   balance         Int
+//   user            User @relation(fields: [id], references: [id], onDelete: Cascade)
+//   userId          String @unique @db.ObjectId
+//   bonuses         Bonuses[]
+// }
+
+// model AccountDetails {
+//   id              String @id @default(auto()) @map("_id") @db.ObjectId
+//   accountName     String
+//   accountNumber   String
+//   bankName        String
+//   user            User @relation(fields: [id], references: [id], onDelete: Cascade)
+//   userId          String @unique @db.ObjectId
+// }
+
+// model Bonuses {
+//     id            String @id @default(auto()) @map("_id") @db.ObjectId
+//     name          String
+//     amount        Int
+//     wallet        Wallet @relation(fields: [id], references: [id], onDelete: Cascade)
+//     walletId      String @db.ObjectId
+// }
+
+// model Account {
+//   id                 String  @id @default(auto()) @map("_id") @db.ObjectId
+//   userId             String  @db.ObjectId
+//   type               String
+//   provider           String
+//   providerAccountId  String  @map("provider_account_id")
+//   refresh_token      String? @db.String
+//   access_token       String? @db.String
+//   expires_at         Int?
+//   token_type         String?
+//   scope              String?
+//   id_token           String? @db.String
+//   session_state      String?
+//   user               User @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   @@unique([provider, providerAccountId])
+//   @@map("account")
+// }
+
+// enum ProjectStatus {
+//   PENDING
+//   ACTIVE
+//   END
+//   COMPLETED
+// }
+
+// enum UserRole {
+//   ADMIN
+//   USER
+// }
+
+// model VerificationToken {
+//   id        String @id @default(auto()) @map("_id") @db.ObjectId
+//   email     String
+//   token     String @unique
+//   expires   DateTime
+//   @@unique([email, token])
+// }
+
+// model Project {
+//     id          String @id @default(auto()) @map("_id") @db.ObjectId
+//     title       String
+//     length      String
+//     coverImage  String
+//     video       String
+//     images      String[]
+//     category    String
+//     description String
+//     duration    DateTime
+//     valuation   String
+//     state       String
+//     city        String
+//     location    String
+//     projectStatus ProjectStatus @default(PENDING)
+//     sharePrice  Int
+//     investment  Investment[]
+//     roi         Int
+//     @@map("project")
+// }
+
+// model Investment {
+//   id                  String @id @default(auto()) @map("_id") @db.ObjectId
+//   investmentAmount    Int
+//   investmentReturn    Int
+//   dateOfInvestment    DateTime
+//   status              ProjectStatus @default(PENDING)
+//   dateOfreturn        DateTime
+//   user                User @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   project             Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+//   userId              String @db.ObjectId
+//   projectId           String @db.ObjectId
+// }
+
+// model PasswordResetToken {
+//   id        String @id @default(auto()) @map("_id") @db.ObjectId
+//   email     String
+//   token     String @unique
+//   expires   DateTime
+//   @@unique([email, token])
+// }
+
+// model twoFactorToken {
+//   id        String @id @default(auto()) @map("_id") @db.ObjectId
+//   email     String
+//   token     String @unique
+//   expires   DateTime
+//   @@unique([email, token])
+// }
+
+// model TwoFactorConfirmation {
+//   id        String @id @default(auto()) @map("_id") @db.ObjectId
+//   userId    String @db.ObjectId
+//   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   @@unique([userId])
+// }

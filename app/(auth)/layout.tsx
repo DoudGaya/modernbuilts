@@ -10,7 +10,7 @@ const AuthLayout = ({ children }: { children:  React.ReactNode}) => {
 
      <>
     <PublicNavigations />
-    <div className=' flex flex-row  items-center max-w-7xl mx-auto justify-center h-[90vh] w-full'>
+    <div className=' flex flex-row bg-gray-50 items-center max-w-7xl mx-auto justify-center h-[90vh] w-full'>
       <div className=" hidden lg:block  w-8/12 ">
         <Image src={authImage} className='h-[400px] object-contain' alt='' />
       </div>

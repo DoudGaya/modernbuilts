@@ -2,7 +2,8 @@
 import { loginSchema } from '@/lib/schema'
 import * as z from 'zod' 
 import { signIn } from '@/auth'
-import { DEFAULT_LOGGED_IN_REDIRRECT} from '@/routes'
+import { DEFAULT_LOGGED_IN_REDIRRECT } from '@/routes'
+import { getRouteByUserRole } from '@/routes'
 import { AuthError } from 'next-auth'
 import { db } from '@/lib/db'
 import { getUserByEmail } from '@/data/user'
@@ -87,7 +88,7 @@ export const login = async (values: z.infer<typeof loginSchema>) => {
             email, 
             password,
             redirect: true,
-            redirectTo: DEFAULT_LOGGED_IN_REDIRRECT,
+            redirectTo: getRouteByUserRole(existingUser.role),
         })
     } catch (error) {
         if (error instanceof AuthError) {

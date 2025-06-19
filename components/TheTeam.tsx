@@ -1,7 +1,9 @@
 import React from 'react'
-import zaks from '@/public/img/ceo-zaks.jpeg'
+import zaks from '@/public/img/ceo-zaks.jpg'
 import daddy from '@/public/img/founder1.jpg'
 import mejarks from '@/public/img/mejarks-works.jpg'
+import musaddiq from '@/public/img/musaddiq.jpg'
+import habib from '@/public/img/habib.jpg'
 import Image, { StaticImageData } from 'next/image'
 
 
@@ -37,6 +39,20 @@ const founders = [
         profession: 'Architect',
         designation: "Director, Works",
         img: mejarks
+    },
+    {
+        id: 4,
+        name: "Habib Mustapha Adam",
+        profession: 'Marketing Specialist',
+        designation: "Sales and Marketing Manager",
+        img: habib
+    },
+     {
+        id: 5,
+        name: "Musaddiq Mahmoud Magashi",
+        profession: 'Marketing Specialist',
+        designation: "Investor Relations Manager",
+        img: musaddiq
     }
 ]
 
@@ -50,8 +66,8 @@ export const TheTeam = () => {
                     founders.map(( founder: Founder ) => {
                         return (
                             <div key={ founder.id} className=" flex flex-col space-y-6 md:space-y-0 items-center text-center space-x-4 ">
-                                <div className=" h-[120px] w-[120px] rounded-full my-6 ">
-                                    <Image src={founder.img} className=' h-[120px] w-[120px] object-cover rounded-full shadow-inner' alt='Stable Bricks CEO' />
+                                <div className=" h-[150px] w-[150px] rounded-full my-6 ">
+                                    <Image src={founder.img} className=' h-[150px] w-[150px] flex-none object-cover rounded-full shadow-inner' alt='Stable Bricks CEO' />
                                 </div>
                                 <div className=" flex flex-col justify-center">
                                     <span className='text-sm'> <span>{ founder.profession}</span> / { founder.designation } </span>

@@ -7,7 +7,11 @@ export const publicRoutes = [
     '/about',
     '/contact',
     '/blog/:slug',
-    '/email-verification'
+    '/email-verification',
+    '/investments',
+    '/portfolio',
+    '/properties',
+    '/calculator',
 ]
 
 
@@ -37,3 +41,5 @@ export const apiRoutesPrefix = '/api/auth'
 
 export const DEFAULT_LOGGED_IN_REDIRRECT = '/user/dashboard'
 export const ADMIN_LOGGED_IN_REDIRRECT = '/admin/dashboard'
+
+export * from './routes/index';
