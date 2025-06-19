@@ -14,33 +14,66 @@ import {
 } from "@/actions/land-submission"
 import { toast } from "@/components/ui/use-toast"
 
+// Define the TypeScript interface for land submission
+interface LandSubmission {
+  id: string;
+  location: string;
+  size: string;
+  titleType: string;
+  currentUse: string | null;
+  description: string;
+  documents: string[];
+  status: string;
+  feedback?: string | null;
+  plans: string[];
+  createdAt: string | Date;
+  updatedAt: string | Date;
+  user: {
+    id: string;
+    name: string | null;
+    email: string | null;
+  };
+  userId: string;
+}
+
 export default function LandSubmissionsPage() {
-  const [submissions, setSubmissions] = useState([])
+  const [submissions, setSubmissions] = useState<LandSubmission[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
-  const [selectedSubmission, setSelectedSubmission] = useState(null)
+  const [selectedSubmission, setSelectedSubmission] = useState<LandSubmission | null>(null)
   const [feedback, setFeedback] = useState("")
-
   useEffect(() => {
     loadSubmissions()
   }, [searchTerm, statusFilter])
-
   const loadSubmissions = async () => {
     setLoading(true)
-    const result = await getAllLandSubmissions({
-      search: searchTerm,
-      status: statusFilter,
-    })
+    try {
+      const result = await getAllLandSubmissions({
+        search: searchTerm,
+        status: statusFilter,
+      })
 
-    if (result.success) {
-      setSubmissions(result.submissions)
-    } else {
+      if (result.success && Array.isArray(result.submissions)) {
+        // Safely cast the submissions to ensure TypeScript is happy
+        const typedSubmissions = result.submissions as LandSubmission[]
+        setSubmissions(typedSubmissions)
+      } else {
+        toast({
+          title: "Error",
+          description: result.error || "Failed to load submissions",
+          variant: "destructive",
+        })
+        setSubmissions([])
+      }
+    } catch (error) {
+      console.error("Error loading submissions:", error)
       toast({
         title: "Error",
-        description: result.error,
+        description: "An unexpected error occurred",
         variant: "destructive",
       })
+      setSubmissions([])
     }
     setLoading(false)
   }
@@ -138,11 +171,10 @@ export default function LandSubmissionsPage() {
             <Button variant="outline">Export Data</Button>
           </div>
         </CardContent>
-      </Card>
-
-      {/* Submissions List */}
+      </Card>      {/* Submissions List */}
       <div className="space-y-4">
-        {submissions.map((submission) => (
+        {submissions && submissions.length > 0 ? (
+          submissions.map((submission) => (
           <Card key={submission.id} className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <div className="flex justify-between items-start">
@@ -153,7 +185,7 @@ export default function LandSubmissionsPage() {
                   </CardTitle>
                   <CardDescription className="flex items-center mt-1">
                     <User className="w-4 h-4 mr-1" />
-                    {submission.user.name} ({submission.user.email})
+                    {submission.user?.name || "Unknown"} ({submission.user?.email || "No email"})
                   </CardDescription>
                 </div>
                 <div className="flex items-center gap-2">
@@ -166,11 +198,11 @@ export default function LandSubmissionsPage() {
                           : "bg-red-500"
                     }`}
                   >
-                    {submission.status}
+                    {submission.status || "Pending"}
                   </Badge>
                   <div className="flex items-center text-sm text-gray-500">
                     <Calendar className="w-4 h-4 mr-1" />
-                    {new Date(submission.createdAt).toLocaleDateString()}
+                    {submission.createdAt ? new Date(submission.createdAt).toLocaleDateString() : "N/A"}
                   </div>
                 </div>
               </div>
@@ -193,22 +225,26 @@ export default function LandSubmissionsPage() {
                 <div>
                   <h4 className="font-semibold mb-2">Documents</h4>
                   <div className="space-y-2">
-                    {submission.documents.map((doc, index) => (
-                      <div key={index} className="flex items-center">
-                        <FileText className="w-4 h-4 mr-2" />
-                        <a
-                          href={doc}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline"
-                        >
-                          Document {index + 1}
-                        </a>
-                        <Button size="sm" variant="ghost">
-                          <Download className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    ))}
+                    {submission.documents && submission.documents.length > 0 ? (
+                      submission.documents.map((doc, index) => (
+                        <div key={index} className="flex items-center">
+                          <FileText className="w-4 h-4 mr-2" />
+                          <a
+                            href={doc}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:underline"
+                          >
+                            Document {index + 1}
+                          </a>
+                          <Button size="sm" variant="ghost">
+                            <Download className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-gray-500">No documents available</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -272,14 +308,12 @@ export default function LandSubmissionsPage() {
               )}
             </CardContent>
           </Card>
-        ))}
-      </div>
-
-      {submissions.length === 0 && (
+        ))
+      ) : (
         <div className="text-center py-12">
           <p className="text-gray-500">No land submissions found</p>
-        </div>
-      )}
+        </div>      )}
+      </div>
     </div>
   )
 }
