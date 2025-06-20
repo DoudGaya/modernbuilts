@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import Image from "next/image";
 
 interface ImageGalleryProps {
@@ -24,10 +24,9 @@ export function CoverImage({ src, alt }: { src: string; alt: string }) {
         <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
           <span className="text-white font-medium">Click to view full size</span>
         </div>
-      </div>
-
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      </div>      <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 overflow-hidden bg-transparent border-none">
+          <DialogTitle className="sr-only">Project Image</DialogTitle>
           <img 
             src={src || "/placeholder.svg"} 
             alt={alt} 
@@ -88,10 +87,9 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
             ))}
           </div>
         </CardContent>
-      </Card>
-
-      <Dialog open={!!selectedImage} onOpenChange={(open) => !open && setSelectedImage(null)}>
+      </Card>      <Dialog open={!!selectedImage} onOpenChange={(open) => !open && setSelectedImage(null)}>
         <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 overflow-hidden bg-transparent border-none">
+          <DialogTitle className="sr-only">{title} - Full Size Image</DialogTitle>
           {selectedImage && (
             <img 
               src={selectedImage} 

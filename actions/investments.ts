@@ -11,6 +11,9 @@ export const createInvestment = async (data: {
   userId: string
   projectId: string
   amount: number
+  shares?: number
+  transactionRef?: string
+  flutterwaveRef?: string
 }) => {
 
     const user = await getUserById(data.userId);
@@ -26,11 +29,16 @@ export const createInvestment = async (data: {
       data: {
         userId: data.userId,
         projectId: data.projectId,
-        amount: data.amount,
+        investmentAmount: data.amount,
+        investmentReturn: 0, // Will be calculated based on project ROI
+        dateOfInvestment: new Date(),
+        dateOfreturn: new Date(Date.now() + (365 * 24 * 60 * 60 * 1000)), // 1 year from now
+        status: "ACTIVE",
         certificateId,
         verificationToken: verificationToken.token,
-        status: "ACTIVE",
-        investmentDate: new Date(),
+        shares: data.shares || Math.floor(data.amount / 100000), // Default calculation
+        transactionRef: data.transactionRef,
+        flutterwaveRef: data.flutterwaveRef,
       },
       include: {
         user: true,

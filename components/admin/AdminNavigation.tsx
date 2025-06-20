@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { signOut } from "next-auth/react"
 import logo from "@/public/stablebricks.png"
 
 export const AdminNavigation = () => {
@@ -30,8 +31,7 @@ export const AdminNavigation = () => {
             <div className="relative mr-6">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <Search className="w-4 h-4 text-gray-500" />
-              </div>
-              <Input type="text" placeholder="Search..." className="pl-10 pr-4 py-2 w-64" />
+              </div>              <Input type="text" placeholder="Search..." className="pl-10 pr-4 py-2 w-64" />
             </div>
 
             <Button variant="ghost" size="sm" className="mr-2">
@@ -47,12 +47,17 @@ export const AdminNavigation = () => {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Admin Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <User className="mr-2 h-4 w-4" />
-                  Profile
+                <DropdownMenuItem asChild>
+                  <Link href="/admin/settings" className="cursor-pointer">
+                    <User className="mr-2 h-4 w-4" />
+                    Profile
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="cursor-pointer"
+                  onClick={() => signOut({ callbackUrl: "/login" })}
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign out
                 </DropdownMenuItem>

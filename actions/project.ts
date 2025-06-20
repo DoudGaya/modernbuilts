@@ -132,8 +132,30 @@ export const createProject = async (formData: FormData) => {  try {
 
 export const updateProject = async (id: string, formData: FormData) => {
   try {
-    // Extract and validate form data similar to createProject
-    // ...
+    // Extract and validate form data
+    const title = formData.get("title") as string
+    const slug = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "")
+    const length = formData.get("length") as string
+    const category = formData.get("category") as string
+    const description = formData.get("description") as string
+    const duration = formData.get("duration") as string
+    const valuation = formData.get("valuation") as string
+    const state = formData.get("state") as string
+    const city = formData.get("city") as string
+    const location = formData.get("location") as string
+    const sharePrice = Number.parseInt(formData.get("sharePrice") as string)
+    const roi = Number.parseInt(formData.get("roi") as string)
+    const projectStatus = formData.get("projectStatus") as "PENDING" | "ACTIVE" | "END" | "COMPLETED"
+    const featuresString = formData.get("features") as string
+    const features = featuresString ? JSON.parse(featuresString) : []
+
+    // Get file URLs from the form (existing URLs or new uploaded URLs)
+    const coverImageUrl = formData.get("coverImageUrl") as string
+    const videoUrl = formData.get("videoUrl") as string
+    const imageUrls = formData.getAll("imageUrls") as string[]
 
     // Find existing project
     const existingProject = await db.project.findUnique({
@@ -144,19 +166,36 @@ export const updateProject = async (id: string, formData: FormData) => {
       return { error: "Project not found" }
     }
 
-    // Handle file updates - only upload new files if provided
-    // ...
+    // Validate required fields
+    if (!title || !category || !description || !location || !sharePrice || !roi) {
+      return { error: "Please fill in all required fields" }
+    }
 
     // Update project in database
     const project = await db.project.update({
       where: { id },
       data: {
-        // Updated fields
-        // ...
+        title,
+        slug,
+        length,
+        category,
+        description,
+        duration: new Date(duration),
+        valuation,
+        state,
+        city,
+        location,
+        sharePrice,
+        roi,
+        projectStatus,
+        features,
+        coverImage: coverImageUrl || existingProject.coverImage,
+        video: videoUrl || existingProject.video,
+        images: imageUrls.length > 0 ? imageUrls : existingProject.images,
       },
     })
 
-    revalidatePath(`/admin/projects/${id}`)
+    revalidatePath(`/admin/projects/${project.slug}`)
     revalidatePath("/admin/projects")
     return { success: true, project }
   } catch (error) {
@@ -224,6 +263,36 @@ export const getProjectById = async (id: string) => {
   }
 }
 
+export const getProjectBySlug = async (slug: string) => {
+  try {
+    const project = await db.project.findUnique({
+      where: { slug },
+      include: {
+        investment: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+        },
+      },
+    })
+
+    if (!project) {
+      return { error: "Project not found" }
+    }
+
+    return { success: true, project }
+  } catch (error) {
+    console.error("Project fetch error:", error)
+    return { error: "Failed to fetch project" }
+  }
+}
+
 export const getAllProjects = async (filters?: {
   status?: string
   category?: string
@@ -246,19 +315,36 @@ export const getAllProjects = async (filters?: {
         { description: { contains: filters.search, mode: "insensitive" } },
         { location: { contains: filters.search, mode: "insensitive" } },
       ]
-    }
-
-    const projects = await db.project.findMany({
+    }    const projects = await db.project.findMany({
       where,
       orderBy: { createdAt: "desc" },
       include: {
+        investment: {
+          select: {
+            investmentAmount: true,
+          },
+        },
         _count: {
           select: { investment: true },
         },
       },
     })
 
-    return { success: true, projects }
+    // Calculate funding progress for each project
+    const projectsWithProgress = projects.map(project => {
+      const totalInvested = project.investment.reduce((sum, inv) => sum + inv.investmentAmount, 0)
+      const targetAmount = parseInt(project.valuation.replace(/[^\d]/g, '')) || 1
+      const fundingProgress = Math.min((totalInvested / targetAmount) * 100, 100)
+      
+      return {
+        ...project,
+        totalInvested,
+        fundingProgress: Math.round(fundingProgress),
+        totalInvestors: project._count.investment,
+      }
+    })
+
+    return { success: true, projects: projectsWithProgress }
   } catch (error) {
     console.error("Projects fetch error:", error)
     return { error: "Failed to fetch projects" }
@@ -461,6 +547,36 @@ export const sendProjectUpdateToInvestors = async (projectId: string, subject: s
 //   try {
 //     const project = await db.project.findUnique({
 //       where: { id },
+//       include: {
+//         investment: {
+//           include: {
+//             user: {
+//               select: {
+//                 id: true,
+//                 name: true,
+//                 email: true,
+//               },
+//             },
+//           },
+//         },
+//       },
+//     })
+
+//     if (!project) {
+//       return { error: "Project not found" }
+//     }
+
+//     return { success: true, project }
+//   } catch (error) {
+//     console.error("Project fetch error:", error)
+//     return { error: "Failed to fetch project" }
+//   }
+// }
+
+// export const getProjectBySlug = async (slug: string) => {
+//   try {
+//     const project = await db.project.findUnique({
+//       where: { slug },
 //       include: {
 //         investment: {
 //           include: {

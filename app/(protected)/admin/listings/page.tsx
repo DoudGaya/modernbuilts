@@ -1,81 +1,51 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Filter, Plus, Eye, Edit, Trash2, Bed, Bath, Square, MapPin } from "lucide-react"
+import { Search, Filter, Plus, Eye, Edit, Trash2, Bed, Bath, Square, MapPin, Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { toast } from "@/components/ui/use-toast"
-import { deleteListing } from "@/actions/listing"
-
-// This would come from your API/database
-const listings = [
-  {
-    id: "1",
-    title: "Modern 4-Bedroom Duplex",
-    location: "Lekki Phase 1, Lagos",
-    price: 85000000,
-    type: "For Sale",
-    category: "Residential",
-    bedrooms: 4,
-    bathrooms: 5,
-    area: "450 sqm",
-    status: "Active",
-    coverImage: "/placeholder.svg?height=250&width=400",
-    features: ["Swimming Pool", "BQ", "Fitted Kitchen", "Parking"],
-  },
-  {
-    id: "2",
-    title: "Luxury 3-Bedroom Apartment",
-    location: "Banana Island, Lagos",
-    price: 120000000,
-    type: "For Sale",
-    category: "Residential",
-    bedrooms: 3,
-    bathrooms: 4,
-    area: "280 sqm",
-    status: "Active",
-    coverImage: "/placeholder.svg?height=250&width=400",
-    features: ["Ocean View", "Gym", "24/7 Security", "Generator"],
-  },
-  {
-    id: "3",
-    title: "Commercial Office Space",
-    location: "Victoria Island, Lagos",
-    price: 45000000,
-    type: "For Rent",
-    category: "Commercial",
-    bedrooms: 0,
-    bathrooms: 4,
-    area: "200 sqm",
-    status: "Active",
-    coverImage: "/placeholder.svg?height=250&width=400",
-    features: ["Elevator", "Conference Room", "Parking", "Generator"],
-  },
-]
+import { deleteListing, getAllListings } from "@/actions/listing"
+import { PropertyListing } from "@/types/admin"
 
 export default function ListingsPage() {
   const router = useRouter()
+  const [listings, setListings] = useState<PropertyListing[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [typeFilter, setTypeFilter] = useState("all")
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
 
-  const filteredListings = listings.filter((listing) => {
-    const matchesSearch =
-      listing.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      listing.location.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = statusFilter === "all" || listing.status.toLowerCase() === statusFilter.toLowerCase()
-    const matchesType = typeFilter === "all" || listing.type.toLowerCase() === typeFilter.toLowerCase()
-    const matchesCategory = categoryFilter === "all" || listing.category.toLowerCase() === categoryFilter.toLowerCase()
+  useEffect(() => {
+    loadListings()
+  }, [searchTerm, statusFilter, typeFilter, categoryFilter])
 
-    return matchesSearch && matchesStatus && matchesType && matchesCategory
-  })
+  const loadListings = async () => {
+    setLoading(true)
+    const result = await getAllListings({
+      search: searchTerm,
+      status: statusFilter,
+      type: typeFilter,
+      category: categoryFilter,
+    })
 
+    if (result.success && result.listings) {
+      setListings(result.listings)
+    } else {
+      toast({
+        title: "Error",
+        description: result.error || "Failed to load listings",
+        variant: "destructive",
+      })
+    }
+    setLoading(false)
+  }
   const handleDelete = async (id: string) => {
     try {
       setIsDeleting(id)
@@ -95,7 +65,8 @@ export default function ListingsPage() {
         description: "Listing deleted successfully",
       })
 
-      router.refresh()
+      // Reload listings after successful deletion
+      loadListings()
     } catch (error) {
       toast({
         title: "Error",
@@ -105,6 +76,14 @@ export default function ListingsPage() {
     } finally {
       setIsDeleting(null)
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    )
   }
 
   return (
@@ -176,11 +155,9 @@ export default function ListingsPage() {
             <Button variant="outline">Export Data</Button>
           </div>
         </CardContent>
-      </Card>
-
-      {/* Listings Grid */}
+      </Card>      {/* Listings Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredListings.map((listing) => (
+        {listings.map((listing: PropertyListing) => (
           <Card key={listing.id} className="overflow-hidden hover:shadow-lg transition-shadow">
             <div className="relative">
               <img
@@ -207,7 +184,7 @@ export default function ListingsPage() {
             <CardContent className="space-y-4">
               <div className="text-xl font-bold">₦{listing.price.toLocaleString()}</div>
 
-              {listing.bedrooms > 0 && (
+              {listing.bedrooms && listing.bedrooms > 0 && (
                 <div className="flex justify-between text-sm text-gray-600">
                   <div className="flex items-center">
                     <Bed className="w-4 h-4 mr-1" />
@@ -225,7 +202,7 @@ export default function ListingsPage() {
               )}
 
               <div className="flex flex-wrap gap-2">
-                {listing.features.slice(0, 3).map((feature, index) => (
+                {listing.features.slice(0, 3).map((feature: string, index: number) => (
                   <Badge key={index} variant="secondary" className="text-xs">
                     {feature}
                   </Badge>

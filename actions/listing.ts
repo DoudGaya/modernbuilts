@@ -188,9 +188,6 @@ async function sendListingNotificationEmails(listing: any) {
 
 export const updateListing = async (id: string, formData: FormData) => {
   try {
-    // Extract and validate form data similar to createListing
-    // ...
-
     // Find existing listing
     const existingListing = await db.propertyListing.findUnique({
       where: { id },
@@ -200,15 +197,112 @@ export const updateListing = async (id: string, formData: FormData) => {
       return { error: "Listing not found" }
     }
 
-    // Handle file updates - only upload new files if provided
-    // ...
+    // Extract and validate form data
+    const title = formData.get("title") as string
+    const slug = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "")
+    const description = formData.get("description") as string
+    const price = Number.parseInt(formData.get("price") as string)
+    const location = formData.get("location") as string
+    const state = formData.get("state") as string
+    const city = formData.get("city") as string
+    const bedrooms = formData.get("bedrooms") ? Number.parseInt(formData.get("bedrooms") as string) : undefined
+    const bathrooms = formData.get("bathrooms") ? Number.parseInt(formData.get("bathrooms") as string) : undefined
+    const area = (formData.get("area") as string) || undefined
+    const type = formData.get("type") as string
+    const category = formData.get("category") as string
+    const features = JSON.parse((formData.get("features") as string) || "[]")
+    const status = (formData.get("status") as string) || "Active"
+
+    // Handle image updates
+    let coverImageUrl = existingListing.coverImage
+    let imageUrls = existingListing.images || []
+
+    // Check if new image URLs are provided
+    const preUploadedCoverUrl = formData.get("coverImageUrl") as string
+    const imageUrlsStr = formData.get("imageUrls") as string
+
+    if (preUploadedCoverUrl) {
+      coverImageUrl = preUploadedCoverUrl
+    }
+
+    if (imageUrlsStr) {
+      try {
+        imageUrls = JSON.parse(imageUrlsStr)
+      } catch (parseError) {
+        console.error("Error parsing imageUrls JSON:", parseError)
+      }
+    }
+
+    // Handle traditional file uploads if provided
+    const coverImageFile = formData.get("coverImage") as File
+    const imageFiles = formData.getAll("images") as File[]
+
+    if (coverImageFile && coverImageFile.size > 0) {
+      // Delete old cover image if it's not a placeholder
+      if (existingListing.coverImage !== "placeholder.jpg") {
+        await deleteFromS3(existingListing.coverImage)
+      }
+      coverImageUrl = await uploadToS3(coverImageFile, "listings/covers")
+    }
+
+    if (imageFiles && imageFiles.length > 0 && imageFiles[0].size > 0) {
+      // Delete old images if they're not placeholders
+      await Promise.all(
+        existingListing.images
+          .filter(img => img !== "placeholder.jpg")
+          .map(img => deleteFromS3(img))
+      )
+      imageUrls = await Promise.all(
+        imageFiles.map(file => uploadToS3(file, "listings/images"))
+      )
+    }
+
+    // Validate data
+    const validatedFields = propertyListingSchema.safeParse({
+      title,
+      description,
+      price,
+      location,
+      state,
+      city,
+      bedrooms,
+      bathrooms,
+      area,
+      type,
+      category,
+      features,
+      coverImage: coverImageUrl,
+      images: imageUrls,
+      status,
+    })
+
+    if (!validatedFields.success) {
+      return { error: "Invalid fields", issues: validatedFields.error.issues }
+    }
 
     // Update listing in database
     const listing = await db.propertyListing.update({
       where: { id },
       data: {
-        // Updated fields
-        // ...
+        title,
+        slug,
+        description,
+        price,
+        location,
+        state,
+        city,
+        bedrooms,
+        bathrooms,
+        area,
+        type,
+        category,
+        features,
+        coverImage: coverImageUrl,
+        images: imageUrls,
+        status,
       },
     })
 

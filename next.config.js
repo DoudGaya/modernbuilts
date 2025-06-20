@@ -6,9 +6,28 @@ const nextConfig = {
       bodySizeLimit: '50mb' // Increased size limit for server actions
     },
   },
-  // Increase overall response limit
-  api: {
-    responseLimit: false,
+  // Configure external image domains
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'jigawa-state.s3.us-east-1.amazonaws.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.amazonaws.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 's3.amazonaws.com',
+        port: '',
+        pathname: '/**',
+      }
+    ],
   },
   // Add CORS headers for API routes
   async headers() {

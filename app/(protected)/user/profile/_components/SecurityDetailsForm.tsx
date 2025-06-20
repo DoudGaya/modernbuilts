@@ -80,11 +80,10 @@ export const SecurityDetailsForm = ( {editModal, changeModal}: {editModal: strin
                   <FormField
                     control={form.control}
                     name="oldPassword"
-                    render={({ field }) => (
-                      <FormItem>
+                    render={({ field }) => (                      <FormItem>
                         <FormLabel>Old Password</FormLabel>
                         <FormControl>
-                          <Input disabled={isPending} type='password' className=" outline-yellow-500" placeholder="Confirm Password" {...field} />
+                          <Input disabled={isPending} type='password' className=" outline-yellow-500" placeholder="Enter old password" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -94,11 +93,10 @@ export const SecurityDetailsForm = ( {editModal, changeModal}: {editModal: strin
                   <FormField
                     control={form.control}
                     name="newPassword"
-                    render={({ field }) => (
-                      <FormItem>
+                    render={({ field }) => (                      <FormItem>
                         <FormLabel>New Password</FormLabel>
                         <FormControl>
-                          <Input disabled={isPending} type='password' className=" outline-yellow-500" placeholder="Confirm Password" {...field} />
+                          <Input disabled={isPending} type='password' className=" outline-yellow-500" placeholder="Enter new password" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -142,7 +140,8 @@ export const SecurityDetailsForm = ( {editModal, changeModal}: {editModal: strin
                     )}
                   />
                   </div>
-                  { success ?  <FormSuccess message={success} /> ? error : <FormError message={error} /> : "" }
+                  { success && <FormSuccess message={success} /> }
+                  { error && <FormError message={error} /> }
                   <Button type="submit" disabled={isPending} className=" bg-black hover:bg-black/80 text-primary w-full">Update Security Records</Button> 
                 </form>
               </Form>

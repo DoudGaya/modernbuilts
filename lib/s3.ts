@@ -14,11 +14,23 @@ export async function uploadToS3(file: File, folder: string): Promise<string> {
   try {
     console.log(`Starting S3 upload for file: ${file.name}, size: ${(file.size/1024/1024).toFixed(2)} MB`);
     
-    // Get file content as Buffer
-    const fileBuffer = Buffer.from(await file.arrayBuffer())
+    // Get file content as Buffer with error handling
+    let fileBuffer;
+    try {
+      fileBuffer = Buffer.from(await file.arrayBuffer());
+    } catch (bufferError) {
+      console.error("Error creating buffer from file:", bufferError);
+      throw new Error(`Failed to process file data: ${bufferError instanceof Error ? bufferError.message : String(bufferError)}`);
+    }
     
-    // Generate unique file name with UUID
-    const fileKey = `${folder}/${crypto.randomUUID()}-${file.name.replace(/\s/g, "-")}`
+    // Validate buffer
+    if (!fileBuffer || fileBuffer.length === 0) {
+      throw new Error("File data is empty or corrupted");
+    }
+    
+    // Generate unique file name with UUID and sanitize filename
+    const sanitizedName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
+    const fileKey = `${folder}/${crypto.randomUUID()}-${sanitizedName}`;
     
     // Get bucket name with fallback
     const bucketName = process.env.AWS_BUCKET_NAME || process.env.AWS_S3_BUCKET_NAME;
@@ -34,17 +46,51 @@ export async function uploadToS3(file: File, folder: string): Promise<string> {
       Bucket: bucketName,
       Key: fileKey,
       Body: fileBuffer,
-      ContentType: file.type,
-    }
+      ContentType: file.type || "application/octet-stream", // Provide a fallback content type
+      ContentDisposition: `attachment; filename="${sanitizedName}"`,
+    };
 
-    await s3Client.send(new PutObjectCommand(params))
+    // Implement retry logic
+    const maxAttempts = 3;
+    let attempt = 0;
+    let lastError = null;
     
-    console.log(`S3 upload successful for: ${file.name}`);
-
-    return `https://${bucketName}.s3.${region}.amazonaws.com/${fileKey}`
+    while (attempt < maxAttempts) {
+      try {
+        attempt++;
+        console.log(`S3 upload attempt ${attempt}/${maxAttempts} for ${file.name}`);
+        
+        await s3Client.send(new PutObjectCommand(params));
+        console.log(`S3 upload successful for: ${file.name} on attempt ${attempt}`);
+        
+        return `https://${bucketName}.s3.${region}.amazonaws.com/${fileKey}`;
+      } catch (attemptError) {
+        lastError = attemptError;
+        console.error(`S3 upload attempt ${attempt} failed:`, attemptError);
+        
+        if (attempt >= maxAttempts) {
+          break;
+        }
+        
+        // Wait before retrying with exponential backoff
+        const backoffMs = Math.pow(2, attempt) * 1000;
+        console.log(`Retrying in ${backoffMs/1000} seconds...`);
+        await new Promise(resolve => setTimeout(resolve, backoffMs));
+      }
+    }
+    
+    // If we got here, all attempts failed
+    console.error(`All ${maxAttempts} S3 upload attempts failed for ${file.name}`);
+    throw lastError || new Error("Maximum upload attempts reached");
   } catch (error) {
-    console.error("S3 upload error:", error)
-    throw new Error("Failed to upload file")
+    console.error("S3 upload error:", error);
+    
+    // Provide more detailed error message
+    if (error instanceof Error) {
+      throw new Error(`Failed to upload file: ${error.message}`);
+    } else {
+      throw new Error("Failed to upload file due to an unknown error");
+    }
   }
 }
 

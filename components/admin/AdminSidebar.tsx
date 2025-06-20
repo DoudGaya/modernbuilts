@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 const sidebarItems = [
   {
     title: "Dashboard",
-    href: "/admin",
+    href: "/admin/dashboard",
     icon: Home,
   },
   {

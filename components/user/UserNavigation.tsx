@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { signOut } from "next-auth/react"
 import logo from "@/public/stablebricks.png"
 
 export const UserNavigation = () => {
@@ -21,8 +22,8 @@ export const UserNavigation = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-start">
             <Link href="/user/dashboard" className="flex mr-6">
-              <Image src={logo || "/placeholder.svg"} alt="StableBricks" className="h-8 mr-3" />
-              <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap">Dashboard</span>
+              <Image src={logo || "/placeholder.svg"} alt="StableBricks" className="h-8 object-contain object-left mr-3" />
+              {/* <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap">Dashboard</span> */}
             </Link>
           </div>
 
@@ -43,8 +44,7 @@ export const UserNavigation = () => {
               <Bell className="w-5 h-5" />
             </Button>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+            <DropdownMenu>              <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm">
                   <User className="w-5 h-5" />
                 </Button>
@@ -52,12 +52,17 @@ export const UserNavigation = () => {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <User className="mr-2 h-4 w-4" />
-                  Profile
+                <DropdownMenuItem asChild>
+                  <Link href="/user/profile" className="cursor-pointer">
+                    <User className="mr-2 h-4 w-4" />
+                    Profile
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="cursor-pointer"
+                  onClick={() => signOut({ callbackUrl: "/login" })}
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign out
                 </DropdownMenuItem>

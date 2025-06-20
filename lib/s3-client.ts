@@ -3,7 +3,7 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import crypto from "crypto";
 
-// Initialize S3 client
+// Initialize S3 client with retry configuration
 const s3Client = new S3Client({
   region: process.env.AWS_REGION || "us-east-1",
   credentials: {
@@ -11,6 +11,14 @@ const s3Client = new S3Client({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
   },
   forcePathStyle: false, // Use subdomain style access (bucket.s3.region.amazonaws.com)
+  maxAttempts: 3, // Retry failed requests up to 3 times
+  retryMode: "standard", // Use exponential backoff
+  // Extended timeout for operations
+  requestHandler: {
+    // @ts-ignore - Type is not fully defined in SDK
+    connectionTimeout: 5000, // 5 seconds to establish connection
+    socketTimeout: 60000 // 60 seconds for socket inactivity
+  }
 });
 
 // Generate a unique file name with original extension

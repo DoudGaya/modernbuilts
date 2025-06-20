@@ -25,6 +25,7 @@ model User {
   TwoFactorConfirmation TwoFactorConfirmation?
   complaints          Complaint[]
   landSubmissions     LandSubmission[]
+  wishlistItems       Wishlist[]
   @@map("user")
 }
 
@@ -124,6 +125,9 @@ model Investment {
   dateOfInvestment    DateTime
   status              ProjectStatus @default(PENDING)
   dateOfreturn        DateTime
+  shares              Int? @default(1)
+  transactionRef      String?
+  flutterwaveRef      String?
   user                User @relation(fields: [userId], references: [id], onDelete: Cascade)
   project             Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   userId              String @db.ObjectId
@@ -177,6 +181,7 @@ model PropertyListing {
   status          String @default("Active") // Active, Sold, Rented
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  wishlists       Wishlist[]
   @@map("listing")
 }
 
@@ -236,154 +241,15 @@ model DeveloperApplication {
   feedback        String?
 }
 
+model Wishlist {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  user            User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String @db.ObjectId
+  propertyListing PropertyListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listingId       String @db.ObjectId
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-// generator client {
-//   provider = "prisma-client-js"
-// }
-
-
-// datasource db {
-//   provider = "mongodb"
-//   url      = env("DATABASE_URL")
-// }
-
-// model User {
-//   id                  String @id @default(auto()) @map("_id") @db.ObjectId
-//   name                String? 
-//   email               String? @unique
-//   password            String?
-//   phone               String?
-//   emailVerified       DateTime? @map("email_verified")
-//   image               String?
-//   role                UserRole @default(USER)
-//   accounts            Account[]
-//   referralID          String?
-//   investments         Investment[]
-//   accoutDetails       AccountDetails?
-//   wallet              Wallet?
-//   // referralCode        String? @unique
-//   isTwoFactorEnabled Boolean @default(false)
-//   TwoFactorConfirmation TwoFactorConfirmation?
-//   @@map("user")
-// }
-
-
-// model Wallet {
-//   id              String @id @default(auto()) @map("_id") @db.ObjectId
-//   balance         Int
-//   user            User @relation(fields: [id], references: [id], onDelete: Cascade)
-//   userId          String @unique @db.ObjectId
-//   bonuses         Bonuses[]
-// }
-
-// model AccountDetails {
-//   id              String @id @default(auto()) @map("_id") @db.ObjectId
-//   accountName     String
-//   accountNumber   String
-//   bankName        String
-//   user            User @relation(fields: [id], references: [id], onDelete: Cascade)
-//   userId          String @unique @db.ObjectId
-// }
-
-// model Bonuses {
-//     id            String @id @default(auto()) @map("_id") @db.ObjectId
-//     name          String
-//     amount        Int
-//     wallet        Wallet @relation(fields: [id], references: [id], onDelete: Cascade)
-//     walletId      String @db.ObjectId
-// }
-
-// model Account {
-//   id                 String  @id @default(auto()) @map("_id") @db.ObjectId
-//   userId             String  @db.ObjectId
-//   type               String
-//   provider           String
-//   providerAccountId  String  @map("provider_account_id")
-//   refresh_token      String? @db.String
-//   access_token       String? @db.String
-//   expires_at         Int?
-//   token_type         String?
-//   scope              String?
-//   id_token           String? @db.String
-//   session_state      String?
-//   user               User @relation(fields: [userId], references: [id], onDelete: Cascade)
-//   @@unique([provider, providerAccountId])
-//   @@map("account")
-// }
-
-// enum ProjectStatus {
-//   PENDING
-//   ACTIVE
-//   END
-//   COMPLETED
-// }
-
-// enum UserRole {
-//   ADMIN
-//   USER
-// }
-
-// model VerificationToken {
-//   id        String @id @default(auto()) @map("_id") @db.ObjectId
-//   email     String
-//   token     String @unique
-//   expires   DateTime
-//   @@unique([email, token])
-// }
-
-// model Project {
-//     id          String @id @default(auto()) @map("_id") @db.ObjectId
-//     title       String
-//     length      String
-//     coverImage  String
-//     video       String
-//     images      String[]
-//     category    String
-//     description String
-//     duration    DateTime
-//     valuation   String
-//     state       String
-//     city        String
-//     location    String
-//     projectStatus ProjectStatus @default(PENDING)
-//     sharePrice  Int
-//     investment  Investment[]
-//     roi         Int
-//     @@map("project")
-// }
-
-// model Investment {
-//   id                  String @id @default(auto()) @map("_id") @db.ObjectId
-//   investmentAmount    Int
-//   investmentReturn    Int
-//   dateOfInvestment    DateTime
-//   status              ProjectStatus @default(PENDING)
-//   dateOfreturn        DateTime
-//   user                User @relation(fields: [userId], references: [id], onDelete: Cascade)
-//   project             Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-//   userId              String @db.ObjectId
-//   projectId           String @db.ObjectId
-// }
-
-// model PasswordResetToken {
-//   id        String @id @default(auto()) @map("_id") @db.ObjectId
-//   email     String
-//   token     String @unique
-//   expires   DateTime
-//   @@unique([email, token])
-// }
-
-// model twoFactorToken {
-//   id        String @id @default(auto()) @map("_id") @db.ObjectId
-//   email     String
-//   token     String @unique
-//   expires   DateTime
-//   @@unique([email, token])
-// }
-
-// model TwoFactorConfirmation {
-//   id        String @id @default(auto()) @map("_id") @db.ObjectId
-//   userId    String @db.ObjectId
-//   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-//   @@unique([userId])
-// }
+  @@unique([userId, listingId])
+  @@map("wishlist")
+}

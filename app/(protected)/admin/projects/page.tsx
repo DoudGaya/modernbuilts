@@ -10,8 +10,36 @@ import { Search, Filter, Plus, Eye, Edit, Trash2, TrendingUp, Clock, DollarSign,
 import { getAllProjects, deleteProject } from "@/actions/project"
 import { toast } from "@/components/ui/use-toast"
 
+type ProjectWithProgress = {
+  id: string
+  title: string
+  slug: string
+  coverImage: string
+  video: string
+  images: string[]
+  category: string
+  description: string
+  duration: Date
+  valuation: string
+  state: string
+  city: string
+  location: string
+  projectStatus: "PENDING" | "ACTIVE" | "END" | "COMPLETED"
+  features: string[]
+  sharePrice: number
+  roi: number
+  length: string
+  createdAt: Date
+  updatedAt: Date
+  investment: { investmentAmount: number }[]
+  _count: { investment: number }
+  totalInvested: number
+  fundingProgress: number
+  totalInvestors: number
+}
+
 export default function ProjectsPage() {
-  const [projects, setProjects] = useState([])
+  const [projects, setProjects] = useState<ProjectWithProgress[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
@@ -198,7 +226,7 @@ export default function ProjectsPage() {
                     View
                   </Button>
                 </Link>
-                <Link href={`/admin/projects/edit/${project.id}`} className="flex-1">
+                <Link href={`/admin/projects/edit/${project.slug}`} className="flex-1">
                   <Button variant="outline" className="w-full" size="sm">
                     <Edit className="w-4 h-4 mr-1" />
                     Edit

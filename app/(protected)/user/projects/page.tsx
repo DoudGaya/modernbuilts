@@ -1,6 +1,5 @@
 "use client"
 import { useState, useEffect } from "react"
-import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,15 +8,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, Filter, TrendingUp, Clock, DollarSign, MapPin, Heart } from "lucide-react"
 import { getAllProjects } from "@/actions/project"
 import { addToWishlist, removeFromWishlist } from "@/actions/wishlist"
-import { toast } from "@/components/ui/use-toast"
+import { useToast } from "@/components/ui/use-toast"
+import Link from "next/link"
+import { InvestmentModal } from "./[slug]/components/InvestmentModal"
 
 export default function UserProjectsPage() {
-  const [projects, setProjects] = useState([])
+  const [projects, setProjects] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [sortBy, setSortBy] = useState("newest")
-  const [wishlist, setWishlist] = useState([])
+  const [wishlist, setWishlist] = useState<string[]>([])
+  const [showInvestmentModal, setShowInvestmentModal] = useState(false)
+  const [selectedProject, setSelectedProject] = useState<any>(null)
+  const [shares, setShares] = useState(1)
+  const { toast } = useToast()
 
   useEffect(() => {
     loadProjects()
@@ -42,7 +47,6 @@ export default function UserProjectsPage() {
     }
     setLoading(false)
   }
-
   const handleWishlistToggle = async (projectId: string) => {
     const isInWishlist = wishlist.includes(projectId)
 
@@ -59,6 +63,12 @@ export default function UserProjectsPage() {
         toast({ title: "Added to wishlist" })
       }
     }
+  }
+
+  const handleInvestClick = (project: any) => {
+    setSelectedProject(project)
+    setShares(1) // Reset to 1 share
+    setShowInvestmentModal(true)
   }
 
   if (loading) {
@@ -116,10 +126,11 @@ export default function UserProjectsPage() {
                 <SelectItem value="price-low">Lowest Price</SelectItem>
                 <SelectItem value="price-high">Highest Price</SelectItem>
               </SelectContent>
-            </Select>
-            <Button variant="outline">
-              <Heart className="w-4 h-4 mr-2" />
-              View Wishlist
+            </Select>            <Button variant="outline" asChild>
+              <Link href="/user/wishlist">
+                <Heart className="w-4 h-4 mr-2" />
+                View Wishlist
+              </Link>
             </Button>
           </div>
         </CardContent>
@@ -172,17 +183,15 @@ export default function UserProjectsPage() {
                   <span>₦{project.sharePrice.toLocaleString()}/share</span>
                 </div>
                 <div className="text-sm text-gray-500">Value: {project.valuation}</div>
-              </div>
-
-              <div className="space-y-2">
+              </div>              <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span>Funding Progress</span>
-                  <span>{Math.floor(Math.random() * 100)}%</span>
+                  <span>{project.fundingProgress || Math.floor(Math.random() * 100)}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
                     className="bg-yellow-400 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${Math.floor(Math.random() * 100)}%` }}
+                    style={{ width: `${project.fundingProgress || Math.floor(Math.random() * 100)}%` }}
                   ></div>
                 </div>
               </div>
@@ -193,21 +202,32 @@ export default function UserProjectsPage() {
                     View Details
                   </Button>
                 </Link>
-                <Link href={`/user/projects/${project.slug}/invest`} className="flex-1">
-                  <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black" size="sm">
-                    Invest Now
-                  </Button>
-                </Link>
+                <Button 
+                  className="flex-1 bg-yellow-400 hover:bg-yellow-500 text-black" 
+                  size="sm"
+                  onClick={() => handleInvestClick(project)}
+                >
+                  Invest Now
+                </Button>
               </div>
             </CardContent>
           </Card>
         ))}
-      </div>
-
-      {projects.length === 0 && (
+      </div>      {projects.length === 0 && (
         <div className="text-center py-12">
           <p className="text-gray-500">No projects found</p>
         </div>
+      )}
+
+      {/* Investment Modal */}
+      {selectedProject && (
+        <InvestmentModal
+          isOpen={showInvestmentModal}
+          onClose={() => setShowInvestmentModal(false)}
+          project={selectedProject}
+          initialShares={shares}
+          onSharesChange={setShares}
+        />
       )}
     </div>
   )

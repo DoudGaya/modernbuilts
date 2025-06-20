@@ -5,96 +5,38 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Bed, Bath, Square, MapPin, Search, Filter, Heart, Share2 } from "lucide-react"
+import { Bed, Bath, Square, MapPin, Search, Filter, Share2 } from "lucide-react"
+import { PropertyCard } from "@/components/property/PropertyCard"
+import { getPropertyListings } from "@/actions/property"
 
-const properties = [
-  {
-    id: 1,
-    title: "Modern 4-Bedroom Duplex",
-    location: "Lekki Phase 1, Lagos",
-    price: "₦85,000,000",
-    type: "For Sale",
-    category: "Residential",
-    bedrooms: 4,
-    bathrooms: 5,
-    area: "450 sqm",
-    image: "/placeholder.svg?height=250&width=400",
-    features: ["Swimming Pool", "BQ", "Fitted Kitchen", "Parking", "Generator", "Security"],
-    description: "Luxurious 4-bedroom duplex in the prestigious Lekki Phase 1 with modern amenities.",
-  },
-  {
-    id: 2,
-    title: "Luxury 3-Bedroom Apartment",
-    location: "Banana Island, Lagos",
-    price: "₦120,000,000",
-    type: "For Sale",
-    category: "Residential",
-    bedrooms: 3,
-    bathrooms: 4,
-    area: "280 sqm",
-    image: "/placeholder.svg?height=250&width=400",
-    features: ["Ocean View", "Gym", "24/7 Security", "Generator", "Elevator", "Parking"],
-    description: "Premium apartment with stunning ocean views in exclusive Banana Island.",
-  },
-  {
-    id: 3,
-    title: "Executive 5-Bedroom Villa",
-    location: "Asokoro, Abuja",
-    price: "₦150,000,000",
-    type: "For Sale",
-    category: "Residential",
-    bedrooms: 5,
-    bathrooms: 6,
-    area: "600 sqm",
-    image: "/placeholder.svg?height=250&width=400",
-    features: ["Garden", "Study Room", "Maid's Room", "Garage", "Swimming Pool", "Security"],
-    description: "Spacious villa in Abuja's diplomatic zone with extensive gardens and premium finishes.",
-  },
-  {
-    id: 4,
-    title: "Commercial Office Space",
-    location: "Victoria Island, Lagos",
-    price: "₦45,000,000",
-    type: "For Rent",
-    category: "Commercial",
-    bedrooms: 0,
-    bathrooms: 4,
-    area: "200 sqm",
-    image: "/placeholder.svg?height=250&width=400",
-    features: ["Elevator", "Conference Room", "Parking", "Generator", "AC", "Reception"],
-    description: "Prime office space in Victoria Island's business district with modern facilities.",
-  },
-  {
-    id: 5,
-    title: "2-Bedroom Apartment",
-    location: "Ikeja GRA, Lagos",
-    price: "₦35,000,000",
-    type: "For Sale",
-    category: "Residential",
-    bedrooms: 2,
-    bathrooms: 3,
-    area: "120 sqm",
-    image: "/placeholder.svg?height=250&width=400",
-    features: ["Fitted Kitchen", "Parking", "Generator", "Security", "Balcony"],
-    description: "Affordable 2-bedroom apartment in the heart of Ikeja with modern amenities.",
-  },
-  {
-    id: 6,
-    title: "Warehouse Complex",
-    location: "Agbara Industrial Estate, Ogun",
-    price: "₦200,000,000",
-    type: "For Sale",
-    category: "Industrial",
-    bedrooms: 0,
-    bathrooms: 2,
-    area: "2000 sqm",
-    image: "/placeholder.svg?height=250&width=400",
-    features: ["Loading Bay", "Office Space", "Security", "Power", "Water", "Access Road"],
-    description: "Large warehouse complex perfect for manufacturing and distribution businesses.",
-  },
-]
+export default async function PropertiesPage({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
+  // Parse search parameters
+  const page = searchParams?.page ? parseInt(searchParams.page as string) : 1;
+  const type = searchParams?.type as string | undefined;
+  const category = searchParams?.category as string | undefined;
+  const location = searchParams?.location as string | undefined;
+  const bedrooms = searchParams?.bedrooms as string | undefined;
+  const priceRange = searchParams?.price as string | undefined;
+  
+  // Fetch property listings with filters and pagination
+  const result = await getPropertyListings({
+    page,
+    limit: 9,
+    type,
+    category,
+    location,
+    bedrooms: bedrooms ? parseInt(bedrooms) : undefined,
+    priceRange,
+  });
+  
+  const properties = result.properties || [];
+  const totalPages = result.totalPages || 1;
+  const currentPage = result.currentPage || 1;
 
-export default function PropertiesPage() {
   return (
     <>
       <PublicNavigations />
@@ -133,41 +75,41 @@ export default function PropertiesPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                <Select>
+              <form action="/properties" className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <Select name="type" defaultValue={type || "all"}>
                   <SelectTrigger>
                     <SelectValue placeholder="Property Type" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Types</SelectItem>
-                    <SelectItem value="for-sale">For Sale</SelectItem>
-                    <SelectItem value="for-rent">For Rent</SelectItem>
+                    <SelectItem value="For Sale">For Sale</SelectItem>
+                    <SelectItem value="For Rent">For Rent</SelectItem>
                   </SelectContent>
                 </Select>
-                <Select>
+                <Select name="category" defaultValue={category || "all"}>
                   <SelectTrigger>
                     <SelectValue placeholder="Category" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Categories</SelectItem>
-                    <SelectItem value="residential">Residential</SelectItem>
-                    <SelectItem value="commercial">Commercial</SelectItem>
-                    <SelectItem value="industrial">Industrial</SelectItem>
+                    <SelectItem value="Residential">Residential</SelectItem>
+                    <SelectItem value="Commercial">Commercial</SelectItem>
+                    <SelectItem value="Industrial">Industrial</SelectItem>
                   </SelectContent>
                 </Select>
-                <Select>
+                <Select name="location" defaultValue={location || "all"}>
                   <SelectTrigger>
                     <SelectValue placeholder="Location" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Locations</SelectItem>
-                    <SelectItem value="lagos">Lagos</SelectItem>
-                    <SelectItem value="abuja">Abuja</SelectItem>
-                    <SelectItem value="port-harcourt">Port Harcourt</SelectItem>
-                    <SelectItem value="kano">Kano</SelectItem>
+                    <SelectItem value="Lagos">Lagos</SelectItem>
+                    <SelectItem value="Abuja">Abuja</SelectItem>
+                    <SelectItem value="Port Harcourt">Port Harcourt</SelectItem>
+                    <SelectItem value="Kano">Kano</SelectItem>
                   </SelectContent>
                 </Select>
-                <Select>
+                <Select name="bedrooms" defaultValue={bedrooms || "all"}>
                   <SelectTrigger>
                     <SelectValue placeholder="Bedrooms" />
                   </SelectTrigger>
@@ -180,7 +122,7 @@ export default function PropertiesPage() {
                     <SelectItem value="5">5+ Bedrooms</SelectItem>
                   </SelectContent>
                 </Select>
-                <Select>
+                <Select name="price" defaultValue={priceRange || "all"}>
                   <SelectTrigger>
                     <SelectValue placeholder="Price Range" />
                   </SelectTrigger>
@@ -192,99 +134,68 @@ export default function PropertiesPage() {
                     <SelectItem value="200m+">₦200M+</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
+                <Button type="submit" className="md:col-span-5 bg-yellow-500 hover:bg-yellow-600">
+                  Apply Filters
+                </Button>
+              </form>
             </CardContent>
           </Card>
 
           {/* Properties Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {properties.map((property) => (
-              <Card key={property.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="relative">
-                  <img
-                    src={property.image || "/placeholder.svg"}
-                    alt={property.title}
-                    className="w-full h-64 object-cover"
-                  />
-                  <Badge
-                    className={`absolute top-4 right-4 ${
-                      property.type === "For Sale" ? "bg-green-500" : "bg-blue-500"
-                    }`}
+            {properties.length > 0 ? (
+              properties.map((property) => (
+                <PropertyCard
+                  key={property.id}
+                  id={property.id}
+                  title={property.title}
+                  location={property.location}
+                  city={property.city}
+                  state={property.state}
+                  price={property.price}
+                  type={(property as any).listingType || "For Sale"}
+                  category={property.category || "Residential"}
+                  bedrooms={property.bedrooms ?? undefined}
+                  bathrooms={property.bathrooms ?? undefined}
+                  area={property.area ?? undefined}
+                  coverImage={property.coverImage}
+                  features={property.features || []}
+                  description={property.description}
+                  slug={property.slug}
+                  isInWishlist={property.isInWishlist}
+                />
+              ))
+            ) : (
+              <div className="col-span-3 py-20 text-center">
+                <h3 className="text-xl font-semibold mb-2">No properties found</h3>
+                <p className="text-gray-500">Try adjusting your search filters</p>
+              </div>
+            )}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center gap-2 mt-12">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                <a
+                  key={pageNum}
+                  href={`/properties?page=${pageNum}${type ? `&type=${type}` : ''}${
+                    category ? `&category=${category}` : ''
+                  }${location ? `&location=${location}` : ''}${bedrooms ? `&bedrooms=${bedrooms}` : ''}${
+                    priceRange ? `&price=${priceRange}` : ''
+                  }`}
+                >
+                  <Button
+                    variant={pageNum === currentPage ? "default" : "outline"}
+                    size="sm"
+                    className={pageNum === currentPage ? "bg-yellow-500 hover:bg-yellow-600" : ""}
                   >
-                    {property.type}
-                  </Badge>
-                  <Badge className="absolute top-4 left-4 bg-black/70 text-white">{property.category}</Badge>
-                  <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded-md">
-                    <span className="font-bold text-lg">{property.price}</span>
-                  </div>
-                  <div className="absolute top-4 right-16 flex gap-2">
-                    <Button size="sm" variant="secondary" className="w-8 h-8 p-0">
-                      <Heart className="w-4 h-4" />
-                    </Button>
-                    <Button size="sm" variant="secondary" className="w-8 h-8 p-0">
-                      <Share2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-xl font-poppins">{property.title}</CardTitle>
-                  <CardDescription className="flex items-center">
-                    <MapPin className="w-4 h-4 mr-1" />
-                    {property.location}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-sm text-gray-600">{property.description}</p>
-
-                  {property.bedrooms > 0 && (
-                    <div className="flex justify-between text-sm text-gray-600">
-                      <div className="flex items-center">
-                        <Bed className="w-4 h-4 mr-1" />
-                        <span>{property.bedrooms} Beds</span>
-                      </div>
-                      <div className="flex items-center">
-                        <Bath className="w-4 h-4 mr-1" />
-                        <span>{property.bathrooms} Baths</span>
-                      </div>
-                      <div className="flex items-center">
-                        <Square className="w-4 h-4 mr-1" />
-                        <span>{property.area}</span>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="flex flex-wrap gap-2">
-                    {property.features.slice(0, 3).map((feature, index) => (
-                      <Badge key={index} variant="secondary" className="text-xs">
-                        {feature}
-                      </Badge>
-                    ))}
-                    {property.features.length > 3 && (
-                      <Badge variant="outline" className="text-xs">
-                        +{property.features.length - 3} more
-                      </Badge>
-                    )}
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Button className="flex-1 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">
-                      View Details
-                    </Button>
-                    <Button variant="outline" className="flex-1">
-                      Contact Agent
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Load More */}
-          <div className="text-center mt-12">
-            <Button size="lg" variant="outline" className="px-8">
-              Load More Properties
-            </Button>
-          </div>
+                    {pageNum}
+                  </Button>
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       </div>
       <Footer />

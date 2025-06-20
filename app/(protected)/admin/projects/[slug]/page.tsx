@@ -100,7 +100,7 @@ async function getProjectBySlug(slug: string) {
   }
 }
 
-export default async function ProjectDetailPage({ params }: { params: { slug: string } }) {
+export default async function ProjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   // In Next.js App Router, params need to be awaited
   const { slug } = await params;
   const project = await getProjectBySlug(slug);

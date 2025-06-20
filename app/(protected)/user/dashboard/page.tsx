@@ -6,12 +6,17 @@ import Link from "next/link"
 
 export default async function UserDashboard() {
   const dashboardData = await getUserDashboardData()
-
   if (dashboardData.error) {
     return <div>Error loading dashboard data</div>
   }
 
   const { stats, recentInvestments, topProjects, walletBalance } = dashboardData
+
+  // Provide default values if data is undefined
+  const safeStats = stats || { totalInvestments: 0, activeProjects: 0, expectedReturns: 0 }
+  const safeWalletBalance = walletBalance || 0
+  const safeRecentInvestments = recentInvestments || []
+  const safeTopProjects = topProjects || []
 
   return (
     <div className="space-y-8">
@@ -28,7 +33,7 @@ export default async function UserDashboard() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₦{stats.totalInvestments.toLocaleString()}</div>
+            <div className="text-2xl font-bold">₦{safeStats.totalInvestments.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">+20.1% from last month</p>
           </CardContent>
         </Card>
@@ -39,7 +44,7 @@ export default async function UserDashboard() {
             <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.activeProjects}</div>
+            <div className="text-2xl font-bold">{safeStats.activeProjects}</div>
             <p className="text-xs text-muted-foreground">+2 new this month</p>
           </CardContent>
         </Card>
@@ -50,7 +55,7 @@ export default async function UserDashboard() {
             <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₦{walletBalance.toLocaleString()}</div>
+            <div className="text-2xl font-bold">₦{safeWalletBalance.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">Available for investment</p>
           </CardContent>
         </Card>
@@ -61,7 +66,7 @@ export default async function UserDashboard() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₦{stats.expectedReturns.toLocaleString()}</div>
+            <div className="text-2xl font-bold">₦{safeStats.expectedReturns.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">Projected earnings</p>
           </CardContent>
         </Card>
@@ -76,7 +81,7 @@ export default async function UserDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentInvestments.map((investment) => (
+              {safeRecentInvestments.map((investment) => (
                 <div key={investment.id} className="flex items-center justify-between border-b pb-2">
                   <div>
                     <p className="font-medium">{investment.project.title}</p>
@@ -116,7 +121,7 @@ export default async function UserDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {topProjects.map((project) => (
+              {safeTopProjects.map((project) => (
                 <div key={project.id} className="flex items-center justify-between border-b pb-2">
                   <div>
                     <p className="font-medium">{project.title}</p>

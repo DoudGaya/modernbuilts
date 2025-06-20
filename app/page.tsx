@@ -16,13 +16,6 @@ import { verifyNIN } from "@/actions/nin"
 export default async function Home() {
 
 
- await verifyNIN("81392154948").then(result => {
-  if (result.status === 200) {
-    console.log("NIN verified successfully")
-  } else {
-    console.log(`Verification failed: ${result.message}`)
-  }
-})
 
   return (
     <>
