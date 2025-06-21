@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { PublicNavigations } from "@/components/PublicNavigations";
 import { Footer } from "@/components/Footer";
 import { SessionProvider } from "next-auth/react";
+import { Toaster } from "@/components/ui/sonner"
 import { auth } from "@/auth";
 // import '/../public/fonts.css'
 import "./globals.css";
@@ -32,6 +33,7 @@ export default async function RootLayout({
           >
         {children}
       </ThemeProvider>
+        <Toaster />
       </body>
      </SessionProvider>
     </html>

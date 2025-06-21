@@ -8,7 +8,8 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Filter, MessageSquare, Calendar, User } from "lucide-react"
 import { getAllComplaints, updateComplaintStatus, respondToComplaint } from "@/actions/complaint"
-import { toast } from "@/components/ui/use-toast"
+// import { toast } from "@/components/ui/use-toast"
+import { toast } from 'sonner'
 
 export default function ComplaintsPage() {
   const [complaints, setComplaints] = useState([])
@@ -32,11 +33,10 @@ export default function ComplaintsPage() {
     if (result.success) {
       setComplaints(result.complaints)
     } else {
-      toast({
-        title: "Error",
-        description: result.error,
-        variant: "destructive",
-      })
+       toast("Error...", {
+          description: "Failed to load complaints",
+         
+        })
     }
     setLoading(false)
   }

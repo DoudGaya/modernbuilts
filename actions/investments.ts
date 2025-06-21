@@ -23,7 +23,7 @@ export const createInvestment = async (data: {
 
   try {
     const verificationToken = await generateVerificationToken(user.email || user.id )
-    const certificateId = `CERT-${data.projectId.slice(0, 3).toUpperCase()}-${Date.now()}`
+    const certificateId = `SB-CERT-${data.projectId.slice(0, 3).toUpperCase()}-${Date.now()}`
 
     const investment = await db.investment.create({
       data: {
@@ -98,14 +98,14 @@ export const getInvestmentByToken = async (token: string) => {
       include: {
         user: {
           select: {
+            id: true,
             name: true,
             email: true,
           },
-        },
-        project: {
+        },        project: {
           select: {
             title: true,
-            expectedReturn: true,
+            roi: true,
             duration: true,
           },
         },
@@ -123,38 +123,121 @@ export const getInvestmentByToken = async (token: string) => {
   }
 }
 
+export const getUserInvestments = async (userId: string) => {
+  try {
+    const investments = await db.investment.findMany({
+      where: { userId },
+      include: {
+        project: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            coverImage: true,
+            location: true,
+            roi: true,
+            duration: true,
+          },
+        },
+      },
+      orderBy: { dateOfInvestment: "desc" },
+    })
 
-// "use client"
-// import { getUserById } from "@/data/user"
-// import { db } from "@/lib/db";
+    return { success: true, investments }
+  } catch (error) {
+    console.error("Failed to fetch user investments:", error)
+    return { error: "Failed to fetch investments" }
+  }
+}
 
-// export const getInvestmentCountByUserId = async (userId: string) => {
-//     const user = await getUserById(userId);
-//     if (!user) {
-//         return {error: "User does not exist"}
-//     }
-//     const investmentCount = await db.investment.count({
-//         where: {
-//             userId: user.id
-//         }
-//     })
+export const getInvestmentById = async (investmentId: string, userId?: string) => {
+  try {
+    const whereClause: any = { id: investmentId }
+    if (userId) {
+      whereClause.userId = userId
+    }    const investment = await db.investment.findUnique({
+      where: whereClause,
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },        project: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            coverImage: true,
+            location: true,
+            state: true,
+            city: true,
+            roi: true,
+            duration: true,
+            category: true,
+          },
+        },
+      },
+    })
 
-//     return investmentCount
-// }
+    if (!investment) {
+      return { error: "Investment not found" }
+    }
 
+    return { success: true, investment }
+  } catch (error) {
+    console.error("Failed to fetch investment:", error)
+    return { error: "Failed to fetch investment" }
+  }
+}
 
-// export const getAllInvestmentByUserId = async (userId: string) => {
+export const getPublicInvestmentByToken = async (token: string) => {
+  try {
+    const investment = await db.investment.findUnique({
+      where: { verificationToken: token },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },        project: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            coverImage: true,
+            location: true,
+            state: true,
+            city: true,
+            roi: true,
+            duration: true,
+            category: true,
+          },
+        },
+      },
+    })
 
-//     const user = await getUserById(userId);
-//     if (!user) {
-//         return {error: "User does not exist"}
-//     }
-//     const investmentCount = await db.investment.findMany({
-//         where: {
-//             userId: user.id
-//         }
-//     })
-//     return investmentCount
-// }
+    if (!investment) {
+      return { error: "Investment verification failed - Invalid token" }
+    }
+
+    // Generate certificate number for display
+    const certificateNumber = investment.certificateId || `SB-CERT-${investment.id.slice(-8).toUpperCase()}`
+
+    return { 
+      success: true, 
+      investment: {
+        ...investment,
+        certificateNumber,
+      }
+    }
+  } catch (error) {
+    console.error("Failed to verify investment:", error)
+    return { error: "Investment verification failed" }
+  }
+}
 
 

@@ -1,28 +1,69 @@
-import React from 'react'
+"use client"
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useCurrentUser } from '@/hooks/use-current-user'
+import { getWalletByUserId } from '@/actions/wallet'
 
-interface WalletProps {
+interface WalletData {
   balance: number
-  totalRewards: number
+  totalBonuses: number
   referralBonus: number
   welcomeBonus: number
 }
 
+export const DashboardWallet = () => {
+  const user = useCurrentUser()
+  const [walletData, setWalletData] = useState<WalletData>({
+    balance: 0,
+    totalBonuses: 0,
+    referralBonus: 0,
+    welcomeBonus: 0
+  })
+  const [loading, setLoading] = useState(true)
 
-export const DashboardWallet = ({
-  balance,
-  totalRewards,
-  referralBonus,
-  welcomeBonus
-}: WalletProps) => {
-
+  useEffect(() => {
+    if (user?.id) {
+      loadWalletData()
+    }
+  }, [user?.id])
+  const loadWalletData = async () => {
+    if (!user?.id) return
+    
+    try {
+      const result = await getWalletByUserId(user.id)
+      if (result.success && result.wallet) {
+        setWalletData({
+          balance: result.wallet.balance || 0,
+          totalBonuses: result.wallet.totalBonuses || 0,
+          referralBonus: result.wallet.referralBonus || 0,
+          welcomeBonus: result.wallet.welcomeBonus || 0
+        })
+      }
+    } catch (error) {
+      console.error("Failed to load wallet data:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const formattedDigits = {
-    balance: balance.toLocaleString(),
-    totalRewards: totalRewards.toLocaleString(),
-    referralBonus: referralBonus.toLocaleString(),
-    welcomeBonus: welcomeBonus.toLocaleString()
+    balance: walletData.balance.toLocaleString(),
+    totalBonuses: walletData.totalBonuses.toLocaleString(),
+    referralBonus: walletData.referralBonus.toLocaleString(),
+    welcomeBonus: walletData.welcomeBonus.toLocaleString()
   }
+
+  if (loading) {
+    return (
+      <div className='w-full h-full flex items-center justify-center rounded-xl bg-white drop-shadow-md'>
+        <div className="animate-pulse">
+          <div className="h-4 w-32 bg-gray-200 rounded mb-2"></div>
+          <div className="h-8 w-24 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className=' w-full h-full flex flex-col space-y-6 dark:text-[#ffffff] rounded-xl pt-6 dark:border dark:border-neutral-800 dark:bg-neutral-900/95 bg-white drop-shadow-md'>
       <div className=" flex items-center px-6 space-x-2">
@@ -45,26 +86,26 @@ export const DashboardWallet = ({
       <div className=" flex md:space-x-6 space-y-3 md:space-y-0 flex-col items-start md:flex-row">
         {/* WALLET BUTTONS COMPONENTS */}
 
-        <button className=' flex flex-col justify-center items-center space-y-2 '>
-          <div className='stroke-black md:w-[50px] md:h-[50px] space-x-4 px-6 items-center md:space-x-0 justify-center flex text-center py-1 md:p-3 rounded-lg md:rounded-full bg-green-500/80'>
+        <Link href="/user/wallet" className=' flex flex-col justify-center items-center space-y-2 '>
+          <div className='stroke-black md:w-[50px] md:h-[50px] space-x-4 px-6 items-center md:space-x-0 justify-center flex text-center py-1 md:p-3 rounded-lg md:rounded-full bg-green-500/80 hover:bg-green-600/80 transition-colors'>
           <p className=' flex md:hidden'> Fund Wallet </p>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" strokeWidth={1.2} fill="currentColor" className="size-4 transform rotate-180  flex-none md:size-6">
               <path fillRule="evenodd" d="M10 3a.75.75 0 0 1 .75.75v10.638l3.96-4.158a.75.75 0 1 1 1.08 1.04l-5.25 5.5a.75.75 0 0 1-1.08 0l-5.25-5.5a.75.75 0 1 1 1.08-1.04l3.96 4.158V3.75A.75.75 0 0 1 10 3Z" clipRule="evenodd" />
             </svg>
           </div>
           <p className=' text-xs font-poppins hidden md:block font-medium'>Fund Wallet</p>
-        </button>
+        </Link>
 
 
-        <button className=' flex flex-col justify-center items-center space-y-2'>
-          <div className='stroke-black md:w-[50px] md:h-[50px] space-x-4 md:space-x-0 px-6 items-center justify-center flex text-center py-1 md:p-3 rounded-lg md:rounded-full bg-primary/80'>
+        <Link href="/user/wallet" className=' flex flex-col justify-center items-center space-y-2'>
+          <div className='stroke-black md:w-[50px] md:h-[50px] space-x-4 md:space-x-0 px-6 items-center justify-center flex text-center py-1 md:p-3 rounded-lg md:rounded-full bg-primary/80 hover:bg-primary/90 transition-colors'>
           <p className=' flex md:hidden'> withdraw </p>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" strokeWidth={1.2} fill="currentColor" className="size-4 flex-none md:size-6">
               <path fillRule="evenodd" d="M10 3a.75.75 0 0 1 .75.75v10.638l3.96-4.158a.75.75 0 1 1 1.08 1.04l-5.25 5.5a.75.75 0 0 1-1.08 0l-5.25-5.5a.75.75 0 1 1 1.08-1.04l3.96 4.158V3.75A.75.75 0 0 1 10 3Z" clipRule="evenodd" />
             </svg>
           </div>
           <p className=' text-xs font-poppins hidden md:block font-medium'>Withdraw</p>
-        </button>
+        </Link>
 
       
       </div>
@@ -78,23 +119,23 @@ export const DashboardWallet = ({
             </svg>  
          </div>
          <div className=" flex flex-col space-y-2">
-          <p className=' font-font text-sm font-semibold text-[#8F8F8F]'>REWARDS</p>
+          <p className=' font-font text-sm font-semibold text-[#8F8F8F]'>TOTAL REWARDS</p>
          <div className=" flex space-x-2 items-baseline text-[#8F8F8F] ">
-          <p className=' text-2xl font-poppins font-bold text-primary'>{ formattedDigits.totalRewards }</p>
+          <p className=' text-2xl font-poppins font-bold text-primary'>{ formattedDigits.totalBonuses }</p>
           <span className=' font-bold text-[#8F8F8F]'>NGN</span>
          </div>
          </div>
         </div>
         <div className=" flex flex-col md:flex-row text-[#8F8F8F] w-full md:justify-between space-y-4 md:space-y-0">
          <div className=" flex space-x-3">
-         <Link href={''} className=" hover:bg-gray-600/40 p-2 rounded-lg flex flex-col font-poppins">
+         <Link href={'/user/wallet'} className=" hover:bg-gray-600/40 p-2 rounded-lg flex flex-col font-poppins transition-colors">
               <p className=' text-sm text-white'>Welcome Bonus</p>
               <div className=" flex space-x-1 items-baseline">
                   <p className=' font-semibold text-xl text-primary'>{ formattedDigits.welcomeBonus }</p>
                   <span className=' font-semibold text-sm'>NGN</span>
               </div>
           </Link>
-          <Link href={''} className=" hover:bg-gray-600/40 p-2 rounded-lg flex flex-col font-poppins">
+          <Link href={'/user/wallet'} className=" hover:bg-gray-600/40 p-2 rounded-lg flex flex-col font-poppins transition-colors">
               <p className=' text-sm text-white'>Referral Bonus</p>
               <div className=" flex space-x-1 items-baseline">
                   <p className=' font-semibold text-xl text-primary'>{ formattedDigits.referralBonus}</p>
@@ -103,7 +144,7 @@ export const DashboardWallet = ({
           </Link>
          </div>
          <div className=" flex items-center  md:justify-end">
-          <Link href={''} className=' pl-4 pr-10 text-black flex space-x-1 items-center font-poppins font-semibold  rounded-xl bg-primary py-2'>
+          <Link href={'/user/wallet'} className=' pl-4 pr-10 text-black flex space-x-1 items-center font-poppins font-semibold  rounded-xl bg-primary py-2 hover:bg-primary/90 transition-colors'>
             <p>Go to Wallet</p>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
@@ -111,7 +152,6 @@ export const DashboardWallet = ({
           </Link>
          </div>
         </div>
-      </div>
-    </div>
+      </div>    </div>
   )
 }

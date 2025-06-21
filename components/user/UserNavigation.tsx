@@ -13,9 +13,47 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { signOut } from "next-auth/react"
+import { useCurrentUser } from "@/hooks/use-current-user"
+import { getWalletByUserId } from "@/actions/wallet"
+import { useState, useEffect } from "react"
 import logo from "@/public/stablebricks.png"
 
 export const UserNavigation = () => {
+  const user = useCurrentUser()
+  const [balance, setBalance] = useState<number>(0)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (user?.id) {
+      loadWalletBalance()
+    }
+  }, [user?.id])
+
+  const loadWalletBalance = async () => {
+    if (!user?.id) return
+    
+    try {
+      const result = await getWalletByUserId(user.id)
+      if (result.success && result.wallet) {
+        setBalance(result.wallet.balance || 0)
+      }
+    } catch (error) {
+      console.error("Failed to load wallet balance:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const formatBalance = (amount: number) => {
+    if (amount >= 1000000) {
+      return `₦${(amount / 1000000).toFixed(1)}M`
+    } else if (amount >= 1000) {
+      return `₦${(amount / 1000).toFixed(1)}K`
+    } else {
+      return `₦${amount.toLocaleString()}`
+    }
+  }
+
   return (
     <nav className="bg-white border-b border-gray-200 fixed w-full z-30 top-0">
       <div className="px-3 py-3 lg:px-5 lg:pl-3">
@@ -33,12 +71,14 @@ export const UserNavigation = () => {
                 <Search className="w-4 h-4 text-gray-500" />
               </div>
               <Input type="text" placeholder="Search..." className="pl-10 pr-4 py-2 w-64" />
-            </div>
-
-            <Button variant="ghost" size="sm" className="mr-2">
-              <Wallet className="w-5 h-5" />
-              <span className="ml-2">₦0</span>
-            </Button>
+            </div>            <Link href="/user/wallet">
+              <Button variant="ghost" size="sm" className="mr-2">
+                <Wallet className="w-5 h-5" />
+                <span className="ml-2">
+                  {loading ? "..." : formatBalance(balance)}
+                </span>
+              </Button>
+            </Link>
 
             <Button variant="ghost" size="sm" className="mr-2">
               <Bell className="w-5 h-5" />

@@ -18,7 +18,7 @@ export default async function UserLayout({ children }: { children: React.ReactNo
             <UserNavigation />
             <div className="flex">
               <UserSidebar />
-              <main className="flex-1 ml-64 p-8">{children}</main>
+              <main className="flex-1 ml-64 py-20 p-8">{children}</main>
             </div>
           </div>
     

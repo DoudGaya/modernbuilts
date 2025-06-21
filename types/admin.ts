@@ -71,14 +71,14 @@ export interface Investment {
   dateOfInvestment: Date
   status: "PENDING" | "ACTIVE" | "END" | "COMPLETED"
   dateOfreturn: Date
-  shares?: number
-  transactionRef?: string
-  flutterwaveRef?: string
+  shares?: number | null
+  transactionRef?: string | null
+  flutterwaveRef?: string | null
   userId: string
   projectId: string
-  certificateId?: string
-  verificationToken?: string
-  user: {
+  certificateId?: string | null
+  verificationToken?: string | null
+  user?: {
     id: string
     name: string | null
     email: string | null
@@ -87,6 +87,13 @@ export interface Investment {
     id: string
     title: string
     slug: string
+    coverImage?: string
+    location?: string
+    state?: string
+    city?: string
+    roi?: number
+    duration?: Date
+    category?: string
   }
 }
 

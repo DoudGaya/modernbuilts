@@ -21,6 +21,7 @@ model User {
   investments         Investment[]
   accoutDetails       AccountDetails?
   wallet              Wallet?
+  transactions        Transaction[]
   isTwoFactorEnabled  Boolean @default(false)
   TwoFactorConfirmation TwoFactorConfirmation?
   complaints          Complaint[]
@@ -38,7 +39,7 @@ enum UserRole {
 model Wallet {
   id              String @id @default(auto()) @map("_id") @db.ObjectId
   balance         Int
-  user            User @relation(fields: [id], references: [id], onDelete: Cascade)
+  user            User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId          String @unique @db.ObjectId
   bonuses         Bonuses[]
 }
@@ -48,7 +49,7 @@ model AccountDetails {
   accountName     String
   accountNumber   String
   bankName        String
-  user            User @relation(fields: [id], references: [id], onDelete: Cascade)
+  user            User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId          String @unique @db.ObjectId
 }
 
@@ -56,7 +57,7 @@ model Bonuses {
     id            String @id @default(auto()) @map("_id") @db.ObjectId
     name          String
     amount        Int
-    wallet        Wallet @relation(fields: [id], references: [id], onDelete: Cascade)
+    wallet        Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
     walletId      String @db.ObjectId
 }
 
@@ -252,4 +253,18 @@ model Wishlist {
 
   @@unique([userId, listingId])
   @@map("wishlist")
+}
+
+model Transaction {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  type            String // "credit" or "debit"
+  amount          Int
+  description     String
+  status          String @default("completed") // "completed", "pending", "failed"
+  transactionRef  String?
+  user            User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String @db.ObjectId
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  @@map("transaction")
 }
