@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { ThemeProvider } from "@/components/theme-provider"
+import { Providers } from "@/components/Providers";
 import { PublicNavigations } from "@/components/PublicNavigations";
 import { Footer } from "@/components/Footer";
-import { SessionProvider } from "next-auth/react";
 import { Toaster } from "@/components/ui/sonner"
 import { auth } from "@/auth";
 // import '/../public/fonts.css'
@@ -23,19 +22,12 @@ export default async function RootLayout({
   const session = await auth()
   return (
     <html lang="en" suppressHydrationWarning>
-     <SessionProvider session={session}>
      <body className={`${inter.className} text-gray-950 bg-gray-50`}>
-      <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
+      <Providers session={session}>
         {children}
-      </ThemeProvider>
         <Toaster />
+      </Providers>
       </body>
-     </SessionProvider>
     </html>
   );
 }

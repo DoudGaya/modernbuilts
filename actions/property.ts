@@ -17,15 +17,14 @@ export async function getPropertyListings({
   category?: string;
   type?: string;
   location?: string;
-  bedrooms?: number;
+  bedrooms?: string;
   priceRange?: string;
 }) {
   try {
     const skip = (page - 1) * limit;
-    
-    // Build where conditions based on filters
+      // Build where conditions based on filters
     const where: any = {
-      published: true, 
+      status: "Active", // Use 'status' instead of 'published'
     };
     
     if (category && category !== "all") {
@@ -33,7 +32,7 @@ export async function getPropertyListings({
     }
     
     if (type && type !== "all") {
-      where.listingType = type;
+      where.type = type; // Use 'type' instead of 'listingType'
     }
     
     if (location && location !== "all") {
@@ -75,8 +74,7 @@ export async function getPropertyListings({
         where,
         orderBy: { createdAt: "desc" },
         take: limit,
-        skip,
-        select: {
+        skip,        select: {
           id: true,
           title: true,
           slug: true,
@@ -89,7 +87,8 @@ export async function getPropertyListings({
           bedrooms: true,
           bathrooms: true,
           area: true,
-          features: true,          
+          features: true,
+          type: true,
           category: true,
           createdAt: true,
         },
@@ -132,5 +131,45 @@ export async function getPropertyListings({
   } catch (error) {
     console.error("Error fetching properties:", error);
     return { error: "Failed to fetch properties" };
+  }
+}
+
+export async function getPropertyBySlug(slug: string) {
+  try {
+    const session = await auth();
+    const userId = session?.user?.id;
+
+    const property = await db.propertyListing.findFirst({
+      where: {
+        slug: slug,
+        status: "Active"
+      }
+    });
+
+    if (!property) {
+      return { success: false, error: "Property not found" };
+    }
+
+    // Check if property is in user's wishlist if logged in
+    let isInWishlist = false;
+    if (userId) {
+      const wishlistItem = await db.wishlist.findFirst({
+        where: {
+          userId,
+          listingId: property.id
+        }
+      });
+      isInWishlist = !!wishlistItem;
+    }
+
+    const transformedProperty = {
+      ...property,
+      isInWishlist
+    };
+
+    return { success: true, property: transformedProperty };
+  } catch (error) {
+    console.error("Error fetching property:", error);
+    return { success: false, error: "Failed to fetch property" };
   }
 }

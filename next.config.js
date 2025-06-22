@@ -5,8 +5,7 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '50mb' // Increased size limit for server actions
     },
-  },
-  // Configure external image domains
+  },  // Configure external image domains
   images: {
     remotePatterns: [
       {
@@ -26,7 +25,28 @@ const nextConfig = {
         hostname: 's3.amazonaws.com',
         port: '',
         pathname: '/**',
-      }
+      },
+      // Google OAuth profile images
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        port: '',
+        pathname: '/**',
+      },
+      // GitHub OAuth profile images
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+        port: '',
+        pathname: '/**',
+      },
+      // Additional Google image domains
+      {
+        protocol: 'https',
+        hostname: 'googleusercontent.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
   // Add CORS headers for API routes

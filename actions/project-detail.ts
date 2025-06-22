@@ -30,11 +30,9 @@ export const getProjectBySlug = async (slug: string) => {
 
     if (!project) {
       return { error: "Project not found" }
-    }
-
-    // Calculate funding progress
+    }    // Calculate funding progress
     const totalInvested = project.investment.reduce((sum, inv) => sum + inv.investmentAmount, 0)
-    const fundingProgress = (totalInvested / parseInt(project.valuation.replace(/[^\d]/g, ''))) * 100
+    const fundingProgress = project.investmentRequired > 0 ? (totalInvested / project.investmentRequired) * 100 : 0
 
     return { 
       success: true, 

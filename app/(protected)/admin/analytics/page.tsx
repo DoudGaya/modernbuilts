@@ -8,7 +8,7 @@ import { getAnalyticsData } from "@/actions/analytics"
 export default async function AnalyticsPage() {
   const analyticsData = await getAnalyticsData()
 
-  if (analyticsData.error) {
+  if (analyticsData.error || !analyticsData.success) {
     return <div>Error loading analytics data</div>
   }
 

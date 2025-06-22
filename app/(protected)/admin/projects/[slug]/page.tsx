@@ -5,39 +5,21 @@ import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Edit, TrendingUp, Clock, DollarSign, MapPin, Calendar, Users, Building } from "lucide-react"
 import { notFound } from "next/navigation"
 import { formatCurrency } from "@/lib/utils"
+import { formatCurrencyShort } from "@/lib/project-utils"
 import { db } from "@/lib/db"
 import { ProjectStatus } from "@prisma/client"
 import ImageGallery, { CoverImage, VideoPlayer } from "./components/ImageGallery"
 
 // Helper function to calculate funding percentage based on investments
-const calculateFundingPercentage = (investments: any[], valuation: string) => {
-  if (!investments?.length) return 0;
+const calculateFundingPercentage = (investments: any[], investmentRequired: number) => {
+  if (!investments?.length || !investmentRequired) return 0;
   
   const totalInvested = investments.reduce(
     (sum, inv) => sum + inv.investmentAmount,
     0
   );
   
-  // Convert valuation from string (e.g. "₦2.5B" or "500000") to number for calculation
-  let valuationNumber = 0;
-  try {
-    // First remove currency symbol and commas
-    const cleanVal = valuation.replace(/[₦,]/g, "");
-    
-    // Handle if the valuation has B (billions) or M (millions)
-    if (cleanVal.includes("B")) {
-      valuationNumber = parseFloat(cleanVal) * 1000000000;
-    } else if (cleanVal.includes("M")) {
-      valuationNumber = parseFloat(cleanVal) * 1000000;
-    } else {
-      valuationNumber = parseFloat(cleanVal);
-    }
-  } catch (e) {
-    console.error("Error parsing valuation:", e);
-    valuationNumber = 0;
-  }
-  
-  return valuationNumber > 0 ? Math.min(100, (totalInvested / valuationNumber) * 100) : 0;
+  return Math.min(100, (totalInvested / investmentRequired) * 100);
 };
 
 // Function to generate features from project description
@@ -107,9 +89,8 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   
   if (!project) {
     notFound();
-  }
-    // Calculate funding percentage
-  const fundingPercentage = calculateFundingPercentage(project.investment, project.valuation);
+  }    // Calculate funding percentage
+  const fundingPercentage = calculateFundingPercentage(project.investment, project.investmentRequired || 0);
   
   // Use features from database or generate them if not available
   const features = project.features && project.features.length > 0 

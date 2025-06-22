@@ -7,10 +7,22 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Filter, Trash2, Mail, Phone, Calendar } from "lucide-react"
 import { getAllContacts, deleteContact, updateContactStatus } from "@/actions/contact"
-import { toast } from "@/components/ui/use-toast"
+import { toast } from 'sonner'
+
+type Contact = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  subject: string;
+  message: string;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 export default function ContactsPage() {
-  const [contacts, setContacts] = useState([])
+  const [contacts, setContacts] = useState<Contact[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
@@ -19,8 +31,7 @@ export default function ContactsPage() {
     loadContacts()
   }, [searchTerm, statusFilter])
 
-  const loadContacts = async () => {
-    setLoading(true)
+  const loadContacts = async () => {    setLoading(true)
     const result = await getAllContacts({
       search: searchTerm,
       status: statusFilter,
@@ -29,11 +40,7 @@ export default function ContactsPage() {
     if (result.success) {
       setContacts(result.contacts)
     } else {
-      toast({
-        title: "Error",
-        description: result.error,
-        variant: "destructive",
-      })
+      toast.error(result.error || "Failed to load contacts")
     }
     setLoading(false)
   }
@@ -42,17 +49,10 @@ export default function ContactsPage() {
     const result = await updateContactStatus(id, status)
 
     if (result.success) {
-      toast({
-        title: "Success",
-        description: "Contact status updated",
-      })
+      toast.success("Contact status updated")
       loadContacts()
     } else {
-      toast({
-        title: "Error",
-        description: result.error,
-        variant: "destructive",
-      })
+      toast.error(result.error || "Failed to update status")
     }
   }
 
@@ -60,17 +60,10 @@ export default function ContactsPage() {
     const result = await deleteContact(id)
 
     if (result.success) {
-      toast({
-        title: "Success",
-        description: "Contact deleted successfully",
-      })
+      toast.success("Contact deleted successfully")
       loadContacts()
     } else {
-      toast({
-        title: "Error",
-        description: result.error,
-        variant: "destructive",
-      })
+      toast.error(result.error || "Failed to delete contact")
     }
   }
 

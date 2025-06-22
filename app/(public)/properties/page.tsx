@@ -12,15 +12,18 @@ import { getPropertyListings } from "@/actions/property"
 export default async function PropertiesPage({
   searchParams,
 }: {
-  searchParams?: { [key: string]: string | string[] | undefined };
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  // Await search parameters in Next.js 15
+  const params = await searchParams;
+  
   // Parse search parameters
-  const page = searchParams?.page ? parseInt(searchParams.page as string) : 1;
-  const type = searchParams?.type as string | undefined;
-  const category = searchParams?.category as string | undefined;
-  const location = searchParams?.location as string | undefined;
-  const bedrooms = searchParams?.bedrooms as string | undefined;
-  const priceRange = searchParams?.price as string | undefined;
+  const page = params?.page ? parseInt(params.page as string) : 1;
+  const type = params?.type as string | undefined;
+  const category = params?.category as string | undefined;
+  const location = params?.location as string | undefined;
+  const bedrooms = params?.bedrooms as string | undefined;
+  const priceRange = params?.price as string | undefined;
   
   // Fetch property listings with filters and pagination
   const result = await getPropertyListings({
@@ -29,7 +32,7 @@ export default async function PropertiesPage({
     type,
     category,
     location,
-    bedrooms: bedrooms ? parseInt(bedrooms) : undefined,
+    bedrooms,
     priceRange,
   });
   

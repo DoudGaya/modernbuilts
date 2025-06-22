@@ -44,7 +44,7 @@ export const regsiter = async (values: z.infer<typeof signUpSchema>) => {
             email,
             password: hashedPassword,
             phone,
-            referralCode
+            referralID: referralCode
         }
     })
 

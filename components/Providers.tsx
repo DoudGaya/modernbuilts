@@ -1,10 +1,16 @@
 "use client"
 
 import { ThemeProvider, useTheme } from 'next-themes'
+import { SessionProvider } from "next-auth/react"
 import { ReactNode, useEffect, useState } from 'react'
 import { FaMoon, FaSun } from 'react-icons/fa'
 
-export function Providers({ children }: { children: ReactNode }) {
+interface ProvidersProps {
+  children: ReactNode
+  session?: any
+}
+
+export function Providers({ children, session }: ProvidersProps) {
   // Avoid rendering the ThemeProvider until mounted to prevent hydration mismatch
   const [mounted, setMounted] = useState(false)
   
@@ -15,11 +21,12 @@ export function Providers({ children }: { children: ReactNode }) {
   if (!mounted) {
     return <>{children}</>
   }
-  
-  return (
-    <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-      {children}
-    </ThemeProvider>
+    return (
+    <SessionProvider session={session}>
+      <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+        {children}
+      </ThemeProvider>
+    </SessionProvider>
   )
 }
 

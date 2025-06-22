@@ -11,12 +11,28 @@ import { getAllComplaints, updateComplaintStatus, respondToComplaint } from "@/a
 // import { toast } from "@/components/ui/use-toast"
 import { toast } from 'sonner'
 
+type ComplaintWithUser = {
+  id: string;
+  subject: string;
+  description: string;
+  status: string;
+  userId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  response: string | null;
+  respondedAt: Date | null;
+  user: {
+    name: string | null;
+    email: string | null;
+  };
+}
+
 export default function ComplaintsPage() {
-  const [complaints, setComplaints] = useState([])
+  const [complaints, setComplaints] = useState<ComplaintWithUser[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
-  const [selectedComplaint, setSelectedComplaint] = useState(null)
+  const [selectedComplaint, setSelectedComplaint] = useState<ComplaintWithUser | null>(null)
   const [response, setResponse] = useState("")
 
   useEffect(() => {
@@ -40,51 +56,31 @@ export default function ComplaintsPage() {
     }
     setLoading(false)
   }
-
   const handleStatusUpdate = async (id: string, status: string) => {
     const result = await updateComplaintStatus(id, status)
 
     if (result.success) {
-      toast({
-        title: "Success",
-        description: "Complaint status updated",
-      })
+      toast.success("Complaint status updated")
       loadComplaints()
     } else {
-      toast({
-        title: "Error",
-        description: result.error,
-        variant: "destructive",
-      })
+      toast.error(result.error || "Failed to update status")
     }
   }
-
   const handleRespond = async (id: string) => {
     if (!response.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter a response",
-        variant: "destructive",
-      })
+      toast.error("Please enter a response")
       return
     }
 
     const result = await respondToComplaint(id, response)
 
     if (result.success) {
-      toast({
-        title: "Success",
-        description: "Response sent successfully",
-      })
+      toast.success("Response sent successfully")
       setResponse("")
       setSelectedComplaint(null)
       loadComplaints()
     } else {
-      toast({
-        title: "Error",
-        description: result.error,
-        variant: "destructive",
-      })
+      toast.error(result.error || "Failed to send response")
     }
   }
 
@@ -180,9 +176,8 @@ export default function ComplaintsPage() {
               {complaint.response && (
                 <div className="bg-blue-50 p-4 rounded-lg">
                   <h4 className="font-semibold mb-2">Admin Response:</h4>
-                  <p className="text-gray-700">{complaint.response}</p>
-                  <p className="text-sm text-gray-500 mt-2">
-                    Responded on: {new Date(complaint.respondedAt).toLocaleDateString()}
+                  <p className="text-gray-700">{complaint.response}</p>                  <p className="text-sm text-gray-500 mt-2">
+                    Responded on: {complaint.respondedAt ? new Date(complaint.respondedAt).toLocaleDateString() : 'Unknown'}
                   </p>
                 </div>
               )}

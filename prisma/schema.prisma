@@ -95,27 +95,30 @@ model VerificationToken {
 }
 
 model Project {
-    id            String @id @default(auto()) @map("_id") @db.ObjectId
-    title         String
-    length        String
-    slug          String @unique  
-    coverImage    String
-    video         String
-    images        String[]
-    category      String
-    description   String
-    duration      DateTime
-    valuation     String
-    state         String
-    city          String
-    location      String
-    projectStatus ProjectStatus @default(PENDING)
-    features      String[]
-    sharePrice    Int
-    investment    Investment[]
-    roi           Int
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
+    id                    String @id @default(auto()) @map("_id") @db.ObjectId
+    title                 String
+    length                String
+    slug                  String @unique  
+    coverImage            String
+    video                 String
+    images                String[]
+    category              String
+    description           String
+    duration              DateTime
+    valuation             Int  // Total value of project after completion
+    investmentRequired    Int  // Amount needed to complete the project
+    state                 String
+    city                  String
+    location              String
+    projectStatus         ProjectStatus @default(PENDING)
+    features              String[]
+    sharePrice            Int  // Price per share
+    totalShares           Int  // Total shares available (investmentRequired / sharePrice)
+    soldShares            Int  @default(0) // Shares sold so far
+    investment            Investment[]
+    roi                   Int
+    createdAt             DateTime @default(now())
+    updatedAt             DateTime @updatedAt
     @@map("project")
 }
 

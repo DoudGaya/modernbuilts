@@ -17,11 +17,10 @@ export const Banner = () => {
                 <h1 className=' lg:text-4xl font-poppins text-2xl font-bold'>Join us and be Part of a Prime <span className=' bg-yellow-500 text-black transform skew-y-6'>Real Esate</span> Project</h1>
                 <h3 className=' text-xl'>
                     We provide investment opportunities for people interested in property investment 
-                </h3>
-                <div className=" flex w-full lg:justify-start justify-center">
+                </h3>                <div className=" flex w-full lg:justify-start justify-center">
                   <LoginButton>
-                        <Link className=' rounded-full font-semibold text-lg border-2 border-yellow-900 px-8 py-2 bg-yellow-500' href={''}>
-                                Fund a Project
+                        <Link className=' rounded-full font-semibold text-lg border-2 border-yellow-900 px-8 py-2 bg-yellow-500' href={'/user/projects'}>
+                                Start Investing
                         </Link>
                   </LoginButton>
                     

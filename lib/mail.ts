@@ -19,7 +19,7 @@ const emailTemplate = (content: string) => `
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StableBricks</title>
+  <title>STABLEBRICKS</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -73,8 +73,8 @@ const emailTemplate = (content: string) => `
       ${content}
     </div>
     <div class="footer">
-      <p>&copy; ${new Date().getFullYear()} StableBricks. All rights reserved.</p>
-      <p>Plot 123, Victoria Island, Lagos, Nigeria</p>
+      <p>&copy; ${new Date().getFullYear()} STABLEBRICKS. All rights reserved.</p>
+      <p>Kundila Housing Estate, Tarauni, Kano</p>
     </div>
   </div>
 </body>
@@ -91,7 +91,7 @@ export const sendTwoFactorEmail = async (email: string, token: string) => {
     `
 
   await resend.emails.send({
-    from: "StableBricks <noreply@stablebricks.com>",
+    from: "STABLEBRICKS <noreply@stablebricks.com>",
     to: email,
     subject: "Your Authentication Code",
     html: emailTemplate(content),
@@ -110,7 +110,7 @@ export const sendPasswordResetEmail = async (email: string, token: string) => {
     `
 
   await resend.emails.send({
-    from: "StableBricks <noreply@stablebricks.com>",
+    from: "STABLEBRICKS <noreply@stablebricks.com>",
     to: email,
     subject: "Reset Your Password",
     html: emailTemplate(content),
@@ -122,15 +122,15 @@ export const sendVrificationEmail = async (email: string, token: string) => {
 
   const content = `
         <h2>Verify Your Email Address</h2>
-        <p>Thank you for registering with StableBricks. Please click the button below to verify your email address:</p>
+        <p>Thank you for registering with STABLEBRICS Limited. Please click the button below to verify your email address:</p>
         <a href="${confirmationLink}" class="button">Verify Email</a>
-        <p>If you didn't create an account with StableBricks, please ignore this email.</p>
+        <p>If you didn't create an account with STABLEBRICKS, please ignore this email.</p>
     `
 
   await resend.emails.send({
-    from: "StableBricks <noreply@stablebricks.com>",
+    from: "STABLEBRICKS <noreply@stablebricks.com>",
     to: email,
-    subject: "Verify Your StableBricks Account",
+    subject: "Verify Your STABLEBRICKS Account",
     html: emailTemplate(content),
   })
 }
@@ -140,14 +140,14 @@ export const sendDeveloperApprovalEmail = async (email: string, name: string) =>
 
   const content = `
         <h2>Congratulations, ${name}!</h2>
-        <p>Your application to become a StableBricks developer has been approved.</p>
+        <p>Your application to become a STABLEBRICKS developer has been approved.</p>
         <p>You can now access the developer dashboard and start submitting land and project proposals.</p>
         <a href="${loginLink}" class="button">Login to Your Account</a>
         <p>If you have any questions, please contact our support team.</p>
     `
 
   await resend.emails.send({
-    from: "StableBricks <noreply@stablebricks.com>",
+    from: "STABLEBRICKS <noreply@stablebricks.com>",
     to: email,
     subject: "Your Developer Application is Approved",
     html: emailTemplate(content),
@@ -158,7 +158,7 @@ export const sendDeveloperRejectionEmail = async (email: string, name: string, r
   const content = `
         <h2>Application Status Update</h2>
         <p>Dear ${name},</p>
-        <p>Thank you for your interest in becoming a StableBricks developer.</p>
+        <p>Thank you for your interest in becoming a STABLEBRICKS developer.</p>
         <p>After careful review of your application, we regret to inform you that we are unable to approve your request at this time.</p>
         <p><strong>Reason:</strong> ${reason}</p>
         <p>You are welcome to apply again in the future with additional information or experience.</p>
@@ -166,7 +166,7 @@ export const sendDeveloperRejectionEmail = async (email: string, name: string, r
     `
 
   await resend.emails.send({
-    from: "StableBricks <noreply@stablebricks.com>",
+    from: "STABLEBRICKS <noreply@stablebricks.com>",
     to: email,
     subject: "Your Developer Application Status",
     html: emailTemplate(content),
@@ -194,7 +194,7 @@ export const sendInvestmentConfirmationEmail = async (
     `
 
   await resend.emails.send({
-    from: "StableBricks <noreply@stablebricks.com>",
+    from: "STABLEBRICKS <noreply@stablebricks.com>",
     to: email,
     subject: "Investment Confirmation",
     html: emailTemplate(content),
@@ -226,7 +226,7 @@ export const sendBulkEmail = async (
       `;
 
       return resend.emails.send({
-        from: "StableBricks <noreply@stablebricks.com>",
+        from: "STABLEBRICKS <noreply@stablebricks.com>",
         to: recipient.email,
         subject: subject,
         html: emailTemplate(content),
@@ -288,7 +288,7 @@ export const sendPropertyListingNotification = async (
     `;
 
     await resend.emails.send({
-      from: "StableBricks <noreply@stablebricks.com>",
+      from: "STABLEBRICKS <noreply@stablebricks.com>",
       to: recipient.email,
       subject: `New Property Listing: ${property.title}`,
       html: emailTemplate(content),

@@ -36,14 +36,11 @@ export async function createProject(formData: FormData) {
       fieldErrors: validatedFields.error.flatten().fieldErrors,
     }
   }
-
   try {
     const project = await db.project.create({
       data: {
         ...validatedFields.data,
         slug: validatedFields.data.title.toLowerCase().replace(/\s+/g, "-"),
-        funded: 0,
-        totalInvested: "0",
       },
     })
 

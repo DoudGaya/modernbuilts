@@ -231,24 +231,33 @@ useEffect(() => {
                     <Label htmlFor="length">Project Length</Label>
                     <Input id="length" name="length" placeholder="e.g., 24 months" required />
                   </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                </div>                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="valuation">Valuation (₦)</Label>
-                    <Input id="valuation" name="valuation" placeholder="Enter project valuation" required />
+                    <Label htmlFor="valuation">Total Project Value (₦)</Label>
+                    <Input id="valuation" name="valuation" type="number" placeholder="Total value after completion" required />
+                    <p className="text-xs text-gray-500">Total value of the project when completed</p>
                   </div>
 
                   <div className="space-y-2">
+                    <Label htmlFor="investmentRequired">Investment Required (₦)</Label>
+                    <Input id="investmentRequired" name="investmentRequired" type="number" placeholder="Amount needed to complete project" required />
+                    <p className="text-xs text-gray-500">Total funding needed to complete the project</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
                     <Label htmlFor="sharePrice">Share Price (₦)</Label>
                     <Input id="sharePrice" name="sharePrice" type="number" placeholder="Price per share" required />
+                    <p className="text-xs text-gray-500">Price per individual share</p>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="roi">Expected ROI (%)</Label>
                     <Input id="roi" name="roi" type="number" placeholder="Expected return" required />
+                    <p className="text-xs text-gray-500">Expected return on investment percentage</p>
                   </div>
-                </div>                <div className="space-y-2">
+                </div><div className="space-y-2">
                   <Label htmlFor="duration">Project Duration</Label>
                   <Input id="duration" name="duration" type="date" required />
                 </div>

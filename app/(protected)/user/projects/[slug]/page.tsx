@@ -23,6 +23,7 @@ import {
 import { getProjectBySlug } from "@/actions/project-detail"
 import { addToWishlist, removeFromWishlist, isInWishlist } from "@/actions/wishlist"
 import { useToast } from "@/components/ui/use-toast"
+import { formatCurrency, formatCurrencyShort, calculateFundingProgress } from "@/lib/project-utils"
 import Link from "next/link"
 import { InvestmentModal } from "./components/InvestmentModal"
 
@@ -62,12 +63,11 @@ export default function ProjectDetailPage() {
     }
     setLoading(false)
   }
-
   const checkWishlistStatus = async () => {
     if (project) {
       const result = await isInWishlist(project.id)
-      if (result.success) {
-        setIsInWishlistState(result.isInWishlist)
+      if (!result.error) {
+        setIsInWishlistState(result.inWishlist)
       }
     }
   }
@@ -138,10 +138,9 @@ export default function ProjectDetailPage() {
           </Link>
         </div>
       </div>
-    )
-  }
-  const fundingProgress = project.fundingProgress || Math.floor(Math.random() * 100) // Use actual or fallback
-  const totalInvestors = project.totalInvestors || Math.floor(Math.random() * 50) + 10 // Use actual or fallback
+    )  }
+  const fundingProgress = calculateFundingProgress(project)
+  const totalInvestors = project.totalInvestors || project.investment?.length || 0
 
   return (
     <div className="space-y-6">
@@ -351,19 +350,26 @@ export default function ProjectDetailPage() {
                 </div>
                 <Progress value={fundingProgress} className="h-2" />
               </div>
-              
-              <div className="space-y-3">
+                <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-600">Total Investors</span>
                   <span className="font-semibold">{totalInvestors}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-600">Min Investment</span>
-                  <span className="font-semibold">₦{project.sharePrice.toLocaleString()}</span>
+                  <span className="font-semibold">{formatCurrency(project.sharePrice)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Target Amount</span>
-                  <span className="font-semibold">{project.valuation}</span>
+                  <span className="text-sm text-gray-600">Investment Required</span>
+                  <span className="font-semibold">{formatCurrencyShort(project.investmentRequired)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Project Value</span>
+                  <span className="font-semibold">{formatCurrencyShort(project.valuation)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Remaining Shares</span>
+                  <span className="font-semibold">{((project.totalShares || 0) - (project.soldShares || 0)).toLocaleString()}</span>
                 </div>
               </div>
             </CardContent>

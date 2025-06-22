@@ -16,13 +16,17 @@ export const createProject = async (formData: FormData) => {  try {
     const category = formData.get("category") as string
     const description = formData.get("description") as string
     const duration = formData.get("duration") as string
-    const valuation = formData.get("valuation") as string
+    const valuation = Number.parseInt(formData.get("valuation") as string)
+    const investmentRequired = Number.parseInt(formData.get("investmentRequired") as string)
     const state = formData.get("state") as string
     const city = formData.get("city") as string
     const location = formData.get("location") as string
     const sharePrice = Number.parseInt(formData.get("sharePrice") as string)
     const roi = Number.parseInt(formData.get("roi") as string)
     const projectStatus = formData.get("projectStatus") as "PENDING" | "ACTIVE" | "END" | "COMPLETED"
+
+    // Calculate total shares based on investment required and share price
+    const totalShares = Math.floor(investmentRequired / sharePrice)
 
     // Get file URLs from the form (new approach) or handle direct file uploads (old approach)
     // Check if we're receiving URLs or actual files
@@ -76,9 +80,7 @@ export const createProject = async (formData: FormData) => {  try {
 
     if (existingProject) {
       return { error: "A project with this title already exists" }
-    }
-
-    // Validate data - using URLs instead of file names for validation
+    }    // Validate data - using URLs instead of file names for validation
     const validatedFields = projectSchema.safeParse({
       title,
       length,
@@ -86,6 +88,7 @@ export const createProject = async (formData: FormData) => {  try {
       description,
       duration,
       valuation,
+      investmentRequired,
       state,
       city,
       location,
@@ -98,9 +101,7 @@ export const createProject = async (formData: FormData) => {  try {
     
     if (!validatedFields.success) {
       return { error: "Invalid fields", issues: validatedFields.error.issues }
-    }
-
-    // Create project in database - using the already uploaded files
+    }    // Create project in database - using the already uploaded files
     const project = await db.project.create({
       data: {
         title,
@@ -110,6 +111,9 @@ export const createProject = async (formData: FormData) => {  try {
         description,
         duration: new Date(duration),
         valuation,
+        investmentRequired,
+        totalShares,
+        soldShares: 0,
         state,
         city,
         location,
@@ -142,7 +146,8 @@ export const updateProject = async (id: string, formData: FormData) => {
     const category = formData.get("category") as string
     const description = formData.get("description") as string
     const duration = formData.get("duration") as string
-    const valuation = formData.get("valuation") as string
+    const valuation = Number.parseInt(formData.get("valuation") as string)
+    const investmentRequired = Number.parseInt(formData.get("investmentRequired") as string)
     const state = formData.get("state") as string
     const city = formData.get("city") as string
     const location = formData.get("location") as string
@@ -151,6 +156,9 @@ export const updateProject = async (id: string, formData: FormData) => {
     const projectStatus = formData.get("projectStatus") as "PENDING" | "ACTIVE" | "END" | "COMPLETED"
     const featuresString = formData.get("features") as string
     const features = featuresString ? JSON.parse(featuresString) : []
+
+    // Calculate total shares based on investment required and share price
+    const totalShares = Math.floor(investmentRequired / sharePrice)
 
     // Get file URLs from the form (existing URLs or new uploaded URLs)
     const coverImageUrl = formData.get("coverImageUrl") as string
@@ -169,9 +177,7 @@ export const updateProject = async (id: string, formData: FormData) => {
     // Validate required fields
     if (!title || !category || !description || !location || !sharePrice || !roi) {
       return { error: "Please fill in all required fields" }
-    }
-
-    // Update project in database
+    }    // Update project in database
     const project = await db.project.update({
       where: { id },
       data: {
@@ -182,6 +188,8 @@ export const updateProject = async (id: string, formData: FormData) => {
         description,
         duration: new Date(duration),
         valuation,
+        investmentRequired,
+        totalShares,
         state,
         city,
         location,
@@ -328,12 +336,10 @@ export const getAllProjects = async (filters?: {
           select: { investment: true },
         },
       },
-    })
-
-    // Calculate funding progress for each project
+    })    // Calculate funding progress for each project
     const projectsWithProgress = projects.map(project => {
       const totalInvested = project.investment.reduce((sum, inv) => sum + inv.investmentAmount, 0)
-      const targetAmount = parseInt(project.valuation.replace(/[^\d]/g, '')) || 1
+      const targetAmount = project.investmentRequired || 1
       const fundingProgress = Math.min((totalInvested / targetAmount) * 100, 100)
       
       return {

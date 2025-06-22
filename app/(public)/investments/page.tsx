@@ -6,95 +6,15 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { TrendingUp, Shield, Clock, DollarSign, MapPin, Search, Filter } from "lucide-react"
+import { getAllProjects } from "@/actions/project"
+import Link from "next/link"
+import Image from "next/image"
+import { formatCurrency, formatCurrencyShort, calculateFundingProgress } from "@/lib/project-utils"
 
-const investmentProjects = [
-  {
-    id: 1,
-    title: "Lagos Luxury Apartments",
-    location: "Victoria Island, Lagos",
-    expectedReturn: "18%",
-    duration: "24 months",
-    minInvestment: "₦500,000",
-    totalValue: "₦2.5B",
-    funded: 75,
-    status: "Active",
-    category: "Residential",
-    image: "/placeholder.svg?height=200&width=300",
-    description: "Premium luxury apartments in the heart of Victoria Island with world-class amenities.",
-  },
-  {
-    id: 2,
-    title: "Abuja Commercial Complex",
-    location: "Central Business District, Abuja",
-    expectedReturn: "22%",
-    duration: "18 months",
-    minInvestment: "₦1,000,000",
-    totalValue: "₦1.8B",
-    funded: 60,
-    status: "Active",
-    category: "Commercial",
-    image: "/placeholder.svg?height=200&width=300",
-    description: "Modern commercial complex in Abuja's prime business district.",
-  },
-  {
-    id: 3,
-    title: "Port Harcourt Residential Estate",
-    location: "GRA Phase 2, Port Harcourt",
-    expectedReturn: "16%",
-    duration: "30 months",
-    minInvestment: "₦300,000",
-    totalValue: "₦1.2B",
-    funded: 45,
-    status: "New",
-    category: "Residential",
-    image: "/placeholder.svg?height=200&width=300",
-    description: "Exclusive residential estate with modern infrastructure and security.",
-  },
-  {
-    id: 4,
-    title: "Kano Shopping Mall",
-    location: "Sabon Gari, Kano",
-    expectedReturn: "20%",
-    duration: "36 months",
-    minInvestment: "₦750,000",
-    totalValue: "₦3.2B",
-    funded: 30,
-    status: "New",
-    category: "Commercial",
-    image: "/placeholder.svg?height=200&width=300",
-    description: "Large-scale shopping mall project in Kano's commercial hub.",
-  },
-  {
-    id: 5,
-    title: "Ibadan Mixed-Use Development",
-    location: "Bodija, Ibadan",
-    expectedReturn: "19%",
-    duration: "28 months",
-    minInvestment: "₦400,000",
-    totalValue: "₦1.5B",
-    funded: 55,
-    status: "Active",
-    category: "Mixed-Use",
-    image: "/placeholder.svg?height=200&width=300",
-    description: "Mixed-use development combining residential and commercial spaces.",
-  },
-  {
-    id: 6,
-    title: "Calabar Resort Development",
-    location: "Calabar, Cross River",
-    expectedReturn: "25%",
-    duration: "42 months",
-    minInvestment: "₦1,500,000",
-    totalValue: "₦4.0B",
-    funded: 20,
-    status: "New",
-    category: "Hospitality",
-    image: "/placeholder.svg?height=200&width=300",
-    description: "Luxury resort development in the beautiful city of Calabar.",
-  },
-]
+export default async function InvestmentsPage() {
+  const projectsResult = await getAllProjects()
+  const projects = projectsResult.success ? projectsResult.projects : []
 
-export default function InvestmentsPage() {
   return (
     <>
       <PublicNavigations />
@@ -108,9 +28,11 @@ export default function InvestmentsPage() {
               professional management
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-              <Button size="lg" className="bg-black text-white hover:bg-gray-800">
-                Start Investing
-              </Button>
+              <Link href="/user/projects">
+                <Button size="lg" className="bg-black text-white hover:bg-gray-800">
+                  Start Investing
+                </Button>
+              </Link>
               <Button size="lg" variant="outline" className="border-black text-black hover:bg-black hover:text-white">
                 Download Brochure
               </Button>
@@ -176,74 +98,101 @@ export default function InvestmentsPage() {
 
           {/* Investment Projects Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {investmentProjects.map((project) => (
-              <Card key={project.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="relative">
-                  <img
-                    src={project.image || "/placeholder.svg"}
-                    alt={project.title}
-                    className="w-full h-48 object-cover"
-                  />
-                  <Badge
-                    className={`absolute top-4 right-4 ${project.status === "New" ? "bg-green-500" : "bg-blue-500"}`}
-                  >
-                    {project.status}
-                  </Badge>
-                  <Badge className="absolute top-4 left-4 bg-black/70 text-white">{project.category}</Badge>
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-xl font-poppins">{project.title}</CardTitle>
-                  <CardDescription className="flex items-center">
-                    <MapPin className="w-4 h-4 mr-1" />
-                    {project.location}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-sm text-gray-600">{project.description}</p>
+            {projects.length > 0 ? (
+              projects.map((project: any) => {
+                const fundingProgress = calculateFundingProgress(project)
+                const sharePrice = project.sharePrice || 0
+                
+                return (
+                  <Card key={project.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                    <div className="relative">
+                      <Image
+                        src={project.coverImage || "/placeholder.svg"}
+                        alt={project.title}
+                        width={300}
+                        height={200}
+                        className="w-full h-48 object-cover"
+                      />
+                      <Badge
+                        className={`absolute top-4 right-4 ${
+                          project.projectStatus === "ACTIVE" ? "bg-green-500" : 
+                          project.projectStatus === "COMPLETED" ? "bg-blue-500" : "bg-yellow-500"
+                        }`}
+                      >
+                        {project.projectStatus}
+                      </Badge>
+                      <Badge className="absolute top-4 left-4 bg-black/70 text-white">
+                        {project.category}
+                      </Badge>
+                    </div>
+                    <CardHeader>
+                      <CardTitle className="text-xl font-poppins">{project.title}</CardTitle>
+                      <CardDescription className="flex items-center">
+                        <MapPin className="w-4 h-4 mr-1" />
+                        {project.city}, {project.state}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <p className="text-sm text-gray-600 line-clamp-2">{project.description}</p>
 
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div className="flex items-center">
-                      <TrendingUp className="w-4 h-4 mr-2 text-green-500" />
-                      <span className="font-semibold">{project.expectedReturn} ROI</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Clock className="w-4 h-4 mr-2 text-blue-500" />
-                      <span>{project.duration}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <DollarSign className="w-4 h-4 mr-2 text-yellow-500" />
-                      <span>Min: {project.minInvestment}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Shield className="w-4 h-4 mr-2 text-purple-500" />
-                      <span>Value: {project.totalValue}</span>
-                    </div>
-                  </div>
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div className="flex items-center">
+                          <TrendingUp className="w-4 h-4 mr-2 text-green-500" />
+                          <span className="font-semibold">{project.roi}% ROI</span>
+                        </div>
+                        <div className="flex items-center">
+                          <Clock className="w-4 h-4 mr-2 text-blue-500" />
+                          <span>{project.length}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <DollarSign className="w-4 h-4 mr-2 text-yellow-500" />
+                          <span>Min: {formatCurrency(sharePrice)}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <Shield className="w-4 h-4 mr-2 text-purple-500" />
+                          <span>Value: {formatCurrencyShort(project.valuation || 0)}</span>
+                        </div>
+                      </div>
 
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Funding Progress</span>
-                      <span>{project.funded}%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-yellow-400 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${project.funded}%` }}
-                      ></div>
-                    </div>
-                  </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span>Funding Progress</span>
+                          <span>{Math.round(fundingProgress)}%</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div
+                            className="bg-yellow-400 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${fundingProgress}%` }}
+                          ></div>
+                        </div>
+                        <div className="flex justify-between text-xs text-gray-500">
+                          <span>Raised: {formatCurrencyShort((project.soldShares || 0) * sharePrice)}</span>
+                          <span>Goal: {formatCurrencyShort(project.investmentRequired || 0)}</span>
+                        </div>
+                      </div>
 
-                  <div className="flex gap-2">
-                    <Button className="flex-1 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">
-                      Invest Now
-                    </Button>
-                    <Button variant="outline" className="flex-1">
-                      View Details
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                      <div className="flex gap-2">
+                        <Link href={`/user/projects/${project.slug}`} className="flex-1">
+                          <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">
+                            Invest Now
+                          </Button>
+                        </Link>
+                        <Link href={`/projects/${project.slug}`} className="flex-1">
+                          <Button variant="outline" className="w-full">
+                            View Details
+                          </Button>
+                        </Link>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
+              })
+            ) : (
+              <div className="col-span-full text-center py-12">
+                <h3 className="text-xl font-semibold mb-2">No Investment Projects Available</h3>
+                <p className="text-gray-500">Check back soon for exciting investment opportunities.</p>
+              </div>
+            )}
           </div>
 
           {/* Load More */}

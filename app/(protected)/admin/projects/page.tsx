@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, Filter, Plus, Eye, Edit, Trash2, TrendingUp, Clock, DollarSign, MapPin } from "lucide-react"
 import { getAllProjects, deleteProject } from "@/actions/project"
 import { toast } from "@/components/ui/use-toast"
+import { formatCurrency, formatCurrencyShort, calculateFundingProgress } from "@/lib/project-utils"
 
 type ProjectWithProgress = {
   id: string
@@ -20,7 +21,10 @@ type ProjectWithProgress = {
   category: string
   description: string
   duration: Date
-  valuation: string
+  valuation: number
+  investmentRequired: number
+  totalShares: number
+  soldShares: number
   state: string
   city: string
   location: string
@@ -201,9 +205,7 @@ export default function ProjectsPage() {
             </CardHeader>
 
             <CardContent className="space-y-4">
-              <p className="text-sm text-gray-600 line-clamp-2">{project.description}</p>
-
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <p className="text-sm text-gray-600 line-clamp-2">{project.description}</p>              <div className="grid grid-cols-2 gap-4 text-sm">
                 <div className="flex items-center">
                   <TrendingUp className="w-4 h-4 mr-2 text-green-500" />
                   <span className="font-semibold">{project.roi}% ROI</span>
@@ -214,9 +216,27 @@ export default function ProjectsPage() {
                 </div>
                 <div className="flex items-center">
                   <DollarSign className="w-4 h-4 mr-2 text-yellow-500" />
-                  <span>₦{project.sharePrice.toLocaleString()}</span>
+                  <span>{formatCurrency(project.sharePrice)}</span>
                 </div>
-                <div className="text-sm text-gray-500">Value: {project.valuation}</div>
+                <div className="text-sm text-gray-500">Value: {formatCurrencyShort(project.valuation)}</div>
+              </div>
+
+              {/* Funding Progress */}
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Funding Progress</span>
+                  <span>{Math.round(calculateFundingProgress(project))}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="bg-yellow-400 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${calculateFundingProgress(project)}%` }}
+                  ></div>
+                </div>
+                <div className="flex justify-between text-xs text-gray-500">
+                  <span>Raised: {formatCurrencyShort((project.soldShares || 0) * project.sharePrice)}</span>
+                  <span>Target: {formatCurrencyShort(project.investmentRequired)}</span>
+                </div>
               </div>
 
               <div className="flex gap-2 pt-2 border-t">

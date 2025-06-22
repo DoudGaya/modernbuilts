@@ -27,7 +27,10 @@ type Project = {
   category: string
   description: string
   duration: Date
-  valuation: string
+  valuation: number
+  investmentRequired: number
+  totalShares: number
+  soldShares: number
   state: string
   city: string
   location: string
@@ -296,22 +299,36 @@ export default function EditProjectPage({ params }: EditProjectPageProps) {
             </CardContent>
           </Card>
 
-          {/* Financial Information */}
-          <Card>
+          {/* Financial Information */}          <Card>
             <CardHeader>
               <CardTitle>Financial Details</CardTitle>
               <CardDescription>Update pricing and investment details</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="valuation">Valuation</Label>
+                <Label htmlFor="valuation">Total Project Value (₦)</Label>
                 <Input
                   id="valuation"
                   name="valuation"
+                  type="number"
                   defaultValue={project.valuation}
-                  placeholder="e.g., ₦50,000,000"
+                  placeholder="Total value after completion"
                   required
                 />
+                <p className="text-xs text-gray-500 mt-1">Total value of the project when completed</p>
+              </div>
+
+              <div>
+                <Label htmlFor="investmentRequired">Investment Required (₦)</Label>
+                <Input
+                  id="investmentRequired"
+                  name="investmentRequired"
+                  type="number"
+                  defaultValue={project.investmentRequired}
+                  placeholder="Amount needed to complete project"
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-1">Total funding needed to complete the project</p>
               </div>
 
               <div>
@@ -325,6 +342,7 @@ export default function EditProjectPage({ params }: EditProjectPageProps) {
                   step="1000"
                   required
                 />
+                <p className="text-xs text-gray-500 mt-1">Price per individual share</p>
               </div>
 
               <div>
@@ -338,6 +356,7 @@ export default function EditProjectPage({ params }: EditProjectPageProps) {
                   max="100"
                   required
                 />
+                <p className="text-xs text-gray-500 mt-1">Expected return on investment percentage</p>
               </div>
 
               <div>
@@ -353,6 +372,20 @@ export default function EditProjectPage({ params }: EditProjectPageProps) {
                     <SelectItem value="COMPLETED">Completed</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              {/* Display calculated fields */}
+              <div className="pt-4 border-t">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <Label className="text-gray-600">Total Shares</Label>
+                    <p className="font-semibold">{project.totalShares?.toLocaleString() || 0}</p>
+                  </div>
+                  <div>
+                    <Label className="text-gray-600">Sold Shares</Label>
+                    <p className="font-semibold">{project.soldShares?.toLocaleString() || 0}</p>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
