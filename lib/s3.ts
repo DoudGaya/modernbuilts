@@ -124,3 +124,52 @@ export async function generatePresignedUrl(key: string, contentType: string): Pr
 
   return signedUrl
 }
+
+export async function uploadBase64ToS3(base64Data: string, fileName: string, folder: string): Promise<string> {
+  try {
+    console.log(`Starting S3 upload for base64 file: ${fileName}`);
+    
+    // Decode base64 data
+    const fileBuffer = Buffer.from(base64Data, 'base64');
+    
+    // Validate buffer
+    if (!fileBuffer || fileBuffer.length === 0) {
+      throw new Error("File data is empty or corrupted");
+    }
+    
+    // Generate unique file name with UUID
+    const sanitizedName = fileName.replace(/[^a-zA-Z0-9._-]/g, "-");
+    const fileKey = `${folder}/${crypto.randomUUID()}-${sanitizedName}`;
+    
+    // Get bucket name with fallback
+    const bucketName = process.env.AWS_BUCKET_NAME || process.env.AWS_S3_BUCKET_NAME;
+    if (!bucketName) {
+      throw new Error("S3 bucket name is not defined in environment variables");
+    }
+    
+    const region = process.env.AWS_REGION || "us-east-1";
+    
+    console.log(`Uploading to S3 bucket: ${bucketName}, region: ${region}, key: ${fileKey}`);
+
+    const params = {
+      Bucket: bucketName,
+      Key: fileKey,
+      Body: fileBuffer,
+      ContentType: "image/png", // Default for profile images
+      ContentDisposition: `inline; filename="${sanitizedName}"`,
+    };
+
+    await s3Client.send(new PutObjectCommand(params));
+    console.log(`S3 upload successful for: ${fileName}`);
+    
+    return `https://${bucketName}.s3.${region}.amazonaws.com/${fileKey}`;
+  } catch (error) {
+    console.error("S3 base64 upload error:", error);
+    
+    if (error instanceof Error) {
+      throw new Error(`Failed to upload profile image: ${error.message}`);
+    } else {
+      throw new Error("Failed to upload profile image due to an unknown error");
+    }
+  }
+}

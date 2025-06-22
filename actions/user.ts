@@ -62,3 +62,42 @@ export const getUserDashboardData = async () => {
     return { error: "Failed to fetch dashboard data" }
   }
 }
+
+export const getUserInvestmentStats = async () => {
+  try {
+    const session = await auth()
+
+    if (!session?.user?.id) {
+      return { error: "Unauthorized" }
+    }
+
+    const userId = session.user.id
+
+    // Get user's investments
+    const userInvestments = await db.investment.findMany({
+      where: { userId },
+      include: {
+        project: {
+          select: {
+            projectStatus: true,
+          },
+        },
+      },
+    })
+
+    // Calculate stats
+    const totalInvestments = userInvestments.length
+    const activeProjects = userInvestments.filter(inv => inv.project.projectStatus === "ACTIVE").length
+
+    return {
+      success: true,
+      stats: {
+        totalInvestments,
+        activeProjects,
+      }
+    }
+  } catch (error) {
+    console.error("Investment stats fetch error:", error)
+    return { error: "Failed to fetch investment stats" }
+  }
+}

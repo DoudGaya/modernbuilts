@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { ReferralCard } from "@/components/ReferralCard"
 import { 
   Wallet, 
   ArrowUpRight, 
@@ -758,9 +759,13 @@ export default function WalletPage() {
                   No transactions yet
                 </p>
               )}
-            </CardContent>
-          </Card>
+            </CardContent>          </Card>
         </div>
+      </div>
+
+      {/* Referral Section */}
+      <div className="mt-8">
+        <ReferralCard />
       </div>
     </div>
   )

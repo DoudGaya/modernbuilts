@@ -1,5 +1,6 @@
 "use server"
 import * as z from 'zod'
+import bcrypt from 'bcryptjs'
 import { db } from '@/lib/db'
 import { getUserById } from '@/data/user'
 import { currentUser } from '@/lib/auth'
@@ -64,7 +65,7 @@ export const profileRecordsUpdate = async (values: z.infer<typeof SettingsSchema
 }
 
 export const securityRecordsUpdate = async ( values: z.infer<typeof settingsSecurityDetailsSchema>) => {
-      const user = await currentUser();
+    const user = await currentUser();
     if (!user) {
         return {error: "Unauthorized"}
     }
@@ -73,11 +74,58 @@ export const securityRecordsUpdate = async ( values: z.infer<typeof settingsSecu
     if (!dbUser) {
         return {error: "Unauthorized"}
     }
+
+    // Check if user is OAuth - they shouldn't be able to update passwords
+    if (user.isOAuth) {
+        // Only allow 2FA updates for OAuth users
+        if (values.oldPassword || values.newPassword || values.newPasswordConfirmation) {
+            return {error: "Cannot update password for social login accounts"}
+        }
+        
+        // Update only 2FA setting
+        await db.user.update({
+            where: {id: dbUser.id},
+            data: {
+                isTwoFactorEnabled: values.isTwoFactorEnabled
+            }
+        })
+        return {success: "Security settings updated"}
+    }
+
+    // For regular users, handle password changes
+    const updateData: any = {};
+    
+    if (values.isTwoFactorEnabled !== undefined) {
+        updateData.isTwoFactorEnabled = values.isTwoFactorEnabled;
+    }    // If password fields are provided, validate them
+    if (values.newPassword || values.newPasswordConfirmation) {
+        if (!values.oldPassword) {
+            return {error: "Current password is required"}
+        }
+        
+        if (values.newPassword !== values.newPasswordConfirmation) {
+            return {error: "New passwords do not match"}
+        }
+        
+        // Verify old password
+        if (dbUser.password) {
+            const passwordsMatch = await bcrypt.compare(values.oldPassword, dbUser.password);
+            if (!passwordsMatch) {
+                return {error: "Current password is incorrect"}
+            }
+        }
+        
+        // Hash new password
+        if (values.newPassword) {
+            const hashedPassword = await bcrypt.hash(values.newPassword, 12);
+            updateData.password = hashedPassword;
+        }
+    }
+
     await db.user.update({
         where: {id: dbUser.id},
-        data: {
-            ...values,
-           }
+        data: updateData
     })
-    return {success: "Profile Updated"}
+    
+    return {success: "Security settings updated"}
 }

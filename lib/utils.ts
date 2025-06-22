@@ -6,8 +6,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function generateReferralCode(email: string): string {
-  const hash = crypto.createHash("md5").update(email).digest("hex")
+export function generateReferralCode(input: string): string {
+  // Create a referral code based on input (email or name) and hash
+  const hash = crypto.createHash("md5").update(input).digest("hex")
   return hash.substring(0, 8).toUpperCase()
 }
 

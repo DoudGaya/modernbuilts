@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { TrendingUp, Wallet, Building2, Eye, Download } from "lucide-react"
 import { getUserDashboardData } from "@/actions/user"
+import { ReferralCard } from "@/components/ReferralCard"
 import Link from "next/link"
 
 export default async function UserDashboard() {
@@ -141,8 +142,31 @@ export default async function UserDashboard() {
                 </Button>
               </Link>
             </div>
-          </CardContent>
-        </Card>
+          </CardContent>        </Card>
+      </div>
+
+      {/* Referral Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <ReferralCard />
+        </div>
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Need Help?</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <p className="text-sm text-gray-600">
+                  Contact our support team for assistance with your investments.
+                </p>
+                <Button variant="outline" className="w-full">
+                  Contact Support
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* Quick Actions */}

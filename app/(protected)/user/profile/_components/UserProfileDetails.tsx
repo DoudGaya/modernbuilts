@@ -1,14 +1,28 @@
 "use client"
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useCurrentUser } from '@/hooks/use-current-user'
 import { User } from '@prisma/client'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
+import { getUserInvestmentStats } from '@/actions/user'
 
 
 // @ts-ignore
 export const UserProfileDetails = ({ changeModal }) => {
     const user = useCurrentUser()
+    const [investmentStats, setInvestmentStats] = useState({ totalInvestments: 0, activeProjects: 0 })
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            const result = await getUserInvestmentStats()
+            if (result.success) {
+                setInvestmentStats(result.stats)
+            }
+        }
+        if (user) {
+            fetchStats()
+        }
+    }, [user])
 
 
     if (!user) {
@@ -31,19 +45,17 @@ export const UserProfileDetails = ({ changeModal }) => {
                     <p className=' text-xs'>Private Investor </p>
                     <h3 className=' font-poppins text-lg font-semibold text-primary'> { user.name } </h3>
                 </div>
-                </div>
-                <div className=" divide-x rounded-md bg-[#FFFCF8] dark:bg-stone-900 py-1 px-3 border-2 border-gray-200/50 grid gap-2 grid-cols-2">
+                </div>                <div className=" divide-x rounded-md bg-[#FFFCF8] dark:bg-stone-900 py-1 px-3 border-2 border-gray-200/50 grid gap-2 grid-cols-2">
                     <div className=" flex flex-col justify-center w-full text-center">
-                        <p className=' text-2xl font-semibold font-poppins'>20</p>
+                        <p className=' text-2xl font-semibold font-poppins'>{investmentStats.activeProjects}</p>
                         <span className=' text-xs font-poppins'>active project</span>
                     </div>
                     <div className=" flex flex-col justify-center w-full text-center">
-                        <p className=' text-2xl font-semibold font-poppins'>30</p>
+                        <p className=' text-2xl font-semibold font-poppins'>{investmentStats.totalInvestments}</p>
                         <span className=' text-xs font-poppins'>Investment</span>
                     </div>
-                </div> 
-           </div>
-           <div className=" flex flex-col w-full space-y-3">
+                </div>
+           </div>           <div className=" flex flex-col w-full space-y-3">
             {/* PERSONAL DETAILS */}
                 <div className=" rounded-lg space-y-3 py-2 px-3 w-full flex flex-col">
                     <p className=' font-semibold text-gray-700 text-sm'>Personal Details</p>
@@ -58,23 +70,9 @@ export const UserProfileDetails = ({ changeModal }) => {
                         </div>
                     </div>
                 </div>
-            {/* ACCOUNT DETAILS */}
-                <div className=" rounded-lg space-y-3 py-2 px-3 w-full flex flex-col">
-                    <p className=' font-semibold text-gray-700 text-sm'>Account Details</p>
-                    <div className=" flex justify-between w-full">
-                        <div className=" flex flex-col">
-                            <p className=' text-gray-600 text-sm'>Bank Name</p>
-                            <p className=' font-semibold text-sm text-gray-600'> { "GT Bank" } </p>
-                        </div>
-                        <div className=" flex flex-col text-end">
-                            <p className=' text-gray-600 text-sm'>Account Number</p>
-                            <p className=' font-semibold text-sm text-gray-600'> {user.phone || "Not Available"} </p>
-                        </div>
-                    </div>
-                </div>
-                        {/* SECUTIRY DETAILS */}
+                        {/* SECURITY DETAILS */}
                 <div className=" rounded-lg  space-y-3 py-2 px-3 w-full flex flex-col">
-                    <p className=' font-semibold text-gray-700 text-sm'>Account Details</p>
+                    <p className=' font-semibold text-gray-700 text-sm'>Security Settings</p>
                     <div className=" flex justify-between w-full">
                         <div className=" flex flex-col text-start justify-center ">
                             <p className='text-gray-600 text-sm font-semibold'>2FA Authentication</p>
@@ -88,11 +86,12 @@ export const UserProfileDetails = ({ changeModal }) => {
                     </div>
                 </div>
            </div>
-        </div>
-       <div className="w-full grid grid-cols-2 gap-x-2 ">
+        </div>       <div className="w-full grid grid-cols-2 gap-x-2 ">
             <Button className=' w-full bg-primary text-black dark:bg-primary dark:text-black' onClick={() => changeModal("profile")}>Edit Profile</Button>
-            {! user?.isOAuth && (
-            <Button className=' w-full hover:bg-black/70 bg-black text-primary dark:bg-primary dark:text-black' onClick={() => changeModal("security")}>Security Settings</Button>
+            {!user?.isOAuth ? (
+                <Button className=' w-full hover:bg-black/70 bg-black text-primary dark:bg-primary dark:text-black' onClick={() => changeModal("security")}>Security Settings</Button>
+            ) : (
+                <Button className=' w-full bg-gray-300 text-gray-500 cursor-not-allowed' disabled title="Security settings not available for social login accounts">Security Settings</Button>
             )}
        </div>
     </div>

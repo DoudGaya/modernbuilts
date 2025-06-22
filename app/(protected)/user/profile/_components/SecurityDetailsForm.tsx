@@ -39,16 +39,15 @@ export const SecurityDetailsForm = ( {editModal, changeModal}: {editModal: strin
 
   
      
-   
-    const form = useForm<z.infer<typeof settingsSecurityDetailsSchema>>({
+     const form = useForm<z.infer<typeof settingsSecurityDetailsSchema>>({
       resolver: zodResolver(settingsSecurityDetailsSchema),
       defaultValues: {
-       oldPassword: undefined,
-       newPassword: undefined,
-       newPasswordConfirmation: undefined,
-       isTwoFactorEnabled: undefined
+       oldPassword: "",
+       newPassword: "",
+       newPasswordConfirmation: "",
+       isTwoFactorEnabled: user?.isTwoFactorEnabled || false
       },
-    })     
+    })
 
     const onSubmit = (values: z.infer<typeof settingsSecurityDetailsSchema>) => {
         startTransition(() => {
@@ -64,7 +63,7 @@ export const SecurityDetailsForm = ( {editModal, changeModal}: {editModal: strin
            })
         })
     }
-    if (editModal == 'security') {
+    if (editModal == 'security' && !user?.isOAuth) {
         return (
            <div className=" flex flex-col space-y-4 h-fit shadow-sm max-h-min w-full bg-white rounded-lg">
            <div className=" font-poppins flex justify-between px-4 text-xl bg-black text-primary rounded-t-lg py-4">

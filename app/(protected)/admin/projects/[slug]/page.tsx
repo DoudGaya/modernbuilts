@@ -284,23 +284,10 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 {project.valuation && (
                   <div className="flex justify-between">
                     <span>Remaining</span>
-                    <span className="font-semibold text-yellow-600">
-                      {(() => {
+                    <span className="font-semibold text-yellow-600">                      {(() => {
                         try {
-                          // Remove currency and commas
-                          const cleanVal = project.valuation.replace(/[₦,]/g, "");
-                          let valNumber = 0;
-                          
-                          // Handle if the valuation has B (billions) or M (millions)
-                          if (cleanVal.includes("B")) {
-                            valNumber = parseFloat(cleanVal) * 1000000000;
-                          } else if (cleanVal.includes("M")) {
-                            valNumber = parseFloat(cleanVal) * 1000000;
-                          } else {
-                            valNumber = parseFloat(cleanVal);
-                          }
-                          
-                          const remaining = Math.max(0, valNumber - totalRaised);
+                          // valuation is now a number, so no need to parse
+                          const remaining = Math.max(0, project.valuation - totalRaised);
                           
                           if (remaining >= 1000000000) {
                             return `₦${(remaining / 1000000000).toFixed(2)}B`;
