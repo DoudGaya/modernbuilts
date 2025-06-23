@@ -21,30 +21,35 @@ export const AdminNavigation = () => {
       <div className="px-3 py-3 lg:px-5 lg:pl-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-start">
-            <Link href="/admin" className="flex mr-6">
-              <Image src={logo || "/placeholder.svg"} alt="StableBricks" className="h-8 object-contain object-left mr-3" />
-              {/* <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap">Admin Dashboard</span> */}
+            {/* Leave space for mobile menu button */}
+            <div className="w-10 md:w-0"></div>
+            <Link href="/admin" className="flex mr-2 md:mr-6">
+              <Image src={logo || "/placeholder.svg"} alt="StableBricks" className="h-6 md:h-8 object-contain object-left mr-2 md:mr-3" />
             </Link>
           </div>
 
-          <div className="flex items-center">
-            <div className="relative mr-6">
+          <div className="flex items-center space-x-2">
+            {/* Search - Hidden on small mobile screens */}
+            <div className="relative mr-2 md:mr-6 hidden sm:block">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <Search className="w-4 h-4 text-gray-500" />
-              </div>              <Input type="text" placeholder="Search..." className="pl-10 pr-4 py-2 w-64" />
+              </div>
+              <Input type="text" placeholder="Search..." className="pl-10 pr-4 py-2 w-48 md:w-64" />
             </div>
 
-            <Button variant="ghost" size="sm" className="mr-2">
-              <Bell className="w-5 h-5" />
+            {/* Notifications */}
+            <Button variant="ghost" size="sm">
+              <Bell className="w-4 md:w-5 h-4 md:h-5" />
             </Button>
 
+            {/* User Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm">
-                  <User className="w-5 h-5" />
+                  <User className="w-4 md:w-5 h-4 md:h-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuLabel>Admin Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>

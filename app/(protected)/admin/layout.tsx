@@ -7,15 +7,14 @@ import { AdminSidebar } from '@/components/admin/AdminSidebar';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await auth()
-  
-  if (session?.user.role === "ADMIN") {
+    if (session?.user.role === "ADMIN") {
     return (
       <SessionProvider session={session}>
           <div className="min-h-screen bg-gray-50">
             <AdminNavigation />
             <div className="flex">
               <AdminSidebar />
-              <main className="flex-1 ml-64 my-20 p-8">{children}</main>
+              <main className="flex-1 md:ml-64 pt-16 md:pt-20 p-4 md:p-8">{children}</main>
             </div>
           </div>
       </SessionProvider>

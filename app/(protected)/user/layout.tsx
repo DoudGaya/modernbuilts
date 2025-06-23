@@ -6,31 +6,22 @@ import { getRouteByUserRole } from '@/routes/index';
 import { TopNav } from "../_components/TopNav";
 import { UserNavigation } from "@/components/user/UserNavigation"
 import { UserSidebar } from "@/components/user/UserSidebar"
+import { MobileBottomNav } from "@/components/user/MobileBottomNav"
 import { UserDashboardSideBar } from './_components/UserSideBar';
 
 export default async function UserLayout({ children }: { children: React.ReactNode }) {
   const session = await auth()
-  
   if (session?.user.role === "USER") {
     return (
       <SessionProvider session={session}>
-         <div className="min-h-screen bg-gray-50">
+         <div className="min-h-screen bg-gray-50 pb-16 md:pb-0">
             <UserNavigation />
             <div className="flex">
               <UserSidebar />
-              <main className="flex-1 ml-64 py-20 p-8">{children}</main>
+              <main className="flex-1 md:ml-64 pt-16 md:pt-20 p-4 md:p-8">{children}</main>
             </div>
+            <MobileBottomNav />
           </div>
-    
-        {/* <div className="flex h-screen bg-slate-50 dark:bg-black md:flex-row md:overflow-hidden">
-          <UserDashboardSideBar/>
-          <div className="flex flex-col w-full md:overflow-y-auto ">
-            <TopNav />
-            <div className=" mt-20 md:mt-0 w-full h-full">
-              {children}
-            </div>
-          </div>
-        </div> */}
       </SessionProvider>
     );
   } else {
