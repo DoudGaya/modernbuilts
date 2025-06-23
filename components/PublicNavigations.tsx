@@ -61,8 +61,8 @@ const companyLinks = [
 ]
 
 export const PublicNavigations = () => {
-  const session = useSession()
-  const user = session.data?.user?.name
+  const { data: session } = useSession()
+  const user = session?.user?.name
 
   return (
     <>

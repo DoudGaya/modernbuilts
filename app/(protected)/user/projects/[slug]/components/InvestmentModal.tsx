@@ -55,7 +55,7 @@ export function InvestmentModal({
     onSharesChange(newShares)
   }
   const config = {
-    public_key: process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY || 'FLWPUBK_TEST-SANDBOXDEMOKEY-X',
+    public_key: process.env.NEXT_PUBLIC_FLUTTERWAVE || 'FLWPUBK_TEST-SANDBOXDEMOKEY-X',
     tx_ref: `INV-${Date.now()}-${user?.id}`,
     amount: calculateInvestmentAmount(),
     currency: 'NGN',

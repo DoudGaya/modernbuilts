@@ -51,11 +51,15 @@ export function LoginForm() {
     },
   })
 
-
-  const googleSignIn = (provider: "google") => {
-    signIn(provider, {
-      callbackUrl: DEFAULT_LOGGED_IN_REDIRRECT
-    })
+  const googleSignIn = async (provider: "google") => {
+    try {
+      await signIn(provider, {
+        callbackUrl: DEFAULT_LOGGED_IN_REDIRRECT
+      })
+    } catch (error) {
+      console.error('Google sign-in error:', error)
+      setError('Failed to sign in with Google. Please try again.')
+    }
   }
 
 
@@ -169,7 +173,11 @@ export function LoginForm() {
       <fieldset className=" border-t-2 flex flex-col text-center items-center align-middle justify-center">
           <legend className=" self-center flex px-2 text-sm text-gray-600" >or log in with</legend>
           <div className=" py-4 w-full ">
-            <button onClick={() => googleSignIn("google")} className=" rounded-md hover:bg-gray-100 transition-all ease-in-out flex space-x-3 items-center justify-center bg-white py-2 border-2  border-gray-300 w-full ">
+            <button 
+              type="button"
+              onClick={() => googleSignIn("google")} 
+              className=" rounded-md hover:bg-gray-100 transition-all ease-in-out flex space-x-3 items-center justify-center bg-white py-2 border-2  border-gray-300 w-full "
+            >
             <p className=" text-md">Log in with Google</p>
             <FcGoogle size={23} />
             </button>

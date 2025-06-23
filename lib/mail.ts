@@ -122,7 +122,7 @@ export const sendVrificationEmail = async (email: string, token: string) => {
 
   const content = `
         <h2>Verify Your Email Address</h2>
-        <p>Thank you for registering with STABLEBRICS Limited. Please click the button below to verify your email address:</p>
+        <p>Thank you for registering with STABLEBRICkS Limited. Please click the button below to verify your email address:</p>
         <a href="${confirmationLink}" class="button">Verify Email</a>
         <p>If you didn't create an account with STABLEBRICKS, please ignore this email.</p>
     `

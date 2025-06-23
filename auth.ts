@@ -76,7 +76,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
             const existingAccount = await getAccountByUserId(existingUser.id) 
 
-            token.isOAuth == !!existingAccount
+            token.isOAuth = !!existingAccount
             token.name = existingUser.name
             token.email = existingUser.email
             token.phone = existingUser.phone

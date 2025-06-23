@@ -197,7 +197,7 @@ export default function WalletPage() {
 
     // Configure Flutterwave payment
     const config = {
-      public_key: process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY!,
+      public_key: process.env.NEXT_PUBLIC_FLUTTERWAVE!,
       tx_ref: Date.now().toString(),
       amount: amount,
       currency: 'NGN',
