@@ -27,6 +27,8 @@ model User {
   complaints          Complaint[]
   landSubmissions     LandSubmission[]
   wishlistItems       Wishlist[]
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
   @@map("user")
 }
 
@@ -197,6 +199,8 @@ model Contact {
   subject         String
   message         String
   status          String @default("Unread") // Unread, Read, Responded
+  response        String?
+  respondedAt     DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }

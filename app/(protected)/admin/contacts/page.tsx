@@ -158,9 +158,7 @@ export default function ContactsPage() {
               <div>
                 <h4 className="font-semibold mb-2">Subject: {contact.subject}</h4>
                 <p className="text-gray-700">{contact.message}</p>
-              </div>
-
-              <div className="flex gap-2 pt-2 border-t">
+              </div>              <div className="flex gap-2 pt-2 border-t">
                 <Select onValueChange={(value) => handleStatusUpdate(contact.id, value)}>
                   <SelectTrigger className="w-32">
                     <SelectValue placeholder="Update Status" />
@@ -170,7 +168,17 @@ export default function ContactsPage() {
                     <SelectItem value="Responded">Mark as Responded</SelectItem>
                   </SelectContent>
                 </Select>
-                <Button variant="outline" size="sm">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => window.location.href = `/admin/contacts/${contact.id}`}
+                >
+                  View Details
+                </Button>                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => window.location.href = `/admin/contacts/${contact.id}`}
+                >
                   <Mail className="w-4 h-4 mr-1" />
                   Reply
                 </Button>

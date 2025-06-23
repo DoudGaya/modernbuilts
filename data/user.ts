@@ -10,12 +10,17 @@ export const getUserByEmail = async (email: string) => {
     return user
     
    } catch (error) {
-        console.log(error)
+        console.error("Error fetching user by email:", error)
+        return null
    }
 }
 
 export const getUserById = async (id: string) => {
     try {
+        if (!id) {
+            return null
+        }
+        
         const user = await db.user.findUnique({
             where: {
                 id
@@ -24,7 +29,8 @@ export const getUserById = async (id: string) => {
         return user
         
     } catch (error) {
-       console.log(error)
+       console.error("Error fetching user by id:", error)
+       return null
     }
 }
 

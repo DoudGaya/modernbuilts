@@ -1,113 +1,222 @@
 "use server"
-import { complaintSchema } from "@/lib/schema"
+import { z } from "zod"
 import { db } from "@/lib/db"
-import { auth } from "@/auth"
+import { currentUser } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
+import { sendComplaintNotificationEmail, sendComplaintResponseEmail } from "@/lib/mail"
 
-export const createComplaint = async (formData: FormData) => {
+const complaintSchema = z.object({
+  subject: z.string().min(5, "Subject must be at least 5 characters"),
+  description: z.string().min(20, "Description must be at least 20 characters"),
+})
+
+export const createComplaint = async (values: z.infer<typeof complaintSchema>) => {
   try {
-    const session = await auth()
+    const user = await currentUser()
 
-    if (!session?.user?.id) {
+    if (!user?.id) {
       return { error: "Unauthorized" }
     }
 
-    const subject = formData.get("subject") as string
-    const description = formData.get("description") as string
-
-    const validatedFields = complaintSchema.safeParse({
-      subject,
-      description,
-    })
+    const validatedFields = complaintSchema.safeParse(values)
 
     if (!validatedFields.success) {
-      return { error: "Invalid fields", issues: validatedFields.error.issues }
+      return { error: "Invalid fields" }
     }
+
+    const { subject, description } = validatedFields.data
 
     const complaint = await db.complaint.create({
       data: {
         subject,
         description,
-        userId: session.user.id,
+        userId: user.id,
+        status: "Open"
       },
-    })
-
-    return { success: true, complaint }
-  } catch (error) {
-    console.error("Complaint creation error:", error)
-    return { error: "Failed to create complaint" }
-  }
-}
-
-export const getAllComplaints = async (filters?: {
-  status?: string
-  search?: string
-}) => {
-  try {
-    const where: any = {}
-
-    if (filters?.status && filters.status !== "all") {
-      where.status = filters.status
-    }
-
-    if (filters?.search) {
-      where.OR = [
-        { subject: { contains: filters.search, mode: "insensitive" } },
-        { description: { contains: filters.search, mode: "insensitive" } },
-        { user: { name: { contains: filters.search, mode: "insensitive" } } },
-      ]
-    }
-
-    const complaints = await db.complaint.findMany({
-      where,
       include: {
         user: {
           select: {
             name: true,
-            email: true,
-          },
-        },
-      },
-      orderBy: { createdAt: "desc" },
+            email: true
+          }
+        }
+      }
     })
 
-    return { success: true, complaints }
+    // Send notification email to admins
+    await sendComplaintNotificationEmail({
+      complaintId: complaint.id,
+      subject: complaint.subject,
+      description: complaint.description,
+      userName: complaint.user.name || "Unknown",
+      userEmail: complaint.user.email || ""
+    })
+
+    revalidatePath("/user/complaints")
+    return { success: "Complaint submitted successfully! You will receive an email notification when we respond." }
   } catch (error) {
-    console.error("Complaints fetch error:", error)
+    console.error("Error creating complaint:", error)
+    return { error: "Failed to submit complaint" }
+  }
+}
+
+export const getUserComplaints = async () => {
+  try {
+    const user = await currentUser()
+
+    if (!user?.id) {
+      return { error: "Unauthorized" }
+    }
+
+    const complaints = await db.complaint.findMany({
+      where: {
+        userId: user.id
+      },
+      orderBy: {
+        createdAt: "desc"
+      }
+    })
+
+    return { complaints }
+  } catch (error) {
+    console.error("Error fetching user complaints:", error)
     return { error: "Failed to fetch complaints" }
   }
 }
 
-export const updateComplaintStatus = async (id: string, status: string) => {
+export const getComplaintById = async (id: string) => {
   try {
-    const complaint = await db.complaint.update({
-      where: { id },
-      data: { status },
+    const user = await currentUser()
+
+    if (!user?.id) {
+      return { error: "Unauthorized" }
+    }
+
+    const complaint = await db.complaint.findFirst({
+      where: {
+        id,
+        userId: user.id // Ensure user can only see their own complaints
+      }
     })
 
-    revalidatePath("/admin/complaints")
-    return { success: true, complaint }
+    if (!complaint) {
+      return { error: "Complaint not found" }
+    }
+
+    return { complaint }
   } catch (error) {
-    console.error("Complaint update error:", error)
-    return { error: "Failed to update complaint" }
+    console.error("Error fetching complaint:", error)
+    return { error: "Failed to fetch complaint" }
   }
 }
 
-export const respondToComplaint = async (id: string, response: string) => {
+// Admin functions
+export const getAllComplaints = async () => {
   try {
+    const user = await currentUser()
+
+    if (!user?.id || user.role !== "ADMIN") {
+      return { error: "Unauthorized" }
+    }
+
+    const complaints = await db.complaint.findMany({
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: "desc"
+      }
+    })
+
+    return { complaints }
+  } catch (error) {
+    console.error("Error fetching complaints:", error)
+    return { error: "Failed to fetch complaints" }
+  }
+}
+
+export const getComplaintByIdAdmin = async (id: string) => {
+  try {
+    const user = await currentUser()
+
+    if (!user?.id || user.role !== "ADMIN") {
+      return { error: "Unauthorized" }
+    }
+
+    const complaint = await db.complaint.findUnique({
+      where: { id },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true
+          }
+        }
+      }
+    })
+
+    if (!complaint) {
+      return { error: "Complaint not found" }
+    }
+
+    return { complaint }
+  } catch (error) {
+    console.error("Error fetching complaint:", error)
+    return { error: "Failed to fetch complaint" }
+  }
+}
+
+export const respondToComplaint = async (id: string, response: string, status: string = "Resolved") => {
+  try {
+    const user = await currentUser()
+
+    if (!user?.id || user.role !== "ADMIN") {
+      return { error: "Unauthorized" }
+    }
+
+    if (!response.trim()) {
+      return { error: "Response cannot be empty" }
+    }
+
     const complaint = await db.complaint.update({
       where: { id },
       data: {
         response,
-        respondedAt: new Date(),
-        status: "Resolved",
+        status,
+        respondedAt: new Date()
       },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true
+          }
+        }
+      }
     })
 
+    // Send response email to user
+    if (complaint.user.email) {
+      await sendComplaintResponseEmail({
+        userEmail: complaint.user.email,
+        userName: complaint.user.name || "User",
+        subject: complaint.subject,
+        response: response,
+        status: status,
+        complaintId: complaint.id
+      })
+    }
+
     revalidatePath("/admin/complaints")
-    return { success: true, complaint }
+    revalidatePath(`/admin/complaints/${id}`)
+    return { success: "Response sent successfully!" }
   } catch (error) {
-    console.error("Complaint response error:", error)
-    return { error: "Failed to respond to complaint" }
+    console.error("Error responding to complaint:", error)
+    return { error: "Failed to send response" }
   }
 }

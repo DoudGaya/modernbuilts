@@ -253,4 +253,149 @@ export const getPublicInvestmentByToken = async (token: string) => {
   }
 }
 
+// Admin functions for investment management
+export const getAllInvestments = async (filters?: {
+  search?: string
+  status?: string
+  projectId?: string
+  page?: number
+  limit?: number
+}) => {
+  try {
+    const page = filters?.page || 1
+    const limit = filters?.limit || 9 // 9 investments per page for 3x3 grid
+    const skip = (page - 1) * limit
+
+    const where: any = {}
+
+    if (filters?.search) {
+      where.OR = [
+        { user: { name: { contains: filters.search, mode: "insensitive" } } },
+        { user: { email: { contains: filters.search, mode: "insensitive" } } },
+        { project: { title: { contains: filters.search, mode: "insensitive" } } },
+        { certificateId: { contains: filters.search, mode: "insensitive" } },
+      ]
+    }
+
+    if (filters?.status && filters.status !== "all") {
+      // Map frontend status to backend enum
+      const statusMap: { [key: string]: string } = {
+        "active": "ACTIVE",
+        "pending": "PENDING", 
+        "completed": "COMPLETED",
+        "end": "END"
+      }
+      where.status = statusMap[filters.status] || filters.status
+    }
+
+    if (filters?.projectId && filters.projectId !== "all") {
+      where.projectId = filters.projectId
+    }
+
+    // Get total count for pagination
+    const totalInvestments = await db.investment.count({ where })
+
+    // Get investments with related data
+    const investments = await db.investment.findMany({
+      where,
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        project: {
+          select: {
+            id: true,
+            title: true,
+            roi: true,
+            location: true,
+            state: true,
+            city: true,
+          },
+        },
+      },
+      orderBy: { dateOfInvestment: "desc" },
+      skip,
+      take: limit,
+    })
+
+    // Calculate summary statistics
+    const totalInvestmentValue = await db.investment.aggregate({
+      _sum: {
+        investmentAmount: true,
+      },
+    })
+
+    const activeInvestorsCount = await db.investment.groupBy({
+      by: ['userId'],
+      where: { status: "ACTIVE" },
+    })
+
+    const activeProjectsCount = await db.investment.groupBy({
+      by: ['projectId'],
+      where: { status: "ACTIVE" },
+    })
+
+    // Calculate this month's investments
+    const startOfMonth = new Date()
+    startOfMonth.setDate(1)
+    startOfMonth.setHours(0, 0, 0, 0)
+
+    const thisMonthInvestments = await db.investment.aggregate({
+      _sum: {
+        investmentAmount: true,
+      },
+      where: {
+        dateOfInvestment: {
+          gte: startOfMonth,
+        },
+      },
+    })
+
+    const totalPages = Math.ceil(totalInvestments / limit)
+
+    return {
+      success: true,
+      investments,
+      pagination: {
+        page,
+        limit,
+        totalInvestments,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1,
+      },
+      stats: {
+        totalInvestmentValue: totalInvestmentValue._sum.investmentAmount || 0,
+        activeInvestors: activeInvestorsCount.length,
+        activeProjects: activeProjectsCount.length,
+        thisMonthValue: thisMonthInvestments._sum.investmentAmount || 0,
+      },
+    }
+  } catch (error) {
+    console.error("Error fetching investments:", error)
+    return { error: "Failed to fetch investments" }
+  }
+}
+
+export const getProjectsForFilter = async () => {
+  try {
+    const projects = await db.project.findMany({
+      select: {
+        id: true,
+        title: true,
+      },
+      orderBy: { title: "asc" },
+    })
+
+    return { success: true, projects }
+  } catch (error) {
+    console.error("Error fetching projects:", error)
+    return { error: "Failed to fetch projects" }
+  }
+}
+
 

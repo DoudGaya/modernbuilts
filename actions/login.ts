@@ -81,15 +81,15 @@ export const login = async (values: z.infer<typeof loginSchema>) => {
             return {twoFactor: true}
         }
     }
-
-
     try {
         await signIn("credentials", {
             email, 
             password,
-            redirect: true,
-            redirectTo: getRouteByUserRole(existingUser.role),
+            redirect: false,
         })
+        
+        // If we get here, login was successful
+        redirect(getRouteByUserRole(existingUser.role))
     } catch (error) {
         if (error instanceof AuthError) {
             switch (error.type) {

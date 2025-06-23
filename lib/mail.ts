@@ -294,4 +294,212 @@ export const sendPropertyListingNotification = async (
       html: emailTemplate(content),
     });
   }
-};
+}
+
+// Complaint notification email to admins
+export const sendComplaintNotificationEmail = async ({
+  complaintId,
+  subject,
+  description,
+  userName,
+  userEmail
+}: {
+  complaintId: string
+  subject: string
+  description: string
+  userName: string
+  userEmail: string
+}) => {
+  try {
+    const complaintUrl = `${baseUrl}/admin/complaints/${complaintId}`
+    
+    const content = `
+      <div class="content">
+        <h2>New Complaint Submitted</h2>
+        
+        <p>A new complaint has been submitted that requires your attention.</p>
+        
+        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3>Complaint Details:</h3>
+          <p><strong>Subject:</strong> ${subject}</p>
+          <p><strong>User:</strong> ${userName} (${userEmail})</p>
+          <p><strong>Complaint ID:</strong> ${complaintId}</p>
+          <p><strong>Description:</strong></p>
+          <p style="white-space: pre-wrap;">${description}</p>
+        </div>
+        
+        <a href="${complaintUrl}" class="button">View & Respond to Complaint</a>
+      </div>
+      
+      <p>Please respond to this complaint as soon as possible to maintain good customer relations.</p>
+    `
+
+    await resend.emails.send({
+      from: "STABLEBRICKS <noreply@stablebricks.com>",
+      to: "admin@stablebricks.com", // Replace with actual admin email
+      subject: `New Complaint: ${subject}`,
+      html: emailTemplate(content),
+    })
+  } catch (error) {
+    console.error("Error sending complaint notification email:", error)
+  }
+}
+
+// Complaint response email to user
+export const sendComplaintResponseEmail = async ({
+  userEmail,
+  userName,
+  subject,
+  response,
+  status,
+  complaintId
+}: {
+  userEmail: string
+  userName: string
+  subject: string
+  response: string
+  status: string
+  complaintId: string
+}) => {
+  try {
+    const complaintUrl = `${baseUrl}/user/complaints/${complaintId}`
+    
+    const content = `
+      <div class="content">
+        <h2>Your Complaint Has Been Addressed</h2>
+        
+        <p>Dear ${userName},</p>
+        
+        <p>We have reviewed your complaint and are providing the following response:</p>
+        
+        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3>Original Complaint:</h3>
+          <p><strong>Subject:</strong> ${subject}</p>
+          <p><strong>Status:</strong> <span style="color: ${status === 'Resolved' ? '#22c55e' : '#3b82f6'};">${status}</span></p>
+        </div>
+        
+        <div style="background-color: #ecfdf5; border: 1px solid #d1fae5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: #22c55e;">Our Response:</h3>
+          <p style="white-space: pre-wrap;">${response}</p>
+        </div>
+        
+        <a href="${complaintUrl}" class="button">View Full Details</a>
+      </div>
+      
+      <p>If you have any further questions or concerns, please don't hesitate to contact us.</p>
+      <p>Thank you for your patience and for giving us the opportunity to resolve this matter.</p>
+    `
+
+    await resend.emails.send({
+      from: "STABLEBRICKS <noreply@stablebricks.com>",
+      to: userEmail,
+      subject: `Response to Your Complaint: ${subject}`,
+      html: emailTemplate(content),
+    })
+  } catch (error) {
+    console.error("Error sending complaint response email:", error)
+  }
+}
+
+// Contact notification email to admins
+export const sendContactNotificationEmail = async ({
+  contactId,
+  name,
+  email,
+  phone,
+  subject,
+  message
+}: {
+  contactId: string
+  name: string
+  email: string
+  phone: string
+  subject: string
+  message: string
+}) => {
+  try {
+    const contactUrl = `${baseUrl}/admin/contacts/${contactId}`
+    
+    const content = `
+      <div class="content">
+        <h2>New Contact Message</h2>
+        
+        <p>A new contact message has been received through the website.</p>
+        
+        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3>Contact Details:</h3>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ''}
+          <p><strong>Subject:</strong> ${subject}</p>
+          <p><strong>Contact ID:</strong> ${contactId}</p>
+          <p><strong>Message:</strong></p>
+          <p style="white-space: pre-wrap;">${message}</p>
+        </div>
+        
+        <a href="${contactUrl}" class="button">View & Respond</a>
+      </div>
+      
+      <p>Please respond to this inquiry promptly to provide excellent customer service.</p>
+    `
+
+    await resend.emails.send({
+      from: "STABLEBRICKS <noreply@stablebricks.com>",
+      to: "admin@stablebricks.com", // Replace with actual admin email
+      subject: `New Contact: ${subject}`,
+      html: emailTemplate(content),
+    })
+  } catch (error) {
+    console.error("Error sending contact notification email:", error)
+  }
+}
+
+// Contact response email to user
+export const sendContactResponseEmail = async ({
+  userEmail,
+  userName,
+  subject,
+  response,
+  originalMessage
+}: {
+  userEmail: string
+  userName: string
+  subject: string
+  response: string
+  originalMessage: string
+}) => {
+  try {
+    const content = `
+      <div class="content">
+        <h2>Thank You for Contacting Us</h2>
+        
+        <p>Dear ${userName},</p>
+        
+        <p>Thank you for reaching out to us. We have received your message and are providing the following response:</p>
+        
+        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3>Your Original Message:</h3>
+          <p><strong>Subject:</strong> ${subject}</p>
+          <p style="white-space: pre-wrap;">${originalMessage}</p>
+        </div>
+        
+        <div style="background-color: #ecfdf5; border: 1px solid #d1fae5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: #22c55e;">Our Response:</h3>
+          <p style="white-space: pre-wrap;">${response}</p>
+        </div>
+      </div>
+      
+      <p>If you have any further questions, please don't hesitate to contact us again.</p>
+      <p>We appreciate your interest in STABLEBRICKS and look forward to serving you.</p>
+    `
+
+    await resend.emails.send({
+      from: "STABLEBRICKS <noreply@stablebricks.com>",
+      to: userEmail,
+      subject: `Re: ${subject}`,
+      html: emailTemplate(content),
+    })
+  } catch (error) {
+    console.error("Error sending contact response email:", error)
+  }
+}
