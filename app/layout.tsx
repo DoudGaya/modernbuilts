@@ -6,7 +6,6 @@ import { Footer } from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner"
 import { Analytics } from "@vercel/analytics/next"
 import { auth } from "@/auth";
-// import '/../public/fonts.css'
 import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
@@ -26,6 +25,7 @@ export default async function RootLayout({
      <body className={`${inter.className} text-gray-950 bg-gray-50`}>
       <Providers session={session}>
         {children}
+        <Analytics />
         <Toaster />
       </Providers>
       </body>
