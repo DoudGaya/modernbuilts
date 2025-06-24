@@ -6,12 +6,22 @@ export const publicRoutes = [
     '/',
     '/about',
     '/contact',
+    '/blog',
     '/blog/:slug',
     '/email-verification',
     '/investments',
     '/portfolio',
     '/properties',
+    '/properties/:slug',
+    '/projects/:slug',
     '/calculator',
+    '/partnerships',
+    '/investor-relations',
+    '/land-submissions',
+    '/user-investment/:token',
+    '/privacy-policy',
+    '/terms-of-service',
+    '/cookie-policy',
 ]
 
 

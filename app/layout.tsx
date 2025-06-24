@@ -5,6 +5,8 @@ import { PublicNavigations } from "@/components/PublicNavigations";
 import { Footer } from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner"
 import { Analytics } from "@vercel/analytics/next"
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics"
+import { AnalyticsTracker } from "@/components/analytics/AnalyticsTracker"
 import { auth } from "@/auth";
 import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
@@ -20,10 +22,12 @@ export default async function RootLayout({
 }>) {
 
   const session = await auth()
+  
   return (
     <html lang="en" suppressHydrationWarning>
-     <body className={`${inter.className} text-gray-950 bg-gray-50`}>
+     <body className={`${inter.className} text-gray-950 bg-gray-50`}>      <GoogleAnalytics />
       <Providers session={session}>
+        <AnalyticsTracker />
         {children}
         <Analytics />
         <Toaster />

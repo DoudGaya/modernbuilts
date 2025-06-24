@@ -34,7 +34,7 @@ const contents = [
         contents: 'Need guidance on real estate investment? Our experienced consultants are here to assist you. Whether it’s market trends, legal matters, or financial planning, we offer personalized advice to help you make informed decisions'
     },
     {
-        id: 1,
+        id: 3,
         title: 'Machinery and Tools Rental',
         subtitle: 'Efficiency at Your Fingertips',
         icon: (

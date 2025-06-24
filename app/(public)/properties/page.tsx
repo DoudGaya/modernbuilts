@@ -201,7 +201,6 @@ export default async function PropertiesPage({
           )}
         </div>
       </div>
-      <Footer />
     </>
   )
 }
