@@ -4,6 +4,7 @@ import { Providers } from "@/components/Providers";
 import { PublicNavigations } from "@/components/PublicNavigations";
 import { Footer } from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner"
+import { Analytics } from "@vercel/analytics/next"
 import { auth } from "@/auth";
 // import '/../public/fonts.css'
 import "./globals.css";
