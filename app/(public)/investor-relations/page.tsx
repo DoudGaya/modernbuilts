@@ -4,6 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { TrendingUp, FileText, Calendar, Users, Download, BarChart3, PieChart, DollarSign } from "lucide-react"
+import { getPublicReports } from "@/actions/reports"
+import { getPublicEvents } from "@/actions/events"
+import EventRegistrationButton from "./_components/EventRegistrationButton"
 
 const financialHighlights = [
   {
@@ -29,61 +32,6 @@ const financialHighlights = [
     value: "22.4%",
     change: "+2.1%",
     period: "Annual Average",
-  },
-]
-
-const reports = [
-  {
-    title: "Q4 2024 Financial Report",
-    description: "Comprehensive quarterly financial performance and project updates",
-    date: "December 2024",
-    type: "Financial Report",
-    size: "2.4 MB",
-  },
-  {
-    title: "Annual Investment Summary 2024",
-    description: "Complete overview of all investment activities and returns for 2024",
-    date: "December 2024",
-    type: "Annual Report",
-    size: "5.1 MB",
-  },
-  {
-    title: "Market Analysis Report",
-    description: "In-depth analysis of Nigerian real estate market trends and opportunities",
-    date: "November 2024",
-    type: "Market Report",
-    size: "3.2 MB",
-  },
-  {
-    title: "Project Portfolio Update",
-    description: "Status updates on all active development projects and timelines",
-    date: "November 2024",
-    type: "Project Report",
-    size: "4.7 MB",
-  },
-]
-
-const upcomingEvents = [
-  {
-    title: "Annual Investor Meeting 2025",
-    date: "March 15, 2025",
-    time: "10:00 AM",
-    location: "Lagos Continental Hotel",
-    type: "Annual Meeting",
-  },
-  {
-    title: "Q1 2025 Performance Review",
-    date: "April 20, 2025",
-    time: "2:00 PM",
-    location: "Virtual Meeting",
-    type: "Quarterly Review",
-  },
-  {
-    title: "New Project Launch Presentation",
-    date: "May 10, 2025",
-    time: "11:00 AM",
-    location: "Abuja Sheraton Hotel",
-    type: "Project Launch",
   },
 ]
 
@@ -114,7 +62,12 @@ const keyMetrics = [
   },
 ]
 
-export default function InvestorRelationsPage() {
+export default async function InvestorRelationsPage() {
+  const reportsResult = await getPublicReports()
+  const eventsResult = await getPublicEvents()
+  
+  const reports = reportsResult.success ? reportsResult.reports : []
+  const upcomingEvents = eventsResult.success ? eventsResult.events : []
   return (
     <>
       <PublicNavigations />
@@ -195,34 +148,47 @@ export default function InvestorRelationsPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {reports.map((report, index) => (
-                <Card key={index} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center space-x-3">
-                        <FileText className="w-8 h-8 text-yellow-600" />
-                        <div>
-                          <CardTitle className="text-lg font-poppins">{report.title}</CardTitle>
-                          <CardDescription>{report.description}</CardDescription>
+              {reports.length > 0 ? (
+                reports.map((report) => (
+                  <Card key={report.id} className="hover:shadow-lg transition-shadow">
+                    <CardHeader>
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center space-x-3">
+                          <FileText className="w-8 h-8 text-yellow-600" />
+                          <div>
+                            <CardTitle className="text-lg font-poppins">{report.title}</CardTitle>
+                            <CardDescription>{report.description}</CardDescription>
+                          </div>
                         </div>
+                        <Badge variant="outline">{report.type}</Badge>
                       </div>
-                      <Badge variant="outline">{report.type}</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm text-gray-500">
-                        <div>{report.date}</div>
-                        <div>{report.size}</div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center justify-between">
+                        <div className="text-sm text-gray-500">
+                          <div>{new Date(report.publishDate).toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long' 
+                          })}</div>
+                          <div>{report.fileSize}</div>
+                        </div>
+                        <Button 
+                          className="bg-yellow-400 hover:bg-yellow-500 text-black"
+                          onClick={() => window.open(report.fileUrl, '_blank')}
+                        >
+                          <Download className="w-4 h-4 mr-2" />
+                          Download
+                        </Button>
                       </div>
-                      <Button className="bg-yellow-400 hover:bg-yellow-500 text-black">
-                        <Download className="w-4 h-4 mr-2" />
-                        Download
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <div className="col-span-2 text-center py-8">
+                  <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500">No reports available at the moment</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -237,28 +203,45 @@ export default function InvestorRelationsPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {upcomingEvents.map((event, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-center space-x-3">
-                    <Calendar className="w-6 h-6 text-yellow-600" />
-                    <Badge variant="outline">{event.type}</Badge>
-                  </div>
-                  <CardTitle className="text-lg font-poppins">{event.title}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Calendar className="w-4 h-4 mr-2" />
-                    {event.date} at {event.time}
-                  </div>
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Users className="w-4 h-4 mr-2" />
-                    {event.location}
-                  </div>
-                  <Button className="w-full mt-4 bg-yellow-400 hover:bg-yellow-500 text-black">Register Now</Button>
-                </CardContent>
-              </Card>
-            ))}
+            {upcomingEvents.length > 0 ? (
+              upcomingEvents.map((event) => (
+                <Card key={event.id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className="flex items-center space-x-3">
+                      <Calendar className="w-6 h-6 text-yellow-600" />
+                      <Badge variant="outline">{event.type}</Badge>
+                    </div>
+                    <CardTitle className="text-lg font-poppins">{event.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Calendar className="w-4 h-4 mr-2" />
+                      {new Date(event.date).toLocaleDateString('en-US', { 
+                        weekday: 'long',
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      })} at {event.time}
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Users className="w-4 h-4 mr-2" />
+                      {event.location}
+                    </div>
+                    {event.maxAttendees && (
+                      <div className="text-sm text-gray-500">
+                        {event._count.registrations}/{event.maxAttendees} registered
+                      </div>
+                    )}
+                    <EventRegistrationButton eventId={event.id} />
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <div className="col-span-3 text-center py-8">
+                <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500">No upcoming events at the moment</p>
+              </div>
+            )}
           </div>
         </div>
 

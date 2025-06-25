@@ -28,6 +28,8 @@ model User {
   landSubmissions     LandSubmission[]
   wishlistItems       Wishlist[]
   contacts            Contact[]
+  createdEvents       Event[]
+  eventRegistrations  EventRegistration[]
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
   @@map("user")
@@ -279,4 +281,73 @@ model Transaction {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   @@map("transaction")
+}
+
+model Event {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  title           String
+  description     String
+  date            DateTime
+  time            String
+  location        String
+  type            String // "Annual Meeting", "Quarterly Review", "Project Launch", etc.
+  status          String @default("Active") // Active, Cancelled, Completed
+  maxAttendees    Int?
+  registrationDeadline DateTime?
+  image           String?
+  isPublic        Boolean @default(true)
+  createdBy       String @db.ObjectId
+  creator         User @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  registrations   EventRegistration[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  @@map("event")
+}
+
+model EventRegistration {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  event           Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId         String @db.ObjectId
+  user            User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String? @db.ObjectId
+  // For non-registered users
+  name            String?
+  email           String?
+  phone           String?
+  company         String?
+  status          String @default("Registered") // Registered, Attended, Cancelled
+  registeredAt    DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  @@map("event_registration")
+}
+
+model Report {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  title           String
+  description     String
+  type            String // "Financial Report", "Annual Report", "Market Report", etc.
+  fileUrl         String
+  fileName        String
+  fileSize        String
+  publishDate     DateTime
+  isPublic        Boolean @default(true)
+  createdBy       String @db.ObjectId
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  @@map("report")
+}
+
+model Document {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  title           String
+  description     String?
+  category        String // "Investor", "Legal", "Compliance", etc.
+  fileUrl         String
+  fileName        String
+  fileSize        String
+  isPublic        Boolean @default(false)
+  createdBy       String @db.ObjectId
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  @@map("document")
 }

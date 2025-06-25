@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Building2, TrendingUp, Users, MapPin, AlertTriangle, Mail, BarChart3, Settings, Menu, X } from "lucide-react"
+import { Home, Building2, TrendingUp, Users, MapPin, AlertTriangle, Mail, BarChart3, Settings, Menu, X, Calendar, FileText } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useState, useEffect } from "react"
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -31,6 +31,16 @@ const sidebarItems = [
     title: "Users",
     href: "/admin/users",
     icon: Users,
+  },
+  {
+    title: "Events",
+    href: "/admin/events",
+    icon: Calendar,
+  },
+  {
+    title: "Reports",
+    href: "/admin/reports",
+    icon: FileText,
   },
   {
     title: "Analytics",

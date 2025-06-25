@@ -150,7 +150,7 @@ export default function CookiePolicyPage() {
             <div className="bg-blue-50 p-4 rounded-lg">
               <div className="flex items-center mb-2">
                 <Mail className="w-5 h-5 text-blue-600 mr-2" />
-                <strong>Email:</strong> privacy@stablebricks.com
+                <strong>Email:</strong> info@stablebricks.com
               </div>
               <div><strong>Address:</strong> Hamisu Abba Plaza, Tarauni, Kano State, Nigeria</div>
               <div><strong>Phone:</strong> +234 806 224 9834</div>
