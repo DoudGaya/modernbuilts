@@ -52,7 +52,6 @@ export const UserNavigation = () => {
       return `₦${amount.toLocaleString()}`
     }
   }
-
   return (
     <nav className="bg-white border-b border-gray-200 fixed w-full z-30 top-0">
       <div className="px-3 py-3 lg:px-5 lg:pl-3">

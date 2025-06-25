@@ -27,6 +27,7 @@ model User {
   complaints          Complaint[]
   landSubmissions     LandSubmission[]
   wishlistItems       Wishlist[]
+  contacts            Contact[]
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
   @@map("user")
@@ -201,6 +202,10 @@ model Contact {
   status          String @default("Unread") // Unread, Read, Responded
   response        String?
   respondedAt     DateTime?
+  userId          String? @db.ObjectId // Optional for anonymous contacts
+  user            User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category        String? // For categorizing contact types
+  priority        String? // LOW, MEDIUM, HIGH
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
