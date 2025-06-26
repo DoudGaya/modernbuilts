@@ -2,9 +2,8 @@ import { PublicNavigations } from "@/components/PublicNavigations"
 import { Footer } from "@/components/Footer"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { FileText, DollarSign, Clock, CheckCircle, Upload, AlertCircle } from "lucide-react"
+import { FileText, DollarSign, Clock, CheckCircle, AlertCircle } from "lucide-react"
+import LandSubmissionForm from "./_components/LandSubmissionForm"
 
 const submissionProcess = [
   {
@@ -184,107 +183,7 @@ export default function LandSubmissionsPage() {
 
         {/* Submission Form */}
         <div className="max-w-4xl mx-auto px-4 py-16">
-          <Card>
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-poppins">Submit Your Land</CardTitle>
-              <CardDescription>Provide detailed information about your land for our evaluation team</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Full Name *</label>
-                  <Input placeholder="Enter your full name" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Email Address *</label>
-                  <Input type="email" placeholder="Enter email address" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Phone Number *</label>
-                  <Input placeholder="Enter phone number" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Land Size (sqm) *</label>
-                  <Input placeholder="Enter land size in square meters" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Land Location *</label>
-                <Input placeholder="Enter complete address including state and LGA" />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Land Title Type *</label>
-                  <select className="w-full p-2 border rounded-md">
-                    <option value="">Select title type</option>
-                    <option value="coo">Certificate of Occupancy (C of O)</option>
-                    <option value="governors-consent">Governor's Consent</option>
-                    <option value="deed">Deed of Assignment</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Current Land Use</label>
-                  <select className="w-full p-2 border rounded-md">
-                    <option value="">Select current use</option>
-                    <option value="vacant">Vacant Land</option>
-                    <option value="agricultural">Agricultural</option>
-                    <option value="residential">Residential</option>
-                    <option value="commercial">Commercial</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Land Description *</label>
-                <Textarea
-                  placeholder="Describe the land, its features, accessibility, and any existing structures"
-                  rows={4}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Development Preferences</label>
-                <Textarea
-                  placeholder="What type of development would you prefer? (Residential, Commercial, Mixed-use, etc.)"
-                  rows={3}
-                />
-              </div>
-
-              <div className="space-y-4">
-                <label className="text-sm font-medium">Upload Documents</label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                    <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-                    <p className="text-sm text-gray-600">Upload Land Title</p>
-                    <Button variant="outline" size="sm" className="mt-2">
-                      Choose File
-                    </Button>
-                  </div>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                    <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-                    <p className="text-sm text-gray-600">Upload Survey Plan</p>
-                    <Button variant="outline" size="sm" className="mt-2">
-                      Choose File
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <input type="checkbox" id="terms" className="rounded" />
-                <label htmlFor="terms" className="text-sm">
-                  I confirm that all information provided is accurate and I agree to the terms and conditions
-                </label>
-              </div>
-
-              <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3">
-                Submit Land for Evaluation
-              </Button>
-            </CardContent>
-          </Card>
+          <LandSubmissionForm />
         </div>
       </div>
       <Footer />

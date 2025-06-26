@@ -28,12 +28,12 @@ interface LandSubmission {
   plans: string[];
   createdAt: string | Date;
   updatedAt: string | Date;
-  user: {
+  user?: {
     id: string;
     name: string | null;
     email: string | null;
-  };
-  userId: string;
+  } | null;
+  userId?: string | null;
 }
 
 export default function LandSubmissionsPage() {
@@ -185,7 +185,7 @@ export default function LandSubmissionsPage() {
                   </CardTitle>
                   <CardDescription className="flex items-center mt-1">
                     <User className="w-4 h-4 mr-1" />
-                    {submission.user?.name || "Unknown"} ({submission.user?.email || "No email"})
+                    {submission.user?.name || "Anonymous Submission"} {submission.user?.email ? `(${submission.user.email})` : "(Public Submission)"}
                   </CardDescription>
                 </div>
                 <div className="flex items-center gap-2">

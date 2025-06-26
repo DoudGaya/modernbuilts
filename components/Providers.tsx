@@ -11,17 +11,7 @@ interface ProvidersProps {
 }
 
 export function Providers({ children, session }: ProvidersProps) {
-  // Avoid rendering the ThemeProvider until mounted to prevent hydration mismatch
-  const [mounted, setMounted] = useState(false)
-  
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-  
-  if (!mounted) {
-    return <>{children}</>
-  }
-    return (
+  return (
     <SessionProvider session={session}>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
         {children}

@@ -102,7 +102,7 @@ export async function getAllLandSubmissions(
       },
     }
   } catch (error) {
-    console.error("Error fetching land submissions:", error)
+    // console.error("Error fetching land submissions:", error)
     return { error: "Failed to fetch land submissions" }
   }
 }
@@ -131,7 +131,7 @@ export async function getLandSubmissionById(id: string) {
 
     return { success: true, submission }
   } catch (error) {
-    console.error("Error fetching land submission:", error)
+    // console.error("Error fetching land submission:", error)
     return { error: "Failed to fetch land submission" }
   }
 }
@@ -357,5 +357,92 @@ export async function uploadLandSubmissionPlans(id: string, plans: string[]) {
   } catch (error) {
     console.error("Error uploading plans:", error)
     return { error: "Failed to upload plans" }
+  }
+}
+
+/**
+ * Create a new land submission for public users (no authentication required)
+ */
+export async function submitLandPublic(data: {
+  name: string
+  email: string
+  phone: string
+  location: string
+  size: string
+  titleType: string
+  currentUse?: string
+  description: string
+  developmentPreferences?: string
+  documents?: string[]
+  plans?: string[]
+}) {
+  try {
+    // console.log("submitLandPublic called with data:", JSON.stringify(data, null, 2))
+    // console.log("Data types:", Object.entries(data).map(([key, value]) => `${key}: ${typeof value}`))
+    
+    const validatedData = z.object({
+      name: z.string().min(2, "Name must be at least 2 characters"),
+      email: z.string().email("Invalid email address"),
+      phone: z.string().min(10, "Phone number must be at least 10 characters"),
+      location: z.string().min(10, "Location must be at least 10 characters"),
+      size: z.string().min(1, "Land size is required"),
+      titleType: z.string().min(1, "Title type is required"),
+      currentUse: z.union([z.string(), z.undefined()]).optional(),
+      description: z.string().min(20, "Description must be at least 20 characters"),
+      developmentPreferences: z.union([z.string(), z.undefined()]).optional(),
+      documents: z.array(z.string()).optional(),
+      plans: z.array(z.string()).optional(),
+    }).safeParse(data)
+
+    // console.log("Validation result:", {
+    //   success: validatedData.success,
+    //   error: validatedData.success ? null : validatedData.error?.issues
+    // })
+
+    if (!validatedData.success) {
+      console.error("Validation errors:", validatedData.error.issues)
+      return { 
+        error: "Invalid submission data", 
+        issues: validatedData.error.issues,
+        details: validatedData.error.issues.map(issue => `${issue.path.join('.')}: ${issue.message}`).join(', ')
+      }
+    }
+
+    const { name, email, phone, location, size, titleType, currentUse, description, developmentPreferences, documents, plans } = validatedData.data
+
+    // Create a comprehensive description that includes contact info
+    const fullDescription = `Contact Information:
+Name: ${name}
+Email: ${email}
+Phone: ${phone}
+
+Land Description:
+${description}
+
+${developmentPreferences ? `Development Preferences:
+${developmentPreferences}` : ''}`
+
+    // Create the land submission without userId (for anonymous submissions)
+    const submission = await db.landSubmission.create({
+      data: {
+        location,
+        size,
+        titleType,
+        currentUse: currentUse || undefined,
+        description: fullDescription,
+        documents: documents || [],
+        plans: plans || [],
+        status: "Pending",
+      },
+    })
+
+    revalidatePath("/admin/land-submissions")
+    return { 
+      success: "Land submission received successfully! Our team will review and contact you within 3-5 business days.",
+      submissionId: submission.id
+    }
+  } catch (error) {
+    console.error("Error creating public land submission:", error)
+    return { error: "Failed to submit land. Please try again." }
   }
 }

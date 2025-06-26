@@ -11,8 +11,8 @@ import { auth } from "@/auth";
 import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
-  title: "Stable Bricks",
-  description: "The Nigeria's Real Estate Company. We are stable, We are Reliable",
+  title: "Stablebricks",
+  description: "The Nigeria's Real Estate Investment Company. We are stable, We are Reliable",
 };
 
 export default async function RootLayout({
@@ -25,10 +25,13 @@ export default async function RootLayout({
   
   return (
     <html lang="en" suppressHydrationWarning>
-     <body className={`${inter.className} text-gray-950 bg-gray-50`}>      <GoogleAnalytics />
+     <body className={`${inter.className} text-gray-950 bg-gray-50`}>
+      <GoogleAnalytics />
       <Providers session={session}>
+        <PublicNavigations />
         <AnalyticsTracker />
         {children}
+        <Footer />
         <Analytics />
         <Toaster />
       </Providers>
