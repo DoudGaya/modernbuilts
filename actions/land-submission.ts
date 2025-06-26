@@ -4,6 +4,11 @@ import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 import { auth } from "@/lib/auth"
 import { z } from "zod"
+import { 
+  sendLandSubmissionStatusEmail, 
+  sendLandSubmissionFeedbackEmail,
+  sendLandSubmissionNotificationEmail
+} from "@/lib/mail"
 
 // Schema for getting land submissions
 const landSubmissionFilterSchema = z.object({
@@ -153,9 +158,17 @@ export async function updateLandSubmissionStatus(id: string, status: string) {
       return { error: "Invalid status" }
     }
 
-    // Check if the submission exists
+    // Check if the submission exists and get current data
     const submission = await db.landSubmission.findUnique({
       where: { id },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+      },
     })
 
     if (!submission) {
@@ -169,6 +182,47 @@ export async function updateLandSubmissionStatus(id: string, status: string) {
         status: validatedData.data.status,
       },
     })
+
+    // Send email notification if we have user email and status changed
+    if (submission.description.includes("Email:")) {
+      try {
+        // Extract email from description for anonymous submissions
+        const emailMatch = submission.description.match(/Email:\s*([^\n\r]+)/)
+        const nameMatch = submission.description.match(/Name:\s*([^\n\r]+)/)
+        
+        if (emailMatch && nameMatch) {
+          const userEmail = emailMatch[1].trim()
+          const userName = nameMatch[1].trim()
+          
+          await sendLandSubmissionStatusEmail({
+            userEmail,
+            userName,
+            location: submission.location,
+            status: validatedData.data.status,
+            submissionId: submission.id,
+            feedback: submission.feedback || undefined,
+          })
+        }
+      } catch (emailError) {
+        console.error("Error sending status email:", emailError)
+        // Don't fail the whole operation if email fails
+      }
+    } else if (submission.user?.email) {
+      // Send email for authenticated users
+      try {
+        await sendLandSubmissionStatusEmail({
+          userEmail: submission.user.email,
+          userName: submission.user.name || "User",
+          location: submission.location,
+          status: validatedData.data.status,
+          submissionId: submission.id,
+          feedback: submission.feedback || undefined,
+        })
+      } catch (emailError) {
+        console.error("Error sending status email:", emailError)
+        // Don't fail the whole operation if email fails
+      }
+    }
 
     revalidatePath("/admin/land-submissions")
     return { success: true }
@@ -195,9 +249,17 @@ export async function provideLandSubmissionFeedback(id: string, feedback: string
       return { error: validatedData.error.issues[0].message }
     }
 
-    // Check if the submission exists
+    // Check if the submission exists and get current data
     const submission = await db.landSubmission.findUnique({
       where: { id },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+      },
     })
 
     if (!submission) {
@@ -211,6 +273,45 @@ export async function provideLandSubmissionFeedback(id: string, feedback: string
         feedback: validatedData.data.feedback,
       },
     })
+
+    // Send email notification if we have user email
+    if (submission.description.includes("Email:")) {
+      try {
+        // Extract email from description for anonymous submissions
+        const emailMatch = submission.description.match(/Email:\s*([^\n\r]+)/)
+        const nameMatch = submission.description.match(/Name:\s*([^\n\r]+)/)
+        
+        if (emailMatch && nameMatch) {
+          const userEmail = emailMatch[1].trim()
+          const userName = nameMatch[1].trim()
+          
+          await sendLandSubmissionFeedbackEmail({
+            userEmail,
+            userName,
+            location: submission.location,
+            submissionId: submission.id,
+            feedback: validatedData.data.feedback,
+          })
+        }
+      } catch (emailError) {
+        console.error("Error sending feedback email:", emailError)
+        // Don't fail the whole operation if email fails
+      }
+    } else if (submission.user?.email) {
+      // Send email for authenticated users
+      try {
+        await sendLandSubmissionFeedbackEmail({
+          userEmail: submission.user.email,
+          userName: submission.user.name || "User",
+          location: submission.location,
+          submissionId: submission.id,
+          feedback: validatedData.data.feedback,
+        })
+      } catch (emailError) {
+        console.error("Error sending feedback email:", emailError)
+        // Don't fail the whole operation if email fails
+      }
+    }
 
     revalidatePath("/admin/land-submissions")
     return { success: true }
@@ -435,6 +536,23 @@ ${developmentPreferences}` : ''}`
         status: "Pending",
       },
     })
+
+    // Send email notification to admins about new submission
+    try {
+      await sendLandSubmissionNotificationEmail({
+        submissionId: submission.id,
+        name,
+        email,
+        phone,
+        location,
+        size,
+        titleType,
+        description,
+      })
+    } catch (emailError) {
+      console.error("Error sending admin notification email:", emailError)
+      // Don't fail the submission if email fails
+    }
 
     revalidatePath("/admin/land-submissions")
     return { 

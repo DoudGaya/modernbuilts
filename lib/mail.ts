@@ -503,3 +503,188 @@ export const sendContactResponseEmail = async ({
     console.error("Error sending contact response email:", error)
   }
 }
+
+// Land submission status notification email
+export const sendLandSubmissionStatusEmail = async ({
+  userEmail,
+  userName,
+  location,
+  status,
+  submissionId,
+  feedback
+}: {
+  userEmail: string
+  userName: string
+  location: string
+  status: string
+  submissionId: string
+  feedback?: string
+}) => {
+  try {
+    const statusColor = status === 'Approved' ? '#22c55e' : status === 'Rejected' ? '#ef4444' : '#3b82f6'
+    const statusMessage = status === 'Approved' 
+      ? 'We are pleased to inform you that your land submission has been approved!'
+      : status === 'Rejected'
+      ? 'After careful review, we regret to inform you that your land submission has been rejected.'
+      : 'Your land submission status has been updated.'
+
+    const dashboardLink = `${baseUrl}/land-submissions`
+    
+    const content = `
+      <div class="content">
+        <h2>Land Submission Status Update</h2>
+        
+        <p>Dear ${userName},</p>
+        
+        <p>${statusMessage}</p>
+        
+        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3>Submission Details:</h3>
+          <p><strong>Location:</strong> ${location}</p>
+          <p><strong>Submission ID:</strong> ${submissionId}</p>
+          <p><strong>Status:</strong> <span style="color: ${statusColor}; font-weight: bold;">${status}</span></p>
+        </div>
+        
+        ${feedback ? `
+        <div style="background-color: ${status === 'Approved' ? '#ecfdf5' : '#fef2f2'}; border: 1px solid ${status === 'Approved' ? '#d1fae5' : '#fecaca'}; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: ${statusColor};">Feedback from our team:</h3>
+          <p style="white-space: pre-wrap;">${feedback}</p>
+        </div>
+        ` : ''}
+        
+        ${status === 'Approved' ? `
+        <p>Our team will be in touch with you soon to discuss the next steps for your land development project.</p>
+        ` : status === 'Rejected' ? `
+        <p>You are welcome to submit a new application in the future with additional information or after addressing the concerns mentioned in the feedback.</p>
+        ` : ''}
+        
+        <a href="${dashboardLink}" class="button">View Submission Details</a>
+      </div>
+      
+      <p>If you have any questions about this decision, please don't hesitate to contact our support team.</p>
+      <p>Thank you for your interest in partnering with STABLEBRICKS.</p>
+    `
+
+    await resend.emails.send({
+      from: "STABLEBRICKS <noreply@stablebricks.com>",
+      to: userEmail,
+      subject: `Land Submission ${status}: ${location}`,
+      html: emailTemplate(content),
+    })
+  } catch (error) {
+    console.error("Error sending land submission status email:", error)
+  }
+}
+
+// Land submission feedback notification email
+export const sendLandSubmissionFeedbackEmail = async ({
+  userEmail,
+  userName,
+  location,
+  submissionId,
+  feedback
+}: {
+  userEmail: string
+  userName: string
+  location: string
+  submissionId: string
+  feedback: string
+}) => {
+  try {
+    const dashboardLink = `${baseUrl}/land-submissions`
+    
+    const content = `
+      <div class="content">
+        <h2>New Feedback on Your Land Submission</h2>
+        
+        <p>Dear ${userName},</p>
+        
+        <p>We have provided feedback on your land submission. Please review the details below:</p>
+        
+        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3>Submission Details:</h3>
+          <p><strong>Location:</strong> ${location}</p>
+          <p><strong>Submission ID:</strong> ${submissionId}</p>
+        </div>
+        
+        <div style="background-color: #eff6ff; border: 1px solid #dbeafe; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: #3b82f6;">Feedback from our team:</h3>
+          <p style="white-space: pre-wrap;">${feedback}</p>
+        </div>
+        
+        <a href="${dashboardLink}" class="button">View Full Details</a>
+      </div>
+      
+      <p>If you have any questions about this feedback, please feel free to contact our support team.</p>
+      <p>Thank you for your continued interest in partnering with STABLEBRICKS.</p>
+    `
+
+    await resend.emails.send({
+      from: "STABLEBRICKS <noreply@stablebricks.com>",
+      to: userEmail,
+      subject: `New Feedback on Your Land Submission: ${location}`,
+      html: emailTemplate(content),
+    })
+  } catch (error) {
+    console.error("Error sending land submission feedback email:", error)
+  }
+}
+
+// Land submission notification email to admins
+export const sendLandSubmissionNotificationEmail = async ({
+  submissionId,
+  name,
+  email,
+  phone,
+  location,
+  size,
+  titleType,
+  description
+}: {
+  submissionId: string
+  name: string
+  email: string
+  phone: string
+  location: string
+  size: string
+  titleType: string
+  description: string
+}) => {
+  try {
+    const submissionUrl = `${baseUrl}/admin/land-submissions`
+    
+    const content = `
+      <div class="content">
+        <h2>New Land Submission Received</h2>
+        
+        <p>A new land submission has been received that requires your review.</p>
+        
+        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3>Submission Details:</h3>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Phone:</strong> ${phone}</p>
+          <p><strong>Location:</strong> ${location}</p>
+          <p><strong>Size:</strong> ${size}</p>
+          <p><strong>Title Type:</strong> ${titleType}</p>
+          <p><strong>Submission ID:</strong> ${submissionId}</p>
+          <p><strong>Description:</strong></p>
+          <p style="white-space: pre-wrap;">${description.substring(0, 500)}${description.length > 500 ? '...' : ''}</p>
+        </div>
+        
+        <a href="${submissionUrl}" class="button">Review & Respond to Submission</a>
+      </div>
+      
+      <p>Please review this submission promptly and provide appropriate feedback to the landowner.</p>
+    `
+
+    await resend.emails.send({
+      from: "STABLEBRICKS <noreply@stablebricks.com>",
+      to: "admin@stablebricks.com",
+      subject: `New Land Submission: ${location}`,
+      html: emailTemplate(content),
+    })
+  } catch (error) {
+    console.error("Error sending land submission notification email:", error)
+  }
+}
