@@ -14,27 +14,6 @@ import {
 } from "@/components/ui/navigation-menu"
 import { DarkButton } from "./DarkButton"
 
-// const navLinks = [
-//   {
-//     id: 1,
-//     name: "HOME",
-//     url: "/",
-//     icon: "",
-//   },
-//   {
-//     id: 2,
-//     name: "ABOUT",
-//     url: "/about",
-//     icon: "",
-//   },
-//   {
-//     id: 3,
-//     name: "CONTACT",
-//     url: "/contact",
-//     icon: "",
-//   },
-// ]
-
 const investmentLinks = [
   { name: "Investment Opportunities", url: "/investments", description: "Browse available investment projects" },
   { name: "Portfolio Tracker", url: "/portfolio", description: "Track your investments" },
@@ -355,7 +334,7 @@ export const PublicNavigations = () => {
               {user && (
                 <div className="flex h-full flex-col space-y-4 border-t-2 pt-6 w-full">
                   <div className="flex flex-col h-full justify-between space-y-4">
-                    <Link href={"/dashboard"} className="">
+                    <Link href={"/user/dashboard"} className="">
                       <SheetTrigger className="py-2 font-poppins flex items-center space-x-3 font-semibold text-lg w-full text-black">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
