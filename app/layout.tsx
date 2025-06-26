@@ -28,10 +28,9 @@ export default async function RootLayout({
      <body className={`${inter.className} text-gray-950 bg-gray-50`}>
       <GoogleAnalytics />
       <Providers session={session}>
-        <PublicNavigations />
+        {/* <PublicNavigations /> */}
         <AnalyticsTracker />
         {children}
-        <Footer />
         <Analytics />
         <Toaster />
       </Providers>
