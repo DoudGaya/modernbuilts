@@ -13,9 +13,9 @@ export function InvestmentButton({ projectSlug }: InvestmentButtonProps) {
 
   const handleInvestClick = () => {
     if (user) {
-      router.push(`/user/projects/${projectSlug}`)
+      router.push(`/investments/${projectSlug}`)
     } else {
-      router.push(`/login?redirectTo=/user/projects/${projectSlug}`)
+      router.push(`/login?redirectTo=${encodeURIComponent(`/investments/${projectSlug}`)}`)
     }
   }
 

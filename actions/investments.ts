@@ -54,7 +54,7 @@ export const createInvestment = async (data: {
         where: { id: data.projectId },
         data: {
           soldShares: {
-            increment: investment.shares || 0
+            increment: investment.shares ?? 0
           }
         }
       })
@@ -472,7 +472,7 @@ export const createWalletInvestment = async (data: {
       // Update project sold shares
       await tx.project.update({
         where: { id: data.projectId },
-        data: { soldShares: { increment: investment.shares } },
+        data: { soldShares: { increment: investment.shares ?? 0 } },
       })
 
       return investment
