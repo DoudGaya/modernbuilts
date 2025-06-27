@@ -41,6 +41,7 @@ export const createInvestment = async (data: {
           shares: data.shares || Math.floor(data.amount / 100000), // Default calculation
           transactionRef: data.transactionRef,
           flutterwaveRef: data.flutterwaveRef,
+          paymentMethod: "CARD", // Default to card for Flutterwave payments
         },
         include: {
           user: true,
@@ -398,5 +399,107 @@ export const getProjectsForFilter = async () => {
   }
 }
 
+export const createWalletInvestment = async (data: {
+  userId: string
+  projectId: string
+  amount: number
+  shares?: number
+}) => {
+  const user = await getUserById(data.userId);
+  if (!user) {
+    return { error: "User does not exist" }
+  }
 
- 
+  try {
+    // Check wallet balance
+    const { getWalletByUserId } = await import("@/actions/wallet")
+    const walletResult = await getWalletByUserId(data.userId)
+    
+    if (!walletResult.success || !walletResult.wallet) {
+      return { error: "Wallet not found" }
+    }
+
+    if (walletResult.wallet.balance < data.amount) {
+      return { error: "Insufficient wallet balance" }
+    }
+
+    const verificationToken = await generateVerificationToken(user.email || user.id)
+    const certificateId = `SB-CERT-${data.projectId.slice(0, 3).toUpperCase()}-${Date.now()}`
+    const transactionRef = `WALLET-${Date.now()}-${data.userId.slice(0, 8)}`
+
+    // Create investment and update wallet balance in a transaction
+    const result = await db.$transaction(async (tx) => {
+      // Deduct from wallet balance
+      await tx.wallet.update({
+        where: { id: walletResult.wallet.id },
+        data: { balance: { decrement: data.amount } }
+      })
+
+      // Create wallet transaction record
+      await tx.walletTransaction.create({
+        data: {
+          walletId: walletResult.wallet.id,
+          type: "DEBIT",
+          amount: data.amount,
+          description: `Investment in project: ${data.projectId}`,
+          reference: transactionRef,
+          status: "COMPLETED"
+        }
+      })
+
+      // Create the investment
+      const investment = await tx.investment.create({
+        data: {
+          userId: data.userId,
+          projectId: data.projectId,
+          investmentAmount: data.amount,
+          investmentReturn: 0,
+          dateOfInvestment: new Date(),
+          dateOfreturn: new Date(Date.now() + (365 * 24 * 60 * 60 * 1000)),
+          status: "ACTIVE",
+          certificateId,
+          verificationToken: verificationToken.token,
+          shares: data.shares || Math.floor(data.amount / 100000),
+          transactionRef,
+          paymentMethod: "WALLET",
+        },
+        include: {
+          user: true,
+          project: true,
+        },
+      })
+
+      // Update project sold shares
+      await tx.project.update({
+        where: { id: data.projectId },
+        data: { soldShares: { increment: investment.shares } },
+      })
+
+      return investment
+    })
+
+    // Generate certificate PDF if needed
+    // This is optional and can be done asynchronously
+    try {
+      if (result.project && result.user) {
+        await generateCertificatePDF({
+          investorName: result.user.name || "Unknown",
+          projectName: result.project.title,
+          investmentAmount: result.investmentAmount,
+          shares: result.shares,
+          certificateId: result.certificateId,
+          investmentDate: result.dateOfInvestment,
+        })
+      }
+    } catch (pdfError) {
+      console.error("PDF generation error:", pdfError)
+    }
+
+    return { success: true, investment: result }
+  } catch (error) {
+    console.error("Wallet investment error:", error)
+    return { error: "Failed to process wallet investment" }
+  }
+}
+
+

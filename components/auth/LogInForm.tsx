@@ -41,6 +41,7 @@ export function LoginForm() {
   const [success, setSuccess] = useState<string | undefined>('')
   const searchParams = useSearchParams()
   const urlError = searchParams.get("error") === "OAuthAccountNotLinked" ? "Email already been used with another provider" : ""
+  const redirectTo = searchParams.get("redirectTo") || DEFAULT_LOGGED_IN_REDIRRECT
 
 
    const form = useForm<z.infer<typeof loginSchema>>({
@@ -54,7 +55,7 @@ export function LoginForm() {
   const googleSignIn = async (provider: "google") => {
     try {
       await signIn(provider, {
-        callbackUrl: DEFAULT_LOGGED_IN_REDIRRECT
+        callbackUrl: redirectTo
       })
     } catch (error) {
       console.error('Google sign-in error:', error)
@@ -71,7 +72,7 @@ export function LoginForm() {
     setError('')
     setSuccess('')
     startTransition(() => {
-      login(values)
+      login(values, redirectTo)
       .then((data) => {
         if (data?.error) {
           form.reset() 

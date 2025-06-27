@@ -8,19 +8,19 @@ import { formatCurrency, formatCurrencyShort, calculateFundingProgress } from "@
 import { useCurrentUser } from "@/hooks/use-current-user"
 import { useRouter } from "next/navigation"
 
-interface InvestmentHighlightsProps {
+interface InvestmentHighlightsClientProps {
   projects: any[]
 }
 
-export const InvestmentHighlights = ({ projects }: InvestmentHighlightsProps) => {
+export const InvestmentHighlightsClient = ({ projects }: InvestmentHighlightsClientProps) => {
   const user = useCurrentUser()
   const router = useRouter()
 
   const handleInvestClick = (projectSlug: string) => {
     if (user) {
-      router.push(`/projects/${projectSlug}`)
+      router.push(`/user/projects/${projectSlug}`)
     } else {
-      router.push(`/login?redirectTo=${encodeURIComponent(`/projects/${projectSlug}`)}`)
+      router.push(`/login?redirectTo=/user/projects/${projectSlug}`)
     }
   }
 
@@ -103,7 +103,7 @@ export const InvestmentHighlights = ({ projects }: InvestmentHighlightsProps) =>
                       >
                         Invest Now
                       </Button>
-                      <Link href={`/investments/${project.slug}`} className="flex-1">
+                      <Link href={`/projects/${project.slug}`} className="flex-1">
                         <Button variant="outline" className="w-full">
                           View Details
                         </Button>
@@ -131,5 +131,3 @@ export const InvestmentHighlights = ({ projects }: InvestmentHighlightsProps) =>
     </div>
   )
 }
-
-

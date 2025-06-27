@@ -47,6 +47,32 @@ model Wallet {
   user            User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId          String @unique @db.ObjectId
   bonuses         Bonuses[]
+  transactions    WalletTransaction[]
+}
+
+model WalletTransaction {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  wallet          Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  walletId        String @db.ObjectId
+  type            TransactionType
+  amount          Int
+  description     String
+  reference       String?
+  status          TransactionStatus @default(PENDING)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
 }
 
 model AccountDetails {
@@ -137,12 +163,19 @@ model Investment {
   shares              Int? @default(1)
   transactionRef      String?
   flutterwaveRef      String?
+  paymentMethod       PaymentMethod @default(CARD)
   user                User @relation(fields: [userId], references: [id], onDelete: Cascade)
   project             Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   userId              String @db.ObjectId
   projectId           String @db.ObjectId
   certificateId       String? @unique
   verificationToken   String? @unique
+}
+
+enum PaymentMethod {
+  CARD
+  WALLET
+  BANK_TRANSFER
 }
 
 model PasswordResetToken {

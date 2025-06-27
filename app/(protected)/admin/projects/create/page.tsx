@@ -26,6 +26,7 @@ export default function CreateProjectPage() {
   const [imagesPreviews, setImagesPreviews] = useState<string[]>([])
   const [features, setFeatures] = useState<string[]>([])
   const [newFeature, setNewFeature] = useState("")
+  const [notifyUsers, setNotifyUsers] = useState(false)
   
   // Use our custom upload hook
   const { uploadFile, uploadMultipleFiles, isUploading, progress, error } = useFileUpload()
@@ -131,6 +132,7 @@ export default function CreateProjectPage() {
       formData.append("videoUrl", videoUrl)
       formData.append("imageUrls", JSON.stringify(projectImageUrls))
       formData.append("features", JSON.stringify(features))
+      formData.append("notifyUsers", notifyUsers.toString())
 
       // Now submit the form with URLs instead of files
       const result = await createProject(formData)
@@ -146,7 +148,7 @@ export default function CreateProjectPage() {
 
       toast({
         title: "Success",
-        description: "Project created successfully",
+        description: `Project created successfully${notifyUsers ? ' and users have been notified' : ''}`,
       })
 
       router.push("/admin/projects")
@@ -513,6 +515,18 @@ useEffect(() => {
                 <CardTitle>Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="notifyUsers"
+                    checked={notifyUsers}
+                    onChange={(e) => setNotifyUsers(e.target.checked)}
+                    className="h-4 w-4 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded"
+                  />
+                  <Label htmlFor="notifyUsers" className="text-sm font-medium">
+                    Notify all users via email about this new project
+                  </Label>
+                </div>
                 <Button
                   type="submit"
                   className="w-full bg-yellow-400 hover:bg-yellow-500 text-black"

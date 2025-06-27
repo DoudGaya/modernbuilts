@@ -126,6 +126,18 @@ export const createProject = async (formData: FormData) => {  try {
       },
     })
 
+    // Check if admin wants to notify users about the new project
+    const notifyUsers = formData.get("notifyUsers") === "true"
+    
+    if (notifyUsers) {
+      try {
+        await sendProjectNotificationToAllUsers(project)
+      } catch (emailError) {
+        console.error("Error sending project notification emails:", emailError)
+        // Don't fail the project creation if email fails
+      }
+    }
+
     revalidatePath("/admin/projects")
     return { success: true, project }
   } catch (error) {
@@ -399,295 +411,66 @@ export const sendProjectUpdateToInvestors = async (projectId: string, subject: s
   }
 }
 
+// Function to send new project notifications to all users
+export const sendProjectNotificationToAllUsers = async (project: any) => {
+  try {
+    // Fetch all users who should receive notifications
+    const users = await db.user.findMany({
+      where: {
+        role: {
+          in: ["USER", "DEVELOPER"] // Send to regular users and developers
+        },
+        emailVerified: {
+          not: null // Only send to verified users
+        }
+      },
+      select: {
+        email: true,
+        name: true
+      }
+    })
 
-// "use server"
-// import { projectSchema } from "@/lib/schema"
-// import { db } from "@/lib/db"
-// import { uploadToS3, deleteFromS3 } from "@/lib/s3"
-// import { revalidatePath } from "next/cache"
-// import { sendBulkEmail } from "@/lib/mail"
+    // Prepare recipients list
+    const recipients = users.filter(user => user.email).map(user => ({
+      email: user.email!,
+      name: user.name || "Valued Investor"
+    }))
 
-// export const createProject = async (formData: FormData) => {
-//   try {
-//     // Extract and validate form data
-//     const title = formData.get("title") as string
-//     const length = formData.get("length") as string
-//     const category = formData.get("category") as string
-//     const description = formData.get("description") as string
-//     const duration = formData.get("duration") as string
-//     const valuation = formData.get("valuation") as string
-//     const state = formData.get("state") as string
-//     const city = formData.get("city") as string
-//     const location = formData.get("location") as string
-//     const sharePrice = Number.parseInt(formData.get("sharePrice") as string)
-//     const roi = Number.parseInt(formData.get("roi") as string)
-//     const projectStatus = formData.get("projectStatus") as "PENDING" | "ACTIVE" | "END" | "COMPLETED"
+    if (recipients.length > 0) {
+      // Format investment required with commas for thousands
+      const formattedInvestment = new Intl.NumberFormat('en-NG', {
+        style: 'currency',
+        currency: 'NGN'
+      }).format(project.investmentRequired)
 
-//     // Handle file uploads
-//     const coverImageFile = formData.get("coverImage") as File
-//     const videoFile = formData.get("video") as File
-//     const imageFiles = formData.getAll("images") as File[]
+      const formattedSharePrice = new Intl.NumberFormat('en-NG', {
+        style: 'currency',
+        currency: 'NGN'
+      }).format(project.sharePrice)
 
-//     // Validate data
-//     const validatedFields = projectSchema.safeParse({
-//       title,
-//       length,
-//       category,
-//       description,
-//       duration,
-//       valuation,
-//       state,
-//       city,
-//       location,
-//       sharePrice,
-//       roi,
-//       projectStatus,
-//       coverImage: coverImageFile.name, // Temporary for validation
-//       video: videoFile?.name || "",
-//       images: imageFiles.map((file) => file.name), // Temporary for validation
-//     })
+      // Create email content
+      const subject = `New Investment Opportunity: ${project.title}`
+      const message = `
+        <p>We're excited to announce a new investment opportunity that you might be interested in:</p>
+        
+        <h3>${project.title}</h3>
+        <p><strong>Category:</strong> ${project.category}</p>
+        <p><strong>Location:</strong> ${project.location}, ${project.city}, ${project.state}</p>
+        <p><strong>Investment Required:</strong> ${formattedInvestment}</p>
+        <p><strong>Share Price:</strong> ${formattedSharePrice}</p>
+        <p><strong>Expected ROI:</strong> ${project.roi}%</p>
+        
+        <p>${project.description.substring(0, 200)}${project.description.length > 200 ? '...' : ''}</p>
+        
+        <p>Don't miss out on this exciting investment opportunity. Visit our platform to learn more and start investing today!</p>
+        <a href="https://stablebricks.com/projects/${project.slug}" style="background-color: #f7d046; color: #000; text-decoration: none; padding: 10px 20px; border-radius: 4px; display: inline-block; margin-top: 15px;">View Project & Invest</a>
+      `
 
-//     if (!validatedFields.success) {
-//       return { error: "Invalid fields", issues: validatedFields.error.issues }
-//     }
-
-//     // Upload files to S3
-//     const coverImageUrl = await uploadToS3(coverImageFile, "projects/covers")
-//     const videoUrl = videoFile ? await uploadToS3(videoFile, "projects/videos") : ""
-//     const imageUrls = await Promise.all(imageFiles.map((file) => uploadToS3(file, "projects/images")))
-
-//     // Create project in database
-//     const project = await db.project.create({
-//       data: {
-//         title,
-//         length,
-//         category,
-//         description,
-//         duration: new Date(duration),
-//         valuation,
-//         state,
-//         city,
-//         location,
-//         sharePrice,
-//         roi,
-//         projectStatus,
-//         coverImage: coverImageUrl,
-//         video: videoUrl,
-//         images: imageUrls,
-//       },
-//     })
-
-//     revalidatePath("/admin/projects")
-//     return { success: true, project }
-//   } catch (error) {
-//     console.error("Project creation error:", error)
-//     return { error: "Failed to create project" }
-//   }
-// }
-
-// export const updateProject = async (id: string, formData: FormData) => {
-//   try {
-//     // Extract and validate form data similar to createProject
-//     // ...
-
-//     // Find existing project
-//     const existingProject = await db.project.findUnique({
-//       where: { id },
-//     })
-
-//     if (!existingProject) {
-//       return { error: "Project not found" }
-//     }
-
-//     // Handle file updates - only upload new files if provided
-//     // ...
-
-//     // Update project in database
-//     const project = await db.project.update({
-//       where: { id },
-//       data: {
-//         // Updated fields
-//         // ...
-//       },
-//     })
-
-//     revalidatePath(`/admin/projects/${id}`)
-//     revalidatePath("/admin/projects")
-//     return { success: true, project }
-//   } catch (error) {
-//     console.error("Project update error:", error)
-//     return { error: "Failed to update project" }
-//   }
-// }
-
-// export const deleteProject = async (id: string) => {
-//   try {
-//     // Find project to get file URLs
-//     const project = await db.project.findUnique({
-//       where: { id },
-//     })
-
-//     if (!project) {
-//       return { error: "Project not found" }
-//     }
-
-//     // Delete files from S3
-//     await deleteFromS3(project.coverImage)
-//     if (project.video) await deleteFromS3(project.video)
-//     await Promise.all(project.images.map((image) => deleteFromS3(image)))
-
-//     // Delete project from database
-//     await db.project.delete({
-//       where: { id },
-//     })
-
-//     revalidatePath("/admin/projects")
-//     return { success: true }
-//   } catch (error) {
-//     console.error("Project deletion error:", error)
-//     return { error: "Failed to delete project" }
-//   }
-// }
-
-// export const getProjectById = async (id: string) => {
-//   try {
-//     const project = await db.project.findUnique({
-//       where: { id },
-//       include: {
-//         investment: {
-//           include: {
-//             user: {
-//               select: {
-//                 id: true,
-//                 name: true,
-//                 email: true,
-//               },
-//             },
-//           },
-//         },
-//       },
-//     })
-
-//     if (!project) {
-//       return { error: "Project not found" }
-//     }
-
-//     return { success: true, project }
-//   } catch (error) {
-//     console.error("Project fetch error:", error)
-//     return { error: "Failed to fetch project" }
-//   }
-// }
-
-// export const getProjectBySlug = async (slug: string) => {
-//   try {
-//     const project = await db.project.findUnique({
-//       where: { slug },
-//       include: {
-//         investment: {
-//           include: {
-//             user: {
-//               select: {
-//                 id: true,
-//                 name: true,
-//                 email: true,
-//               },
-//             },
-//           },
-//         },
-//       },
-//     })
-
-//     if (!project) {
-//       return { error: "Project not found" }
-//     }
-
-//     return { success: true, project }
-//   } catch (error) {
-//     console.error("Project fetch error:", error)
-//     return { error: "Failed to fetch project" }
-//   }
-// }
-
-// export const getAllProjects = async (filters?: {
-//   status?: string
-//   category?: string
-//   search?: string
-// }) => {
-//   try {
-//     const where: any = {}
-
-//     if (filters?.status && filters.status !== "all") {
-//       where.projectStatus = filters.status
-//     }
-
-//     if (filters?.category && filters.category !== "all") {
-//       where.category = filters.category
-//     }
-
-//     if (filters?.search) {
-//       where.OR = [
-//         { title: { contains: filters.search, mode: "insensitive" } },
-//         { description: { contains: filters.search, mode: "insensitive" } },
-//         { location: { contains: filters.search, mode: "insensitive" } },
-//       ]
-//     }
-
-//     const projects = await db.project.findMany({
-//       where,
-//       orderBy: { createdAt: "desc" },
-//       include: {
-//         _count: {
-//           select: { investment: true },
-//         },
-//       },
-//     })
-
-//     return { success: true, projects }
-//   } catch (error) {
-//     console.error("Projects fetch error:", error)
-//     return { error: "Failed to fetch projects" }
-//   }
-// }
-
-// export const sendProjectUpdateToInvestors = async (projectId: string, subject: string, message: string) => {
-//   try {
-//     const project = await db.project.findUnique({
-//       where: { id: projectId },
-//       include: {
-//         investment: {
-//           include: {
-//             user: {
-//               select: {
-//                 email: true,
-//                 name: true,
-//               },
-//             },
-//           },
-//         },
-//       },
-//     })
-
-//     if (!project) {
-//       return { error: "Project not found" }
-//     }
-
-//     const investors = project.investment
-//       .map((inv) => ({
-//         email: inv.user.email || "",
-//         name: inv.user.name || "",
-//       }))
-//       .filter((inv) => inv.email)
-
-//     if (investors.length === 0) {
-//       return { error: "No investors found for this project" }
-//     }
-
-//     await sendBulkEmail(investors, subject, message, project.title)
-
-//     return { success: true, count: investors.length }
-//   } catch (error) {
-//     console.error("Email sending error:", error)
-//     return { error: "Failed to send emails" }
-//   }
-// }
+      // Send bulk email
+      await sendBulkEmail(recipients, subject, message, project.title)
+    }
+  } catch (error) {
+    console.error("Failed to send project notification emails:", error)
+    throw error
+  }
+}

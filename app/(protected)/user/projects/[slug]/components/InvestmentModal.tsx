@@ -3,10 +3,11 @@ import { useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { Plus, Minus, DollarSign, TrendingUp, Building2 } from "lucide-react"
+import { Label } from "@/components/ui/label"
+import { Plus, Minus, DollarSign, TrendingUp, Building2, CreditCard, Wallet } from "lucide-react"
 import { useFlutterwave, closePaymentModal } from 'flutterwave-react-v3'
 import { useCurrentUser } from "@/hooks/use-current-user"
-import { createInvestment } from "@/actions/investments"
+import { createInvestment, createWalletInvestment } from "@/actions/investments"
 import { useToast } from "@/components/ui/use-toast"
 import { useRouter } from "next/navigation"
 
@@ -27,6 +28,9 @@ export function InvestmentModal({
 }: InvestmentModalProps) {
   const [shares, setShares] = useState(initialShares)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'wallet'>('card')
+  const [walletBalance, setWalletBalance] = useState<number>(0)
+  const [isLoadingWallet, setIsLoadingWallet] = useState(false)
   const user = useCurrentUser()
   const { toast } = useToast()
   const router = useRouter()
@@ -34,6 +38,28 @@ export function InvestmentModal({
   useEffect(() => {
     setShares(initialShares)
   }, [initialShares])
+
+  // Fetch wallet balance when modal opens
+  useEffect(() => {
+    if (isOpen && user?.id) {
+      fetchWalletBalance()
+    }
+  }, [isOpen, user?.id])
+
+  const fetchWalletBalance = async () => {
+    try {
+      setIsLoadingWallet(true)
+      const response = await fetch('/api/wallet/balance')
+      if (response.ok) {
+        const data = await response.json()
+        setWalletBalance(data.balance)
+      }
+    } catch (error) {
+      console.error('Error fetching wallet balance:', error)
+    } finally {
+      setIsLoadingWallet(false)
+    }
+  }
 
   const calculateInvestmentAmount = () => {
     return project ? shares * project.sharePrice : 0
@@ -59,7 +85,7 @@ export function InvestmentModal({
     tx_ref: `INV-${Date.now()}-${user?.id}`,
     amount: calculateInvestmentAmount(),
     currency: 'NGN',
-    payment_options: 'card,mobilemoney,ussd',
+    payment_options: 'card,mobilemoney,ussd,banktransfer',
     customer: {
       email: user?.email || '',
       phone_number: user?.phone || '',
@@ -152,6 +178,61 @@ export function InvestmentModal({
     })
   }
 
+  const handleWalletInvestment = async () => {
+    if (!user?.id || !project) return
+
+    const investmentAmount = calculateInvestmentAmount()
+
+    if (walletBalance < investmentAmount) {
+      toast({
+        title: "Insufficient Balance",
+        description: `Your wallet balance (₦${walletBalance.toLocaleString()}) is insufficient for this investment (₦${investmentAmount.toLocaleString()})`,
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsProcessing(true)
+
+    try {
+      const investmentData = {
+        userId: user.id,
+        projectId: project.id,
+        amount: investmentAmount,
+        shares: shares,
+      }
+
+      const result = await createWalletInvestment(investmentData)
+      
+      if (result.success) {
+        toast({
+          title: "Investment Successful!",
+          description: `You have successfully invested ₦${investmentAmount.toLocaleString()} from your wallet in ${project.title}`,
+        })
+        
+        // Refresh wallet balance and redirect
+        await fetchWalletBalance()
+        router.push(`/user/investments/success?ref=WALLET-${Date.now()}&amount=${investmentAmount}`)
+      } else {
+        toast({
+          title: "Investment Failed",
+          description: result.error || "Something went wrong",
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error("Wallet investment error:", error)
+      toast({
+        title: "Investment Failed",
+        description: "Failed to process wallet investment",
+        variant: "destructive",
+      })
+    } finally {
+      setIsProcessing(false)
+      onClose()
+    }
+  }
+
   if (!project) return null
 
   return (
@@ -218,6 +299,50 @@ export function InvestmentModal({
             </div>
           </div>
 
+          {/* Payment Method Selection */}
+          <div className="space-y-3">
+            <Label className="text-sm font-medium">Payment Method</Label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setPaymentMethod('card')}
+                className={`p-3 border-2 rounded-lg text-sm font-medium transition-colors ${
+                  paymentMethod === 'card'
+                    ? 'border-yellow-400 bg-yellow-50 text-yellow-800'
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex items-center justify-center space-x-2">
+                  <CreditCard className="w-4 h-4" />
+                  <span>Card Payment</span>
+                </div>
+                <p className="text-xs text-gray-600 mt-1">Pay with Flutterwave</p>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPaymentMethod('wallet')}
+                className={`p-3 border-2 rounded-lg text-sm font-medium transition-colors ${
+                  paymentMethod === 'wallet'
+                    ? 'border-yellow-400 bg-yellow-50 text-yellow-800'
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex items-center justify-center space-x-2">
+                  <Wallet className="w-4 h-4" />
+                  <span>Wallet</span>
+                </div>
+                <p className="text-xs text-gray-600 mt-1">
+                  {isLoadingWallet ? 'Loading...' : `Balance: ₦${walletBalance.toLocaleString()}`}
+                </p>
+              </button>
+            </div>
+            {paymentMethod === 'wallet' && walletBalance < calculateInvestmentAmount() && (
+              <div className="p-2 bg-red-50 border border-red-200 rounded text-sm text-red-600">
+                Insufficient wallet balance. Please fund your wallet or choose card payment.
+              </div>
+            )}
+          </div>
+
           {/* Project Info */}
           <div className="p-3 bg-gray-50 rounded-lg">
             <h4 className="font-medium mb-2">{project.title}</h4>
@@ -244,11 +369,16 @@ export function InvestmentModal({
               Cancel
             </Button>
             <Button
-              onClick={handleInvestment}
-              disabled={isProcessing}
+              onClick={paymentMethod === 'card' ? handleInvestment : handleWalletInvestment}
+              disabled={
+                isProcessing || 
+                (paymentMethod === 'wallet' && walletBalance < calculateInvestmentAmount())
+              }
               className="flex-1 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold"
             >
-              {isProcessing ? "Processing..." : `Pay ₦${calculateInvestmentAmount().toLocaleString()}`}
+              {isProcessing ? "Processing..." : 
+               paymentMethod === 'card' ? `Pay ₦${calculateInvestmentAmount().toLocaleString()} with Card` :
+               `Pay ₦${calculateInvestmentAmount().toLocaleString()} from Wallet`}
             </Button>
           </div>
         </div>

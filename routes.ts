@@ -10,6 +10,7 @@ export const publicRoutes = [
     '/blog/:slug',
     '/email-verification',
     '/investments',
+    '/investments/:slug',
     '/portfolio',
     '/properties',
     '/properties/:slug',
