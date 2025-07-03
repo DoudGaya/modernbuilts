@@ -12,7 +12,9 @@ export async function verifyNIN(nin: string): Promise<any> {
     return error
   }
 
-  const API_KEY = "CCVb73G1EDmPpU4z13s4BWA"
+  const API_KEY = 'CCVb73G1EDmPpU4z13s4BWA'
+
+
   // const API_URL = "https://e-nvs.digitalpulseapi.net/api/lookup/nin"
      const API_URL = "https://e-nvs.digitalpulseapi.net/api/lookup/nin"
   
