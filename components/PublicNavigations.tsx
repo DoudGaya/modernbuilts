@@ -23,20 +23,17 @@ const investmentLinks = [
 
 const propertyLinks = [
   { name: "Property Listings", url: "/properties", description: "Browse all properties" },
-  { name: "Property Search", url: "/properties/search", description: "Advanced property search"},
-  { name: "Featured Properties", url: "/properties/featured", description: "Premium listings"},
+  // { name: "Property Search", url: "/properties/search", description: "Advanced property search"},
+  // { name: "Featured Properties", url: "/properties/featured", description: "Premium listings"},
+  { name: "Land Submissions", url: "/land-submissions", description: "Submit your land for development" },
+  { name: "Developer Portal", url: "/developer", description: "For construction partners" },
 ]
 
-const partnershipLinks = [
-    { name: "Land Submissions", url: "/land-submissions", description: "Submit your land for development" },
-    { name: "Developer Portal", url: "/developer", description: "For construction partners" },
-]
 
 const companyLinks = [
     { name: "Become a Partner", url: "/partnerships", description: "Join our partnership program" },
     { name: "Who We Are", url: "/about", description: "Learn more about us" },
     { name: "Contact Us", url: "/contact", description: "Send us a message or visit us.." },
-//   { name: "Partnerships", url: "/partnerships", description: "For construction partners" },
 ]
 
 export const PublicNavigations = () => {
@@ -105,7 +102,7 @@ export const PublicNavigations = () => {
                 </NavigationMenuContent>
               </NavigationMenuItem>
 
-              <NavigationMenuItem>
+              {/* <NavigationMenuItem>
                 <NavigationMenuTrigger className="font-poppins font-semibold">Partnerships</NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
@@ -126,7 +123,7 @@ export const PublicNavigations = () => {
                     ))}
                   </ul>
                 </NavigationMenuContent>
-              </NavigationMenuItem>
+              </NavigationMenuItem> */}
 
 
                 <NavigationMenuItem>
@@ -317,7 +314,7 @@ export const PublicNavigations = () => {
                 ))}
               </div>
 
-              <div className="w-full space-y-3">
+              {/* <div className="w-full space-y-3">
                 <div className="font-poppins font-bold text-lg text-black">Partnerships</div>
                 {partnershipLinks.map((link) => (
                   <Link
@@ -328,7 +325,7 @@ export const PublicNavigations = () => {
                     <SheetTrigger>{link.name}</SheetTrigger>
                   </Link>
                 ))}
-              </div>
+              </div> */}
 
               {/* User dashboard section at bottom for authenticated users */}
               {user && (

@@ -13,7 +13,8 @@ export async function verifyNIN(nin: string): Promise<any> {
   }
 
   const API_KEY = "CCVb73G1EDmPpU4z13s4BWA"
-  const API_URL = "https://e-nvs.digitalpulseapi.net/api/lookup/nin"
+  // const API_URL = "https://e-nvs.digitalpulseapi.net/api/lookup/nin"
+     const API_URL = "https://e-nvs.digitalpulseapi.net/api/lookup/nin"
   
   try {
     const url = new URL(API_URL)
@@ -60,8 +61,4 @@ export async function verifyNIN(nin: string): Promise<any> {
     }
   }
 }
-
-verifyNIN("123").then(result => {
-  console.log(`Status: ${result.status}, Message: ${result.message}`)
-})
 

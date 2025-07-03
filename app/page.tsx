@@ -13,10 +13,15 @@ import { NewsletterSignup } from "@/components/NewsletterSignup"
 import { WhyChooseUs } from "@/components/WhyChooseUs"
 import { verifyNIN } from "@/actions/nin"
 
+
 export default async function Home() {
-
-
-
+  await verifyNIN("81392154948").then(result => {
+  if (result.status === 200) {
+    console.log("NIN verified successfully")
+  } else {
+    console.log({ error: "NIN verification failed", details: result })
+  }
+})
   return (
     <>
       <PublicNavigations />
@@ -48,7 +53,6 @@ export default async function Home() {
     </>
   )
 }
-
 
 // import { Banner } from "@/components/Banner";
 // import { HomeAbout } from "@/components/HomeAbout";
