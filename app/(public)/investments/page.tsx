@@ -1,3 +1,4 @@
+import { Metadata } from "next"
 import { PublicNavigations } from "@/components/PublicNavigations"
 import { Footer } from "@/components/Footer"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,6 +11,66 @@ import { getAllProjects } from "@/actions/project"
 import Link from "next/link"
 import Image from "next/image"
 import { formatCurrency, formatCurrencyShort, calculateFundingProgress } from "@/lib/project-utils"
+
+export const metadata: Metadata = {
+  title: "Investment Opportunities - StableBricks",
+  description: "Discover high-yield real estate investment opportunities with guaranteed returns, transparent processes, and professional management. Start investing in Nigerian real estate today.",
+  keywords: [
+    "real estate investment opportunities",
+    "property investment Nigeria",
+    "high-yield investments",
+    "real estate portfolio",
+    "investment projects",
+    "property crowdfunding",
+    "real estate returns",
+    "investment platform Nigeria",
+    "property investment returns",
+    "real estate deals",
+    "investment opportunities Lagos",
+    "property investment Abuja",
+    "real estate investment platform",
+    "guaranteed returns property",
+    "commercial real estate investment",
+    "residential property investment"
+  ],
+  openGraph: {
+    title: "Investment Opportunities - StableBricks",
+    description: "Discover high-yield real estate investment opportunities with guaranteed returns, transparent processes, and professional management.",
+    url: "/investments",
+    siteName: "StableBricks",
+    images: [
+      {
+        url: "/og-investments.jpg",
+        width: 1200,
+        height: 630,
+        alt: "StableBricks Investment Opportunities - High-Yield Real Estate",
+      },
+    ],
+    locale: "en_NG",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Investment Opportunities - StableBricks",
+    description: "Discover high-yield real estate investment opportunities with guaranteed returns, transparent processes, and professional management.",
+    images: ["/og-investments.jpg"],
+    creator: "@stablebricks",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: "/investments",
+  },
+}
 
 export default async function InvestmentsPage() {
   const projectsResult = await getAllProjects()

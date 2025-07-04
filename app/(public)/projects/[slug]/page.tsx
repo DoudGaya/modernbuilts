@@ -238,50 +238,64 @@ export async function generateMetadata({ params }: ProjectDetailPageProps): Prom
   const fundingProgress = calculateFundingProgress(project)
 
   return {
-    title: `${project.title} | StableBricks Investment Opportunity`,
-    description: `Invest in ${project.title} in ${project.city}, ${project.state}. ${project.roi}% ROI expected. Starting from ${formatCurrency(sharePrice)}. ${project.description.slice(0, 150)}...`,
+    title: `${project.title} - Real Estate Investment in ${project.city} | StableBricks`,
+    description: `Invest in ${project.title} located in ${project.city}, ${project.state}. Expected ${project.roi}% ROI, ${Math.round(fundingProgress)}% funded. Premium ${project.category.toLowerCase()} investment opportunity starting from ${formatCurrency(sharePrice)}. Secure, transparent, and profitable real estate investment.`,
     keywords: [
-      'real estate investment',
-      'property investment',
-      project.category.toLowerCase(),
-      project.city.toLowerCase(),
-      project.state.toLowerCase(),
-      'high yield investment',
+      `${project.title}`,
+      `real estate investment ${project.city}`,
+      `property investment ${project.state}`,
+      `${project.category} investment Nigeria`,
+      `${project.roi}% ROI investment`,
+      'real estate crowdfunding',
+      'property development Nigeria',
+      'investment opportunity Lagos',
+      'investment opportunity Abuja',
       'stable returns',
-      `${project.roi}% ROI`,
+      'high yield investment',
+      'real estate portfolio',
+      `${project.city} real estate market`,
+      'Nigerian property investment',
+      'commercial real estate',
+      'residential investment',
+      'real estate platform Nigeria'
     ],
     authors: [{ name: 'StableBricks' }],
+    creator: 'StableBricks',
+    publisher: 'StableBricks',
     openGraph: {
-      title: `${project.title} | Investment Opportunity`,
-      description: `${project.roi}% ROI • ${project.city}, ${project.state} • Starting from ${formatCurrency(sharePrice)}`,
+      title: `${project.title} - ${project.roi}% ROI Real Estate Investment`,
+      description: `Premium ${project.category.toLowerCase()} investment in ${project.city}, ${project.state}. ${project.roi}% expected ROI, ${Math.round(fundingProgress)}% funded. Starting from ${formatCurrency(sharePrice)}.`,
       type: 'website',
       url: `https://stablebricks.com/projects/${slug}`,
       siteName: 'StableBricks',
+      locale: 'en_NG',
       images: [
         {
-          url: project.coverImage || '/placeholder.svg',
+          url: project.coverImage || `/api/og/project?title=${encodeURIComponent(project.title)}&location=${encodeURIComponent(project.city + ', ' + project.state)}&roi=${project.roi}&progress=${Math.round(fundingProgress)}`,
           width: 1200,
           height: 630,
-          alt: `${project.title} - Real Estate Investment Opportunity`,
+          alt: `${project.title} - Real Estate Investment Opportunity in ${project.city}, ${project.state}`,
           type: 'image/jpeg',
         },
         ...(project.images?.slice(0, 3).map((image: string, index: number) => ({
           url: image,
           width: 800,
           height: 600,
-          alt: `${project.title} - Image ${index + 1}`,
+          alt: `${project.title} - Property Image ${index + 1}`,
           type: 'image/jpeg',
         })) || [])
       ],
-      locale: 'en_US',
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${project.title} | Investment Opportunity`,
-      description: `${project.roi}% ROI • ${project.city}, ${project.state} • Starting from ${formatCurrency(sharePrice)}`,
-      images: [project.coverImage || '/placeholder.svg'],
+      title: `${project.title} - ${project.roi}% ROI Investment`,
+      description: `Premium real estate investment in ${project.city}, ${project.state}. ${Math.round(fundingProgress)}% funded • Starting from ${formatCurrency(sharePrice)}`,
+      images: [project.coverImage || `/api/og/project?title=${encodeURIComponent(project.title)}&location=${encodeURIComponent(project.city + ', ' + project.state)}&roi=${project.roi}&progress=${Math.round(fundingProgress)}`],
       site: '@stablebricks',
       creator: '@stablebricks',
+    },
+    alternates: {
+      canonical: `https://stablebricks.com/projects/${slug}`,
     },
     robots: {
       index: true,
@@ -293,9 +307,6 @@ export async function generateMetadata({ params }: ProjectDetailPageProps): Prom
         'max-image-preview': 'large',
         'max-snippet': -1,
       },
-    },
-    alternates: {
-      canonical: `https://stablebricks.com/projects/${slug}`,
     },
   }
 }

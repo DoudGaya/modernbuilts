@@ -173,3 +173,22 @@ export async function getPropertyBySlug(slug: string) {
     return { success: false, error: "Failed to fetch property" };
   }
 }
+
+export async function getAllPropertySlugs() {
+  try {
+    const properties = await db.propertyListing.findMany({
+      where: {
+        status: "Active"
+      },
+      select: {
+        slug: true,
+        updatedAt: true
+      }
+    });
+
+    return { success: true, properties };
+  } catch (error) {
+    console.error("Error fetching property slugs:", error);
+    return { success: false, error: "Failed to fetch property slugs" };
+  }
+}

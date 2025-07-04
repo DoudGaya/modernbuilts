@@ -11,8 +11,79 @@ import { auth } from "@/auth";
 import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
-  title: "Stablebricks",
-  description: "The Nigeria's Real Estate Investment Company. We are stable, We are Reliable",
+  title: {
+    default: "StableBricks - Nigeria's Premier Real Estate Investment Platform",
+    template: "%s | StableBricks"
+  },
+  description: "Invest in Nigeria's most profitable real estate projects with StableBricks. High returns, low risk, transparent processes. Join thousands of successful real estate investors today.",
+  keywords: [
+    "real estate investment Nigeria",
+    "property investment",
+    "real estate crowdfunding",
+    "investment opportunities Nigeria", 
+    "property development",
+    "real estate portfolio",
+    "Nigerian real estate",
+    "property investment platform",
+    "real estate returns",
+    "investment properties",
+    "commercial real estate",
+    "residential investment",
+    "Lagos real estate",
+    "Abuja property investment",
+    "stable returns",
+    "property crowdfunding Nigeria"
+  ],
+  authors: [{ name: "StableBricks" }],
+  creator: "StableBricks",
+  publisher: "StableBricks",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL('https://stablebricks.com'),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_NG',
+    url: 'https://stablebricks.com',
+    title: "StableBricks - Nigeria's Premier Real Estate Investment Platform",
+    description: "Invest in Nigeria's most profitable real estate projects with StableBricks. High returns, low risk, transparent processes.",
+    siteName: 'StableBricks',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'StableBricks - Real Estate Investment Platform',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "StableBricks - Nigeria's Premier Real Estate Investment Platform",
+    description: "Invest in Nigeria's most profitable real estate projects with StableBricks. High returns, low risk, transparent processes.",
+    images: ['/og-image.jpg'],
+    creator: '@stablebricks',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: 'your-google-verification-code',
+    yandex: 'your-yandex-verification-code',
+  },
 };
 
 export default async function RootLayout({

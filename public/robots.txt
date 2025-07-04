@@ -1,0 +1,43 @@
+User-agent: *
+Allow: /
+
+# Allow crawling of all public pages
+Allow: /about
+Allow: /contact
+Allow: /investments
+Allow: /investments/*
+Allow: /properties
+Allow: /properties/*
+Allow: /projects/*
+Allow: /calculator
+Allow: /partnerships
+Allow: /investor-relations
+Allow: /land-submissions
+Allow: /privacy-policy
+Allow: /refund-policy
+Allow: /terms-of-service
+Allow: /cookie-policy
+Allow: /portfolio
+
+# Block admin and protected routes
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /user
+Disallow: /user/*
+Disallow: /api/
+Disallow: /_next/
+Disallow: /auth/
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /new-password
+
+# Block development and internal files
+Disallow: *.json
+Disallow: /test-upload/
+
+# Sitemap location
+Sitemap: https://stablebricks.com/sitemap.xml
+
+# Crawl delay (optional)
+Crawl-delay: 1
