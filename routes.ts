@@ -21,6 +21,7 @@ export const publicRoutes = [
     '/land-submissions',
     '/user-investment/:token',
     '/privacy-policy',
+    '/refund-policy',
     '/terms-of-service',
     '/cookie-policy',
 ]

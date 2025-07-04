@@ -203,7 +203,6 @@ export default async function InvestmentsPage() {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   )
 }

@@ -186,7 +186,6 @@ export default function LandSubmissionsPage() {
           <LandSubmissionForm />
         </div>
       </div>
-      <Footer />
     </>
   )
 }

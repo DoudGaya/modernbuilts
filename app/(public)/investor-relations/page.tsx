@@ -272,7 +272,6 @@ export default async function InvestorRelationsPage() {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   )
 }

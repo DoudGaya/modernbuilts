@@ -134,7 +134,6 @@ export default function PropertyDetailPage() {
             <p>Loading property details...</p>
           </div>
         </div>
-        <Footer />
       </>
     )
   }
@@ -149,7 +148,6 @@ export default function PropertyDetailPage() {
             <p className="text-gray-600">The property you're looking for doesn't exist.</p>
           </div>
         </div>
-        <Footer />
       </>
     )
   }
@@ -457,7 +455,6 @@ export default function PropertyDetailPage() {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   )
 }

@@ -265,7 +265,6 @@ export default function PartnershipsPage() {
           </Card>
         </div>
       </div>
-      <Footer />
     </>
   )
 }

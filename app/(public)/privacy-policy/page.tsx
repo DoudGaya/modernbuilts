@@ -1,10 +1,19 @@
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Shield, Mail } from 'lucide-react'
+import { PublicNavigations } from "@/components/PublicNavigations"
+import { Footer } from "@/components/Footer"
+
+export const metadata = {
+  title: "Privacy Policy | StableBricks",
+  description: "Privacy Policy for StableBricks - Learn how we collect, use, and protect your personal information.",
+}
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <>
+      <PublicNavigations />
+      <div className="min-h-screen bg-gray-50 py-12 pt-20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <div className="flex justify-center mb-4">
@@ -20,9 +29,9 @@ export default function PrivacyPolicyPage() {
           </p>
         </div>
 
-        <Card>
+        <div>
           <CardContent className="p-8 prose prose-lg max-w-none">
-            <h2>Introduction</h2>
+            <h2 className=' font-sans'>Introduction</h2>
             <p>
               StableBricks ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services.
             </p>
@@ -115,8 +124,10 @@ export default function PrivacyPolicyPage() {
               <div><strong>Phone:</strong> +234 806 224 9834</div>
             </div>
           </CardContent>
-        </Card>
+        </div>
       </div>
-    </div>
+      </div>
+     
+    </>
   )
 }

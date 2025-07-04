@@ -218,7 +218,6 @@ export default async function PublicProjectDetailPage({ params }: ProjectDetailP
           </div>
         </div>
       </div>
-      <Footer />
     </>
   )
 }
