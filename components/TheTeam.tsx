@@ -2,8 +2,6 @@ import React from 'react'
 import zaks from '@/public/img/ceo-zaks.jpg'
 import daddy from '@/public/img/founder1.jpg'
 import mejarks from '@/public/img/mejarks-works.jpg'
-import musaddiq from '@/public/img/musaddiq.jpg'
-import habib from '@/public/img/habib.jpg'
 import Image, { StaticImageData } from 'next/image'
 
 
@@ -28,8 +26,8 @@ const founders = [
     },  
     {
         id: 2,
-        name: "Engr. Abdulrahman Dauda",
-        profession: 'Software Engineer',
+        name: "Abdulrahman Dauda Gaya",
+        profession: 'CTO',
         designation: "Managing Director",
         img: daddy
     },
@@ -40,20 +38,7 @@ const founders = [
         designation: "Director, Works",
         img: mejarks
     },
-    {
-        id: 4,
-        name: "Habib Mustapha Adam",
-        profession: 'Marketing Specialist',
-        designation: "Sales and Marketing Manager",
-        img: habib
-    },
-     {
-        id: 5,
-        name: "Musaddiq Mahmoud Magashi",
-        profession: 'Marketing Specialist',
-        designation: "Investor Relations Manager",
-        img: musaddiq
-    }
+   
 ]
 
 export const TheTeam = () => {

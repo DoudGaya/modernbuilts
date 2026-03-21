@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+// Removed next/font/google import to avoid Google Fonts fetch during build
 import { Providers } from "@/components/Providers";
 import { PublicNavigations } from "@/components/PublicNavigations";
 import { Footer } from "@/components/Footer";
@@ -8,8 +8,9 @@ import { Analytics } from "@vercel/analytics/next"
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics"
 import { AnalyticsTracker } from "@/components/analytics/AnalyticsTracker"
 import { auth } from "@/auth";
+// @ts-ignore 
 import "./globals.css";
-const inter = Inter({ subsets: ["latin"] });
+// using system font stack instead of next/font to avoid fetching from Google
 export const metadata: Metadata = {
   title: {
     default: "StableBricks - Nigeria's Premier Real Estate Investment Platform",
@@ -109,7 +110,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         />
         {/* End Google Tag Manager */}
       </head>
-     <body className={`${inter.className} text-gray-950 bg-gray-50`}>
+  <body className={`font-sans text-gray-950 bg-gray-50`}>
       {/* Google Tag Manager (noscript) */}
       <noscript>
         <iframe

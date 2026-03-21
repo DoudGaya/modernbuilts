@@ -1,22 +1,17 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-import { Poppins } from 'next/font/google'
-import WhatWeDo from '@/public/img/home-yellow.svg'
 import { Button } from './ui/button'
 import { cn } from '@/lib/utils'
 import bg from '@/public/img/bg.jpg'
 
-// images 
+// images
 import completed from '@/public/img/completed_homes.jpg'
 import site from '@/public/img/construction-site.jpg'
 import unCompleted from '@/public/img/uncompleted.jpg'
 import slideer1 from '@/public/img/slider1.jpeg'
 
-const poppins = Poppins({
-    subsets: ["latin"],
-    weight: "600"
-})
+
 
 export const HomeWhatWeDo = () => {
   return (
@@ -25,7 +20,7 @@ export const HomeWhatWeDo = () => {
 }} className=" flex flex-col w-full bg-cover bg-no-repeat bg-fixed bg-blend-overlay bg-center bg-yellow-50">
       <div className=' w-full '>
           <div className=" max-w-6xl mx-auto">
-            {/* THE CROWDFUNDING */}
+
               <div className=" grid grid-cols-1 gap-6 py-10 lg:grid-cols-2">
                   <div className=" grid grid-cols-1 md:grid-cols-2 px-10 gap-6  lg:h-[400px] rounded-2xl ">
                       <Image src={site} className=' bg-stone-800 bg-blend-overlay object-cover object-center rounded-2xl lg:mt-10 h-[300px]' alt='' />
@@ -46,7 +41,6 @@ export const HomeWhatWeDo = () => {
                           <Link href={'/register'} className=' px-6 bg-yellow-400 w-full rounded-md py-2'> Get Started  </Link>
                       </div>
                   </div>
-                 
               </div>
               {/* end of crowdfunding */}
               <div className=" grid grid-cols-1 gap-6 py-10 lg:py-20 lg:grid-cols-2">

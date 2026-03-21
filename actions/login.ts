@@ -90,7 +90,7 @@ export const login = async (values: z.infer<typeof loginSchema>, redirectTo?: st
         
         // If we get here, login was successful
         const targetRedirect = redirectTo || getRouteByUserRole(existingUser.role)
-        redirect(targetRedirect)
+        return { success: "Login successful!", redirectTo: targetRedirect }
     } catch (error) {
         if (error instanceof AuthError) {
             switch (error.type) {

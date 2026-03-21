@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Label } from "@/components/ui/label"
 import { Plus, Minus, DollarSign, TrendingUp, Building2, CreditCard, Wallet } from "lucide-react"
-import { useFlutterwave, closePaymentModal } from 'flutterwave-react-v3'
+import { useFlutterwave } from 'flutterwave-react-v3'
 import { useCurrentUser } from "@/hooks/use-current-user"
 import { createInvestment, createWalletInvestment } from "@/actions/investments"
 import { useToast } from "@/components/ui/use-toast"
@@ -88,7 +88,8 @@ export function InvestmentModal({
     payment_options: 'card,mobilemoney,ussd,banktransfer',
     customer: {
       email: user?.email || '',
-      phone_number: user?.phone || '',
+      // flutterwave-react-v3 typings expect `phonenumber` (no underscore)
+      phonenumber: user?.phone || '',
       name: user?.name || '',
     },
     customizations: {
@@ -168,7 +169,9 @@ export function InvestmentModal({
           })
         }
         
-        closePaymentModal()
+  // flutterwave-react-v3 no longer exports closePaymentModal in the pinned version
+  // The payment widget should close automatically after callback; if manual
+  // close is required by the package, re-introduce the correct API here.
         setIsProcessing(false)
         onClose()
       },

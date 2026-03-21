@@ -1,13 +1,7 @@
 import React from 'react'
-import { Poppins } from 'next/font/google'
+// Removed next/font/google import to avoid fetching Google Fonts at build time.
+// Use Tailwind font utilities (configured in tailwind.config) which use a system font stack.
 
-
-
-
-const poppins = Poppins({
-    subsets: ['latin'],
-    weight: '600'
-})
 const contents = [
     {
         id: 1,

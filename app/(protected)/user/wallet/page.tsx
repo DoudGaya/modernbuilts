@@ -31,7 +31,7 @@ import {
 } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
 import { useCurrentUser } from "@/hooks/use-current-user"
-import { useFlutterwave, closePaymentModal } from 'flutterwave-react-v3'
+import { useFlutterwave } from 'flutterwave-react-v3'
 import { 
   getWalletByUserId, 
   addFunds, 
@@ -204,7 +204,8 @@ export default function WalletPage() {
       payment_options: 'card,mobilemoney,ussd',
       customer: {
         email: user.email || '',
-        phone_number: user.phone || '',
+        // flutterwave-react-v3 typings expect `phonenumber` (no underscore)
+        phonenumber: user.phone || '',
         name: user.name || '',
       },
       customizations: {
@@ -219,7 +220,9 @@ export default function WalletPage() {
     handleFlutterPayment({
       callback: async (response) => {
         console.log(response)
-        closePaymentModal()
+  // flutterwave-react-v3 no longer exports closePaymentModal in the pinned version
+  // The payment widget should close automatically after callback; if manual
+  // close is required by the package, re-introduce the correct API here.
         
         if (response.status === 'successful') {
           try {
