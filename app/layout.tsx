@@ -8,7 +8,7 @@ import { Toaster } from "@/components/ui/sonner"
 import { auth } from "@/auth";
 // import '/../public/fonts.css'
 import "./globals.css";
-const inter = Inter({ subsets: ["latin"] });
+// using system font stack instead of next/font to avoid fetching from Google
 export const metadata: Metadata = {
   title: "Stable Bricks",
   description: "The Nigeria's Real Estate Company. We are stable, We are Reliable",

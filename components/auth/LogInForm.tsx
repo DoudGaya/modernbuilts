@@ -30,7 +30,7 @@ import { FormSuccess } from "../FormSuccess";
 import { login } from "@/actions/login"
 import { signIn } from "next-auth/react"
 import { DEFAULT_LOGGED_IN_REDIRRECT } from "@/routes"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 
 
 export function LoginForm() {
@@ -40,6 +40,7 @@ export function LoginForm() {
   const [error, setError] = useState<string | undefined>('')
   const [success, setSuccess] = useState<string | undefined>('')
   const searchParams = useSearchParams()
+  const router = useRouter()
   const urlError = searchParams.get("error") === "OAuthAccountNotLinked" ? "Email already been used with another provider" : ""
 
 
@@ -76,6 +77,10 @@ export function LoginForm() {
         if (data?.success) {
           form.reset()
           setSuccess(data.success)
+          // Handle redirect on client side after successful login
+          if (data?.redirectTo) {
+            router.push(data.redirectTo)
+          }
         }
 
         if (data?.twoFactor) {

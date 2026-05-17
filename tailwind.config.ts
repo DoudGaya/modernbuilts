@@ -78,7 +78,20 @@ export default withUt({
         "accordion-up": "accordion-up 0.2s ease-out",
       },
       fontFamily: {
-        poppins: ['Poppins', 'sans-serif']
+        // Use a system font stack instead of remote Poppins to avoid fetching Google Fonts
+        poppins: [
+          'ui-sans-serif',
+          'system-ui',
+          '-apple-system',
+          'Segoe UI',
+          'Roboto',
+          'Helvetica Neue',
+          'Arial',
+          'Noto Sans',
+          'Apple Color Emoji',
+          'Segoe UI Emoji',
+          'Segoe UI Symbol',
+        ],
       },
     },
   },
