@@ -1,206 +1,225 @@
+"use client"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-import { MessageSquare, Clock, CheckCircle, XCircle, User, Calendar } from "lucide-react"
-import { getAllComplaints } from "@/actions/complaint"
-import Link from "next/link"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Search, Filter, MessageSquare, Calendar, User } from "lucide-react"
+import { getAllComplaints, updateComplaintStatus, respondToComplaint } from "@/actions/complaint"
+// import { toast } from "@/components/ui/use-toast"
+import { toast } from 'sonner'
 
-export default async function AdminComplaintsPage() {
-  const complaintsData = await getAllComplaints()
-  
-  if (complaintsData.error) {
-    return (
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Complaints Management</h1>
-          <p className="text-gray-600">Manage and respond to user complaints</p>
-        </div>
-        <div className="text-center py-8">
-          <p className="text-red-600">Error loading complaints: {complaintsData.error}</p>
-        </div>
-      </div>
-    )
+export default function ComplaintsPage() {
+  const [complaints, setComplaints] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [selectedComplaint, setSelectedComplaint] = useState<any>(null)
+  const [response, setResponse] = useState("")
+
+  useEffect(() => {
+    loadComplaints()
+  }, [searchTerm, statusFilter])
+
+  const loadComplaints = async () => {
+    setLoading(true)
+    const result = await getAllComplaints({
+      search: searchTerm,
+      status: statusFilter,
+    })
+
+    if (result.success) {
+      setComplaints(result.complaints)
+    } else {
+      toast.error("Failed to load complaints")
+    }
+    setLoading(false)
   }
 
-  const complaints = complaintsData.complaints || []
+  const handleStatusUpdate = async (id: string, status: string) => {
+    const result = await updateComplaintStatus(id, status)
 
-  const getStatusIcon = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'open':
-        return <Clock className="h-4 w-4" />
-      case 'in progress':
-        return <MessageSquare className="h-4 w-4" />
-      case 'resolved':
-        return <CheckCircle className="h-4 w-4" />
-      case 'closed':
-        return <XCircle className="h-4 w-4" />
-      default:
-        return <Clock className="h-4 w-4" />
+    if (result.success) {
+      toast.success("Complaint status updated")
+      loadComplaints()
+    } else {
+      toast.error(result.error || "Failed to update complaint status")
     }
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'open':
-        return 'bg-red-100 text-red-800'
-      case 'in progress':
-        return 'bg-blue-100 text-blue-800'
-      case 'resolved':
-        return 'bg-green-100 text-green-800'
-      case 'closed':
-        return 'bg-gray-100 text-gray-800'
-      default:
-        return 'bg-yellow-100 text-yellow-800'
+  const handleRespond = async (id: string) => {
+    if (!response.trim()) {
+      toast.error("Please enter a response")
+      return
+    }
+
+    const result = await respondToComplaint(id, response)
+
+    if (result.success) {
+      toast.success("Response sent successfully")
+      setResponse("")
+      setSelectedComplaint(null)
+      loadComplaints()
+    } else {
+      toast.error(result.error || "Failed to send response")
     }
   }
 
-  const getStatusPriority = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'open': return 4
-      case 'in progress': return 3
-      case 'resolved': return 2
-      case 'closed': return 1
-      default: return 0
-    }
+  if (loading) {
+    return <div>Loading complaints...</div>
   }
-
-  // Sort complaints by status priority (open first) then by creation date
-  const sortedComplaints = [...complaints].sort((a, b) => {
-    const priorityDiff = getStatusPriority(b.status) - getStatusPriority(a.status)
-    if (priorityDiff !== 0) return priorityDiff
-    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  })
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Complaints Management</h1>
-        <p className="text-gray-600">Manage and respond to user complaints</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">User Complaints</h1>
+          <p className="text-gray-600">Manage and respond to user complaints</p>
+        </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2">
-              <Clock className="h-8 w-8 text-red-500" />
-              <div>
-                <p className="text-2xl font-bold text-red-600">
-                  {complaints.filter(c => c.status.toLowerCase() === 'open').length}
-                </p>
-                <p className="text-sm text-gray-600">Open</p>
-              </div>
+      {/* Search and Filters */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Filter className="w-5 h-5 mr-2" />
+            Search & Filter
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="Search complaints..."
+                className="pl-10"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2">
-              <MessageSquare className="h-8 w-8 text-blue-500" />
-              <div>
-                <p className="text-2xl font-bold text-blue-600">
-                  {complaints.filter(c => c.status.toLowerCase() === 'in progress').length}
-                </p>
-                <p className="text-sm text-gray-600">In Progress</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-8 w-8 text-green-500" />
-              <div>
-                <p className="text-2xl font-bold text-green-600">
-                  {complaints.filter(c => c.status.toLowerCase() === 'resolved').length}
-                </p>
-                <p className="text-sm text-gray-600">Resolved</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2">
-              <MessageSquare className="h-8 w-8 text-gray-500" />
-              <div>
-                <p className="text-2xl font-bold text-gray-600">
-                  {complaints.length}
-                </p>
-                <p className="text-sm text-gray-600">Total</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="Open">Open</SelectItem>
+                <SelectItem value="In Progress">In Progress</SelectItem>
+                <SelectItem value="Resolved">Resolved</SelectItem>
+                <SelectItem value="Closed">Closed</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button variant="outline">Export Data</Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Complaints List */}
-      {sortedComplaints.length === 0 ? (
-        <Card>
-          <CardContent className="p-8 text-center">
-            <MessageSquare className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No complaints found</h3>
-            <p className="text-gray-600">No complaints have been submitted yet.</p>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid gap-4">
-          {sortedComplaints.map((complaint) => (
-            <Card key={complaint.id} className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <CardTitle className="flex items-center gap-2">
-                      {getStatusIcon(complaint.status)}
-                      {complaint.subject}
-                    </CardTitle>
-                    <CardDescription className="flex items-center gap-4 mt-2">
-                      <span className="flex items-center gap-1">
-                        <User className="h-4 w-4" />
-                        {complaint.user.name || 'Unknown'} ({complaint.user.email})
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4" />
-                        {new Date(complaint.createdAt).toLocaleDateString()}
-                      </span>
-                    </CardDescription>
-                  </div>
-                  <Badge className={getStatusColor(complaint.status)}>
+      <div className="space-y-4">
+        {complaints.map((complaint) => (
+          <Card key={complaint.id} className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle className="text-lg">{complaint.subject}</CardTitle>
+                  <CardDescription className="flex items-center mt-1">
+                    <User className="w-4 h-4 mr-1" />
+                    {complaint.user.name} ({complaint.user.email})
+                  </CardDescription>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge
+                    className={`${
+                      complaint.status === "Open"
+                        ? "bg-red-500"
+                        : complaint.status === "In Progress"
+                          ? "bg-yellow-500"
+                          : complaint.status === "Resolved"
+                            ? "bg-green-500"
+                            : "bg-gray-500"
+                    }`}
+                  >
                     {complaint.status}
                   </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-700 mb-4 line-clamp-2">{complaint.description}</p>
-                
-                {complaint.response && (
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
-                    <h4 className="font-semibold text-green-800 mb-2">Response:</h4>
-                    <p className="text-green-700 text-sm line-clamp-2">{complaint.response}</p>
-                    {complaint.respondedAt && (
-                      <p className="text-sm text-green-600 mt-2">
-                        Responded on {new Date(complaint.respondedAt).toLocaleDateString()}
-                      </p>
-                    )}
+                  <div className="flex items-center text-sm text-gray-500">
+                    <Calendar className="w-4 h-4 mr-1" />
+                    {new Date(complaint.createdAt).toLocaleDateString()}
                   </div>
-                )}
-                
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">
-                    ID: {complaint.id.slice(-8)}
-                  </span>
-                  <Link href={`/admin/complaints/${complaint.id}`}>
-                    <Button variant="outline" size="sm">
-                      {complaint.response ? 'View Details' : 'Respond'}
-                    </Button>
-                  </Link>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
+              </div>
+            </CardHeader>
+
+            <CardContent className="space-y-4">
+              <div>
+                <p className="text-gray-700">{complaint.description}</p>
+              </div>
+
+              {complaint.response && (
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h4 className="font-semibold mb-2">Admin Response:</h4>
+                  <p className="text-gray-700">{complaint.response}</p>
+                  <p className="text-sm text-gray-500 mt-2">
+                    Responded on: {new Date(complaint.respondedAt).toLocaleDateString()}
+                  </p>
+                </div>
+              )}
+
+              <div className="flex gap-2 pt-2 border-t">
+                <Select onValueChange={(value) => handleStatusUpdate(complaint.id, value)}>
+                  <SelectTrigger className="w-40">
+                    <SelectValue placeholder="Update Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="In Progress">In Progress</SelectItem>
+                    <SelectItem value="Resolved">Resolved</SelectItem>
+                    <SelectItem value="Closed">Closed</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button variant="outline" size="sm" onClick={() => setSelectedComplaint(complaint)}>
+                  <MessageSquare className="w-4 h-4 mr-1" />
+                  Respond
+                </Button>
+              </div>
+
+              {selectedComplaint?.id === complaint.id && (
+                <div className="mt-4 p-4 border rounded-lg bg-gray-50">
+                  <Textarea
+                    placeholder="Enter your response..."
+                    value={response}
+                    onChange={(e) => setResponse(e.target.value)}
+                    rows={4}
+                  />
+                  <div className="flex gap-2 mt-2">
+                    <Button
+                      size="sm"
+                      onClick={() => handleRespond(complaint.id)}
+                      className="bg-yellow-400 hover:bg-yellow-500 text-black"
+                    >
+                      Send Response
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setSelectedComplaint(null)
+                        setResponse("")
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {complaints.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-gray-500">No complaints found</p>
         </div>
       )}
     </div>

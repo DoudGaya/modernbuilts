@@ -58,24 +58,18 @@ export default function CreateListingPage() {
       })
     }
   }
+
   const handleRemoveImage = (index: number) => {
     setImagesPreviews(imagesPreviews.filter((_, i) => i !== index))
   }
-    const handleSubmit = async (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
 
     try {
-      // Safely access the form element with proper casting to fix the HTMLFormElement error
-      const formElement = e.target as HTMLFormElement
-      const formData = new FormData(formElement)
-      
-      // Add the features list
+      const formData = new FormData(e.currentTarget)
       formData.append("features", JSON.stringify(features))
-      
-      // For now, this page still uses the traditional approach and not the pre-upload
-      // If you want to add pre-upload functionality similar to the projects page,
-      // you would need to use useFileUpload hook and implement similar logic
 
       const result = await createListing(formData)
 

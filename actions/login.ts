@@ -15,7 +15,7 @@ import { sendVrificationEmail, sendTwoFactorEmail } from '@/lib/mail'
 import { getTwoFactorConfirmationByUserId } from '@/data/two-factor-confirmation'
 import { redirect } from 'next/navigation'
 
-export const login = async (values: z.infer<typeof loginSchema>, redirectTo?: string) => {
+export const login = async (values: z.infer<typeof loginSchema>) => {
     const fieldValidation = loginSchema.safeParse(values);
     if (!fieldValidation.success) {
          return {error: "field Validation failed "}
@@ -81,16 +81,15 @@ export const login = async (values: z.infer<typeof loginSchema>, redirectTo?: st
             return {twoFactor: true}
         }
     }
+
+
     try {
         await signIn("credentials", {
             email, 
             password,
-            redirect: false,
+            redirect: true,
+            redirectTo: getRouteByUserRole(existingUser.role),
         })
-        
-        // If we get here, login was successful
-        const targetRedirect = redirectTo || getRouteByUserRole(existingUser.role)
-        redirect(targetRedirect)
     } catch (error) {
         if (error instanceof AuthError) {
             switch (error.type) {

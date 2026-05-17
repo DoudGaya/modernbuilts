@@ -1,52 +1,39 @@
-// Utility functions for project calculations and formatting
-
-export const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('en-NG', {
-    style: 'currency',
-    currency: 'NGN',
-    minimumFractionDigits: 0
-  }).format(amount)
-}
-
-export const formatCurrencyShort = (amount: number): string => {
-  if (amount >= 1000000000) {
-    return `₦${(amount / 1000000000).toFixed(1)}B`
-  } else if (amount >= 1000000) {
-    return `₦${(amount / 1000000).toFixed(1)}M`
-  } else if (amount >= 1000) {
-    return `₦${(amount / 1000).toFixed(0)}K`
+export function formatCurrency(amount: number): string {
+  if (typeof amount !== 'number') {
+    amount = parseFloat(String(amount).replace(/[^\d.-]/g, '')) || 0;
   }
-  return `₦${amount.toLocaleString()}`
+  return new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+  }).format(amount);
 }
 
-export const calculateFundingProgress = (project: any): number => {
-  if (!project.investmentRequired || project.investmentRequired === 0) return 0
+export function formatCurrencyShort(amount: number | string): string {
+  let numVal = typeof amount === 'number' ? amount : parseFloat(String(amount).replace(/[^\d.-]/g, ''));
+  if (isNaN(numVal)) numVal = 0;
   
-  // Calculate from sold shares
-  const totalInvested = (project.soldShares || 0) * (project.sharePrice || 0)
-  const progress = (totalInvested / project.investmentRequired) * 100
-  
-  return Math.min(progress, 100)
+  if (numVal >= 1000000000) {
+    return `₦${(numVal / 1000000000).toFixed(2)}B`;
+  }
+  if (numVal >= 1000000) {
+    return `₦${(numVal / 1000000).toFixed(2)}M`;
+  }
+  if (numVal >= 1000) {
+    return `₦${(numVal / 1000).toFixed(2)}K`;
+  }
+  return `₦${numVal.toFixed(2)}`;
 }
 
-export const calculateRemainingShares = (project: any): number => {
-  const totalShares = project.totalShares || 0
-  const soldShares = project.soldShares || 0
-  return Math.max(0, totalShares - soldShares)
-}
-
-export const calculateTotalInvested = (project: any): number => {
-  return (project.soldShares || 0) * (project.sharePrice || 0)
-}
-
-export const calculateMinimumInvestment = (project: any): number => {
-  return project.sharePrice || 0
-}
-
-export const calculateExpectedReturns = (investmentAmount: number, roi: number): number => {
-  return investmentAmount * (roi / 100)
-}
-
-export const calculateTotalReturn = (investmentAmount: number, roi: number): number => {
-  return investmentAmount + calculateExpectedReturns(investmentAmount, roi)
+export const calculateFundingProgress = (project: any) => {
+  if (!project) return 0;
+  const totalInvested = project.investment?.reduce((sum: number, inv: any) => sum + (Number(inv.investmentAmount) || 0), 0) || 0;
+  let targetAmount = 1;
+  if (typeof project.valuation === 'string') {
+    targetAmount = parseFloat(project.valuation.replace(/[^\d.]/g, '')) || 1;
+  } else if (typeof project.valuation === 'number') {
+    targetAmount = project.valuation || 1;
+  } else if (project.investmentRequired) {
+    targetAmount = Number(project.investmentRequired) || 1;
+  }
+  return Math.min((totalInvested / targetAmount) * 100, 100);
 }

@@ -41,34 +41,39 @@ export const UserProfileFormUpdate = ( {editModal, changeModal}: {editModal: str
     const [image, setImage] = useState<File | undefined>()
 
      
-     const form = useForm<z.infer<typeof SettingsSchema>>({
+   
+    const form = useForm<z.infer<typeof SettingsSchema>>({
       resolver: zodResolver(SettingsSchema),
       defaultValues: {
-       name: user?.name || "",
-       email: user?.email || "",
-       phone: user?.phone || "",
-       image: user?.image || ""
+       name: user?.name || undefined,
+       email: user?.email || undefined,
+       phone: user?.phone || undefined,
+       image: user?.image || undefined
       },
 
-    })
+    })     
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files && e.target.files[0]) {
           setImage(e.target.files[0]);
       }
   };
-      const onSubmit = (values: z.infer<typeof SettingsSchema>) => {
+    
+    const onSubmit = (values: z.infer<typeof SettingsSchema>) => {
+
+
       if (image) {
         const reader = new FileReader();
         reader.readAsDataURL(image);
         reader.onload = async () => {
         const base64Image = reader.result?.toString().split(',')[1];
-          if (base64Image) {
-            startTransition(() => {
-              profileRecordsUpdate({
+          startTransition(() => {
+              profileRecordsUpdate(
+              {
                 ...values, 
                 image: base64Image
-              })
+              }
+              )
               .then((data) => {
                  if (data.error) {
                   setError(data.error)
@@ -80,11 +85,14 @@ export const UserProfileFormUpdate = ( {editModal, changeModal}: {editModal: str
                   changeModal("")
                  }
               })
-            })
-          }
-        }
-      } else {
-        // No image selected, update other fields only
+          })
+      }
+      }
+
+     if (!image) {
+
+      // console beginig 
+
         startTransition(() => {
             profileRecordsUpdate({...values, image: undefined})
             .then((data) => {
@@ -98,7 +106,8 @@ export const UserProfileFormUpdate = ( {editModal, changeModal}: {editModal: str
                }
             })
         })
-      }
+      //console end
+     }
     }
     if (editModal === "profile") {
         return (
@@ -175,8 +184,7 @@ export const UserProfileFormUpdate = ( {editModal, changeModal}: {editModal: str
                     )}
                   />
                   </div>
-                  {success && <FormSuccess message={success} />}
-                  {error && <FormError message={error} />}
+                  { success ?  <FormSuccess message={success} /> ? error : <FormError message={error} /> : "" }
                   <Button type="submit" disabled={isPending} className=" bg-primary hover:bg-black/80 text-black w-full">Update My Records</Button> 
                 </form>
               </Form>

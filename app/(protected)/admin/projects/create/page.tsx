@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft, Upload, X, Plus } from "lucide-react"
+import { ArrowLeft, Upload, X } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
 import { createProject } from "@/actions/project"
 import { useFileUpload } from "@/hooks/useFileUpload"
@@ -24,9 +24,6 @@ export default function CreateProjectPage() {
   const [videoFile, setVideoFile] = useState<File | null>(null)
   const [imageFiles, setImageFiles] = useState<File[]>([])
   const [imagesPreviews, setImagesPreviews] = useState<string[]>([])
-  const [features, setFeatures] = useState<string[]>([])
-  const [newFeature, setNewFeature] = useState("")
-  const [notifyUsers, setNotifyUsers] = useState(false)
   
   // Use our custom upload hook
   const { uploadFile, uploadMultipleFiles, isUploading, progress, error } = useFileUpload()
@@ -60,6 +57,7 @@ export default function CreateProjectPage() {
       setImagesPreviews([...imagesPreviews, ...newPreviewUrls])
     }
   }
+
   const handleRemoveImage = (index: number) => {
     const updatedPreviews = [...imagesPreviews]
     const updatedFiles = [...imageFiles]
@@ -68,23 +66,13 @@ export default function CreateProjectPage() {
     URL.revokeObjectURL(updatedPreviews[index])
     
     updatedPreviews.splice(index, 1)
-    updatedFiles.splice(index, 1)    
+    updatedFiles.splice(index, 1)
+    
     setImagesPreviews(updatedPreviews)
     setImageFiles(updatedFiles)
   }
-  
-  const handleAddFeature = () => {
-    if (newFeature.trim() && !features.includes(newFeature.trim())) {
-      setFeatures([...features, newFeature.trim()])
-      setNewFeature("")
-    }
-  }
 
-  const handleRemoveFeature = (index: number) => {
-    setFeatures(features.filter((_, i) => i !== index))
-  }
-  
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
 
@@ -118,21 +106,17 @@ export default function CreateProjectPage() {
         projectImageUrls = results.map(result => result.fileUrl)
       }
 
-      // Safely access the form element
-      // Make sure we properly handle the event target as a form element
-      // This fixes the "parameter 1 is not of type 'HTMLFormElement'" error
-      const formElement = e.target as HTMLFormElement;
-      const formData = new FormData(formElement)
+      // Get form data but don't include the file fields directly
+      const formData = new FormData(e.currentTarget)
       
       // Add the S3 URLs instead of the actual files
       formData.delete("coverImage")  
       formData.delete("video")
       formData.delete("images")
-        formData.append("coverImageUrl", coverImageUrl)
+      
+      formData.append("coverImageUrl", coverImageUrl)
       formData.append("videoUrl", videoUrl)
       formData.append("imageUrls", JSON.stringify(projectImageUrls))
-      formData.append("features", JSON.stringify(features))
-      formData.append("notifyUsers", notifyUsers.toString())
 
       // Now submit the form with URLs instead of files
       const result = await createProject(formData)
@@ -148,7 +132,7 @@ export default function CreateProjectPage() {
 
       toast({
         title: "Success",
-        description: `Project created successfully${notifyUsers ? ' and users have been notified' : ''}`,
+        description: "Project created successfully",
       })
 
       router.push("/admin/projects")
@@ -233,65 +217,28 @@ useEffect(() => {
                     <Label htmlFor="length">Project Length</Label>
                     <Input id="length" name="length" placeholder="e.g., 24 months" required />
                   </div>
-                </div>                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="valuation">Total Project Value (₦)</Label>
-                    <Input id="valuation" name="valuation" type="number" placeholder="Total value after completion" required />
-                    <p className="text-xs text-gray-500">Total value of the project when completed</p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="investmentRequired">Investment Required (₦)</Label>
-                    <Input id="investmentRequired" name="investmentRequired" type="number" placeholder="Amount needed to complete project" required />
-                    <p className="text-xs text-gray-500">Total funding needed to complete the project</p>
-                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="valuation">Valuation (₦)</Label>
+                    <Input id="valuation" name="valuation" placeholder="Enter project valuation" required />
+                  </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="sharePrice">Share Price (₦)</Label>
                     <Input id="sharePrice" name="sharePrice" type="number" placeholder="Price per share" required />
-                    <p className="text-xs text-gray-500">Price per individual share</p>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="roi">Expected ROI (%)</Label>
                     <Input id="roi" name="roi" type="number" placeholder="Expected return" required />
-                    <p className="text-xs text-gray-500">Expected return on investment percentage</p>
                   </div>
-                </div><div className="space-y-2">
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="duration">Project Duration</Label>
                   <Input id="duration" name="duration" type="date" required />
-                </div>
-                
-                <div className="space-y-4 mt-4">
-                  <Label>Project Features</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="Add a feature (e.g., Swimming Pool)"
-                      value={newFeature}
-                      onChange={(e) => setNewFeature(e.target.value)}
-                      onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), handleAddFeature())}
-                    />
-                    <Button type="button" onClick={handleAddFeature}>
-                      <Plus className="w-4 h-4" />
-                    </Button>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    {features.map((feature, index) => (
-                      <div key={index} className="bg-gray-100 px-3 py-1 rounded-full flex items-center gap-2">
-                        <span>{feature}</span>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveFeature(index)}
-                          className="text-gray-500 hover:text-red-500"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -515,18 +462,6 @@ useEffect(() => {
                 <CardTitle>Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id="notifyUsers"
-                    checked={notifyUsers}
-                    onChange={(e) => setNotifyUsers(e.target.checked)}
-                    className="h-4 w-4 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded"
-                  />
-                  <Label htmlFor="notifyUsers" className="text-sm font-medium">
-                    Notify all users via email about this new project
-                  </Label>
-                </div>
                 <Button
                   type="submit"
                   className="w-full bg-yellow-400 hover:bg-yellow-500 text-black"

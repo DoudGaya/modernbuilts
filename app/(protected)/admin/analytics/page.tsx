@@ -8,11 +8,16 @@ import { getAnalyticsData } from "@/actions/analytics"
 export default async function AnalyticsPage() {
   const analyticsData = await getAnalyticsData()
 
-  if (analyticsData.error || !analyticsData.success) {
+  if (analyticsData.error) {
     return <div>Error loading analytics data</div>
   }
 
   const { stats, chartData, recentActivity } = analyticsData
+
+  // Safety check
+  if (!stats || !chartData || !recentActivity) {
+    return <div>Analytics data not available</div>
+  }
 
   return (
     <div className="space-y-6">

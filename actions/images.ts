@@ -1,14 +1,21 @@
 "use server"
-import { uploadBase64ToS3 } from "@/lib/s3";
+import { writeFile } from "fs/promises";
+import { join } from "path";
+import { v4 as uuidv4 } from 'uuid';
 
 export const handleUsersProfileImages = async (data: { image: string, name: string }) => {
+
+   
     try {
-        // Upload to S3 instead of local storage
-        const s3Url = await uploadBase64ToS3(data.image, `${data.name}-profile.png`, 'users/profiles');
-        console.log("Profile image uploaded to S3:", s3Url);
-        return s3Url;
+        const buffer = Buffer.from( data.image , 'base64');
+        const uniqueName = `${uuidv4()}-${data.name}`;
+        const path = join('public/private/users', uniqueName + '.png');
+        await writeFile(path, buffer);
+        console.log(path)
+        return `/private/users/${uniqueName}.png`;
     } catch (error) {
-        console.error("Error handling profile image upload:", error);
+        console.error("Error handling image upload:", error);
         return null;
     }
-};
+
+}

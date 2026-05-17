@@ -9,9 +9,6 @@ import { MapPin, Clock, TrendingUp, Shield, Users, Calendar, Share2 } from "luci
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { formatCurrency, formatCurrencyShort, calculateFundingProgress } from "@/lib/project-utils"
-import type { Metadata } from 'next'
-import { InvestmentButton } from "./components/InvestmentButton"
 
 interface ProjectDetailPageProps {
   params: Promise<{ slug: string }>
@@ -21,17 +18,28 @@ export default async function PublicProjectDetailPage({ params }: ProjectDetailP
   const { slug } = await params
   const result = await getProjectBySlug(slug)
 
-  if (!result.success || !result.project) {
+  if (!result) {
     notFound()
   }
-  const project = result.project
 
-  const calculateProjectFundingProgress = () => {
-    return calculateFundingProgress(project)
+  const project = result
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-NG', {
+      style: 'currency',
+      currency: 'NGN',
+      minimumFractionDigits: 0
+    }).format(amount)
   }
 
-  const sharePrice = project.sharePrice || 0
-  const fundingProgress = calculateProjectFundingProgress()
+  const calculateFundingProgress = () => {
+    const totalInvested = project.investment?.reduce((sum: number, inv: any) => sum + inv.investmentAmount, 0) || 0
+    const targetAmount = parseFloat(project.valuation.replace(/[^\d.]/g, '')) || 1
+    return Math.min((totalInvested / targetAmount) * 100, 100)
+  }
+
+  const sharePrice = typeof project.sharePrice === 'number' ? project.sharePrice : parseFloat(String(project.sharePrice || '0').replace(/[^\d.]/g, ''))
+  const fundingProgress = calculateFundingProgress()
 
   return (
     <>
@@ -41,7 +49,8 @@ export default async function PublicProjectDetailPage({ params }: ProjectDetailP
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
-              <Badge variant="secondary">{project.category}</Badge>              <Badge 
+              <Badge variant="secondary">{project.category}</Badge>
+              <Badge 
                 className={
                   project.projectStatus === "ACTIVE" ? "bg-green-500" : 
                   project.projectStatus === "COMPLETED" ? "bg-blue-500" : "bg-yellow-500"
@@ -80,13 +89,13 @@ export default async function PublicProjectDetailPage({ params }: ProjectDetailP
                       Share
                     </Button>
                   </div>
-                    {project.video && (
+                  
+                  {project.video && (
                     <div className="p-6">
                       <h3 className="text-lg font-semibold mb-4">Project Video</h3>
                       <div className="aspect-video">
-                        <video
+                        <iframe 
                           src={project.video}
-                          controls
                           className="w-full h-full rounded-lg"
                         />
                       </div>
@@ -143,14 +152,16 @@ export default async function PublicProjectDetailPage({ params }: ProjectDetailP
                     </div>
                     <div className="flex items-center">
                       <Clock className="w-4 h-4 mr-2 text-blue-500" />
-                      <div>                        <div className="font-semibold">{project.length}</div>
+                      <div>
+                        <div className="font-semibold">{project.length}</div>
                         <div className="text-gray-500">Duration</div>
                       </div>
-                    </div>                    <div className="flex items-center">
+                    </div>
+                    <div className="flex items-center">
                       <Shield className="w-4 h-4 mr-2 text-purple-500" />
                       <div>
-                        <div className="font-semibold">{formatCurrencyShort(project.valuation || 0)}</div>
-                        <div className="text-gray-500">Project Value</div>
+                        <div className="font-semibold">{project.valuation}</div>
+                        <div className="text-gray-500">Total Value</div>
                       </div>
                     </div>
                     <div className="flex items-center">
@@ -175,10 +186,6 @@ export default async function PublicProjectDetailPage({ params }: ProjectDetailP
                         style={{ width: `${fundingProgress}%` }}
                       ></div>
                     </div>
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>Raised: {formatCurrencyShort((project.soldShares || 0) * sharePrice)}</span>
-                      <span>Goal: {formatCurrencyShort(project.investmentRequired || 0)}</span>
-                    </div>
                   </div>
 
                   <div className="space-y-2">
@@ -186,13 +193,13 @@ export default async function PublicProjectDetailPage({ params }: ProjectDetailP
                       <span className="text-sm text-gray-600">Share Price</span>
                       <span className="font-semibold">{formatCurrency(sharePrice)}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Available Shares</span>
-                      <span className="font-semibold">{(project.totalShares || 0) - (project.soldShares || 0)}</span>
-                    </div>
                   </div>
 
-                  <InvestmentButton projectSlug={project.slug} />
+                  <Link href={`/user/projects/${project.slug}`}>
+                    <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">
+                      Start Investing
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
 
@@ -218,95 +225,7 @@ export default async function PublicProjectDetailPage({ params }: ProjectDetailP
           </div>
         </div>
       </div>
+      <Footer />
     </>
   )
-}
-
-export async function generateMetadata({ params }: ProjectDetailPageProps): Promise<Metadata> {
-  const { slug } = await params
-  const result = await getProjectBySlug(slug)
-
-  if (!result.success || !result.project) {
-    return {
-      title: 'Project Not Found | StableBricks',
-      description: 'The requested project could not be found.',
-    }
-  }
-
-  const project = result.project
-  const sharePrice = project.sharePrice || 0
-  const fundingProgress = calculateFundingProgress(project)
-
-  return {
-    title: `${project.title} - Real Estate Investment in ${project.city} | StableBricks`,
-    description: `Invest in ${project.title} located in ${project.city}, ${project.state}. Expected ${project.roi}% ROI, ${Math.round(fundingProgress)}% funded. Premium ${project.category.toLowerCase()} investment opportunity starting from ${formatCurrency(sharePrice)}. Secure, transparent, and profitable real estate investment.`,
-    keywords: [
-      `${project.title}`,
-      `real estate investment ${project.city}`,
-      `property investment ${project.state}`,
-      `${project.category} investment Nigeria`,
-      `${project.roi}% ROI investment`,
-      'real estate crowdfunding',
-      'property development Nigeria',
-      'investment opportunity Lagos',
-      'investment opportunity Abuja',
-      'stable returns',
-      'high yield investment',
-      'real estate portfolio',
-      `${project.city} real estate market`,
-      'Nigerian property investment',
-      'commercial real estate',
-      'residential investment',
-      'real estate platform Nigeria'
-    ],
-    authors: [{ name: 'StableBricks' }],
-    creator: 'StableBricks',
-    publisher: 'StableBricks',
-    openGraph: {
-      title: `${project.title} - ${project.roi}% ROI Real Estate Investment`,
-      description: `Premium ${project.category.toLowerCase()} investment in ${project.city}, ${project.state}. ${project.roi}% expected ROI, ${Math.round(fundingProgress)}% funded. Starting from ${formatCurrency(sharePrice)}.`,
-      type: 'website',
-      url: `https://stablebricks.com/projects/${slug}`,
-      siteName: 'StableBricks',
-      locale: 'en_NG',
-      images: [
-        {
-          url: project.coverImage || `/api/og/project?title=${encodeURIComponent(project.title)}&location=${encodeURIComponent(project.city + ', ' + project.state)}&roi=${project.roi}&progress=${Math.round(fundingProgress)}`,
-          width: 1200,
-          height: 630,
-          alt: `${project.title} - Real Estate Investment Opportunity in ${project.city}, ${project.state}`,
-          type: 'image/jpeg',
-        },
-        ...(project.images?.slice(0, 3).map((image: string, index: number) => ({
-          url: image,
-          width: 800,
-          height: 600,
-          alt: `${project.title} - Property Image ${index + 1}`,
-          type: 'image/jpeg',
-        })) || [])
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: `${project.title} - ${project.roi}% ROI Investment`,
-      description: `Premium real estate investment in ${project.city}, ${project.state}. ${Math.round(fundingProgress)}% funded • Starting from ${formatCurrency(sharePrice)}`,
-      images: [project.coverImage || `/api/og/project?title=${encodeURIComponent(project.title)}&location=${encodeURIComponent(project.city + ', ' + project.state)}&roi=${project.roi}&progress=${Math.round(fundingProgress)}`],
-      site: '@stablebricks',
-      creator: '@stablebricks',
-    },
-    alternates: {
-      canonical: `https://stablebricks.com/projects/${slug}`,
-    },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        'max-video-preview': -1,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
-      },
-    },
-  }
 }

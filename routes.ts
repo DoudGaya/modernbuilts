@@ -6,24 +6,14 @@ export const publicRoutes = [
     '/',
     '/about',
     '/contact',
-    '/blog',
     '/blog/:slug',
     '/email-verification',
     '/investments',
-    '/investments/:slug',
     '/portfolio',
     '/properties',
-    '/properties/:slug',
-    '/projects/:slug',
     '/calculator',
-    '/partnerships',
-    '/investor-relations',
-    '/land-submissions',
-    '/user-investment/:token',
-    '/privacy-policy',
-    '/refund-policy',
-    '/terms-of-service',
-    '/cookie-policy',
+    '/developer',
+    '/developer/apply',
 ]
 
 
@@ -53,5 +43,6 @@ export const apiRoutesPrefix = '/api/auth'
 
 export const DEFAULT_LOGGED_IN_REDIRRECT = '/user/dashboard'
 export const ADMIN_LOGGED_IN_REDIRRECT = '/admin/dashboard'
+export const DEVELOPER_LOGGED_IN_REDIRRECT = '/developer/dashboard'
 
 export * from './routes/index';

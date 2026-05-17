@@ -39,15 +39,16 @@ export const SecurityDetailsForm = ( {editModal, changeModal}: {editModal: strin
 
   
      
-     const form = useForm<z.infer<typeof settingsSecurityDetailsSchema>>({
+   
+    const form = useForm<z.infer<typeof settingsSecurityDetailsSchema>>({
       resolver: zodResolver(settingsSecurityDetailsSchema),
       defaultValues: {
-       oldPassword: "",
-       newPassword: "",
-       newPasswordConfirmation: "",
-       isTwoFactorEnabled: user?.isTwoFactorEnabled || false
+       oldPassword: undefined,
+       newPassword: undefined,
+       newPasswordConfirmation: undefined,
+       isTwoFactorEnabled: undefined
       },
-    })
+    })     
 
     const onSubmit = (values: z.infer<typeof settingsSecurityDetailsSchema>) => {
         startTransition(() => {
@@ -63,7 +64,7 @@ export const SecurityDetailsForm = ( {editModal, changeModal}: {editModal: strin
            })
         })
     }
-    if (editModal == 'security' && !user?.isOAuth) {
+    if (editModal == 'security') {
         return (
            <div className=" flex flex-col space-y-4 h-fit shadow-sm max-h-min w-full bg-white rounded-lg">
            <div className=" font-poppins flex justify-between px-4 text-xl bg-black text-primary rounded-t-lg py-4">
@@ -79,10 +80,11 @@ export const SecurityDetailsForm = ( {editModal, changeModal}: {editModal: strin
                   <FormField
                     control={form.control}
                     name="oldPassword"
-                    render={({ field }) => (                      <FormItem>
+                    render={({ field }) => (
+                      <FormItem>
                         <FormLabel>Old Password</FormLabel>
                         <FormControl>
-                          <Input disabled={isPending} type='password' className=" outline-yellow-500" placeholder="Enter old password" {...field} />
+                          <Input disabled={isPending} type='password' className=" outline-yellow-500" placeholder="Confirm Password" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -92,10 +94,11 @@ export const SecurityDetailsForm = ( {editModal, changeModal}: {editModal: strin
                   <FormField
                     control={form.control}
                     name="newPassword"
-                    render={({ field }) => (                      <FormItem>
+                    render={({ field }) => (
+                      <FormItem>
                         <FormLabel>New Password</FormLabel>
                         <FormControl>
-                          <Input disabled={isPending} type='password' className=" outline-yellow-500" placeholder="Enter new password" {...field} />
+                          <Input disabled={isPending} type='password' className=" outline-yellow-500" placeholder="Confirm Password" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -139,8 +142,7 @@ export const SecurityDetailsForm = ( {editModal, changeModal}: {editModal: strin
                     )}
                   />
                   </div>
-                  { success && <FormSuccess message={success} /> }
-                  { error && <FormError message={error} /> }
+                  { success ?  <FormSuccess message={success} /> ? error : <FormError message={error} /> : "" }
                   <Button type="submit" disabled={isPending} className=" bg-black hover:bg-black/80 text-primary w-full">Update Security Records</Button> 
                 </form>
               </Form>

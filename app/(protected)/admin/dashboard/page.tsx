@@ -4,23 +4,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowUpRight, ArrowDownRight, Download } from "lucide-react"
 import { AnalyticsChart } from "@/components/admin/AnalyticsChart"
 import { getAnalyticsData } from "@/actions/analytics"
-import { AnalyticsData } from "@/types/admin"
 
 export default async function AnalyticsPage() {
-  const analyticsData: AnalyticsData = await getAnalyticsData()
+  const analyticsData = await getAnalyticsData()
 
   if (analyticsData.error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-red-600">Error Loading Dashboard</h2>
-          <p className="text-gray-600 mt-2">{analyticsData.error}</p>
-        </div>
-      </div>
-    )
+    return <div>Error loading analytics data</div>
   }
 
-  const { stats = [], chartData, recentActivity = [] } = analyticsData
+  const { stats, chartData, recentActivity } = analyticsData
+
+  // Safety check
+  if (!stats || !chartData || !recentActivity) {
+    return <div>Analytics data not available</div>
+  }
 
   return (
     <div className="space-y-6">
@@ -75,7 +72,9 @@ export default async function AnalyticsPage() {
             </Card>
           )
         })}
-      </div>      {/* Charts */}
+      </div>
+
+      {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
@@ -83,13 +82,7 @@ export default async function AnalyticsPage() {
             <CardDescription>Monthly investment amounts over time</CardDescription>
           </CardHeader>
           <CardContent>
-            {chartData?.investments ? (
-              <AnalyticsChart data={chartData.investments} type="line" />
-            ) : (
-              <div className="flex items-center justify-center h-64 text-gray-500">
-                No investment data available
-              </div>
-            )}
+            <AnalyticsChart data={chartData.investments} type="line" />
           </CardContent>
         </Card>
 
@@ -99,16 +92,12 @@ export default async function AnalyticsPage() {
             <CardDescription>Projects by status</CardDescription>
           </CardHeader>
           <CardContent>
-            {chartData?.projects ? (
-              <AnalyticsChart data={chartData.projects} type="pie" />
-            ) : (
-              <div className="flex items-center justify-center h-64 text-gray-500">
-                No project data available
-              </div>
-            )}
+            <AnalyticsChart data={chartData.projects} type="pie" />
           </CardContent>
         </Card>
-      </div>      {/* Recent Activity */}
+      </div>
+
+      {/* Recent Activity */}
       <Card>
         <CardHeader>
           <CardTitle>Recent Platform Activity</CardTitle>
@@ -116,21 +105,15 @@ export default async function AnalyticsPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {recentActivity.length > 0 ? (
-              recentActivity.map((activity, index) => (
-                <div key={index} className="flex items-center justify-between border-b pb-2">
-                  <div>
-                    <p className="font-medium">{activity.action}</p>
-                    <p className="text-sm text-gray-600">{activity.details}</p>
-                  </div>
-                  <span className="text-xs text-gray-500">{activity.time}</span>
+            {recentActivity.map((activity, index) => (
+              <div key={index} className="flex items-center justify-between border-b pb-2">
+                <div>
+                  <p className="font-medium">{activity.action}</p>
+                  <p className="text-sm text-gray-600">{activity.details}</p>
                 </div>
-              ))
-            ) : (
-              <div className="text-center text-gray-500 py-8">
-                No recent activity to display
+                <span className="text-xs text-gray-500">{activity.time}</span>
               </div>
-            )}
+            ))}
           </div>
         </CardContent>
       </Card>

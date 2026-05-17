@@ -294,397 +294,194 @@ export const sendPropertyListingNotification = async (
       html: emailTemplate(content),
     });
   }
-}
+};
 
-// Complaint notification email to admins
-export const sendComplaintNotificationEmail = async ({
-  complaintId,
-  subject,
-  description,
-  userName,
-  userEmail
-}: {
-  complaintId: string
-  subject: string
-  description: string
-  userName: string
-  userEmail: string
-}) => {
-  try {
-    const complaintUrl = `${baseUrl}/admin/complaints/${complaintId}`
+export const sendDeveloperApplicationConfirmation = async (
+  email: string,
+  name: string,
+  companyName: string
+) => {
+  const content = `
+    <h2>Developer Application Received</h2>
+    <p>Dear ${name},</p>
+    <p>Thank you for submitting your developer application for <strong>${companyName}</strong>.</p>
     
-    const content = `
-      <div class="content">
-        <h2>New Complaint Submitted</h2>
-        
-        <p>A new complaint has been submitted that requires your attention.</p>
-        
-        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3>Complaint Details:</h3>
-          <p><strong>Subject:</strong> ${subject}</p>
-          <p><strong>User:</strong> ${userName} (${userEmail})</p>
-          <p><strong>Complaint ID:</strong> ${complaintId}</p>
-          <p><strong>Description:</strong></p>
-          <p style="white-space: pre-wrap;">${description}</p>
-        </div>
-        
-        <a href="${complaintUrl}" class="button">View & Respond to Complaint</a>
-      </div>
-      
-      <p>Please respond to this complaint as soon as possible to maintain good customer relations.</p>
-    `
-
-    await resend.emails.send({
-      from: "STABLEBRICKS <noreply@stablebricks.com>",
-      to: "admin@stablebricks.com", // Replace with actual admin email
-      subject: `New Complaint: ${subject}`,
-      html: emailTemplate(content),
-    })
-  } catch (error) {
-    console.error("Error sending complaint notification email:", error)
-  }
-}
-
-// Complaint response email to user
-export const sendComplaintResponseEmail = async ({
-  userEmail,
-  userName,
-  subject,
-  response,
-  status,
-  complaintId
-}: {
-  userEmail: string
-  userName: string
-  subject: string
-  response: string
-  status: string
-  complaintId: string
-}) => {
-  try {
-    const complaintUrl = `${baseUrl}/user/complaints/${complaintId}`
+    <div style="margin: 20px 0; border: 1px solid #eee; padding: 15px; border-radius: 5px; background-color: #f9f9f9;">
+      <h3>What happens next?</h3>
+      <ol>
+        <li><strong>Application Review</strong> - Our team will review your application within 2-5 business days</li>
+        <li><strong>Verification Process</strong> - We may contact you for additional information or documentation</li>
+        <li><strong>Decision Notification</strong> - You'll receive an email with our decision</li>
+        <li><strong>Account Setup</strong> - If approved, you'll get access to your developer dashboard</li>
+      </ol>
+    </div>
     
-    const content = `
-      <div class="content">
-        <h2>Your Complaint Has Been Addressed</h2>
-        
-        <p>Dear ${userName},</p>
-        
-        <p>We have reviewed your complaint and are providing the following response:</p>
-        
-        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3>Original Complaint:</h3>
-          <p><strong>Subject:</strong> ${subject}</p>
-          <p><strong>Status:</strong> <span style="color: ${status === 'Resolved' ? '#22c55e' : '#3b82f6'};">${status}</span></p>
-        </div>
-        
-        <div style="background-color: #ecfdf5; border: 1px solid #d1fae5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: #22c55e;">Our Response:</h3>
-          <p style="white-space: pre-wrap;">${response}</p>
-        </div>
-        
-        <a href="${complaintUrl}" class="button">View Full Details</a>
-      </div>
-      
-      <p>If you have any further questions or concerns, please don't hesitate to contact us.</p>
-      <p>Thank you for your patience and for giving us the opportunity to resolve this matter.</p>
-    `
-
-    await resend.emails.send({
-      from: "STABLEBRICKS <noreply@stablebricks.com>",
-      to: userEmail,
-      subject: `Response to Your Complaint: ${subject}`,
-      html: emailTemplate(content),
-    })
-  } catch (error) {
-    console.error("Error sending complaint response email:", error)
-  }
-}
-
-// Contact notification email to admins
-export const sendContactNotificationEmail = async ({
-  contactId,
-  name,
-  email,
-  phone,
-  subject,
-  message
-}: {
-  contactId: string
-  name: string
-  email: string
-  phone: string
-  subject: string
-  message: string
-}) => {
-  try {
-    const contactUrl = `${baseUrl}/admin/contacts/${contactId}`
+    <p>During the review process, our team will evaluate:</p>
+    <ul>
+      <li>Company credentials and registration</li>
+      <li>Development experience and portfolio</li>
+      <li>Financial stability and insurance coverage</li>
+      <li>Compliance with regulatory requirements</li>
+    </ul>
     
-    const content = `
-      <div class="content">
-        <h2>New Contact Message</h2>
-        
-        <p>A new contact message has been received through the website.</p>
-        
-        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3>Contact Details:</h3>
-          <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ''}
-          <p><strong>Subject:</strong> ${subject}</p>
-          <p><strong>Contact ID:</strong> ${contactId}</p>
-          <p><strong>Message:</strong></p>
-          <p style="white-space: pre-wrap;">${message}</p>
-        </div>
-        
-        <a href="${contactUrl}" class="button">View & Respond</a>
-      </div>
-      
-      <p>Please respond to this inquiry promptly to provide excellent customer service.</p>
-    `
+    <p>If you have any questions about your application or the review process, please don't hesitate to contact our developer relations team.</p>
+    
+    <p>Thank you for choosing StableBricks as your capital raising platform.</p>
+  `;
 
-    await resend.emails.send({
-      from: "STABLEBRICKS <noreply@stablebricks.com>",
-      to: "admin@stablebricks.com", // Replace with actual admin email
-      subject: `New Contact: ${subject}`,
-      html: emailTemplate(content),
-    })
-  } catch (error) {
-    console.error("Error sending contact notification email:", error)
-  }
-}
+  await resend.emails.send({
+    from: "StableBricks Developer Relations <developers@stablebricks.com>",
+    to: email,
+    subject: "Developer Application Received - StableBricks",
+    html: emailTemplate(content),
+  });
+};
 
-// Contact response email to user
-export const sendContactResponseEmail = async ({
-  userEmail,
-  userName,
-  subject,
-  response,
-  originalMessage
-}: {
-  userEmail: string
-  userName: string
-  subject: string
-  response: string
-  originalMessage: string
-}) => {
-  try {
-    const content = `
-      <div class="content">
-        <h2>Thank You for Contacting Us</h2>
-        
-        <p>Dear ${userName},</p>
-        
-        <p>Thank you for reaching out to us. We have received your message and are providing the following response:</p>
-        
-        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3>Your Original Message:</h3>
-          <p><strong>Subject:</strong> ${subject}</p>
-          <p style="white-space: pre-wrap;">${originalMessage}</p>
-        </div>
-        
-        <div style="background-color: #ecfdf5; border: 1px solid #d1fae5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: #22c55e;">Our Response:</h3>
-          <p style="white-space: pre-wrap;">${response}</p>
-        </div>
-      </div>
-      
-      <p>If you have any further questions, please don't hesitate to contact us again.</p>
-      <p>We appreciate your interest in STABLEBRICKS and look forward to serving you.</p>
-    `
-
-    await resend.emails.send({
-      from: "STABLEBRICKS <noreply@stablebricks.com>",
-      to: userEmail,
-      subject: `Re: ${subject}`,
-      html: emailTemplate(content),
-    })
-  } catch (error) {
-    console.error("Error sending contact response email:", error)
-  }
-}
-
-// Land submission status notification email
-export const sendLandSubmissionStatusEmail = async ({
-  userEmail,
-  userName,
-  location,
-  status,
-  submissionId,
-  feedback
-}: {
-  userEmail: string
-  userName: string
-  location: string
-  status: string
-  submissionId: string
+export const sendDeveloperApplicationApproval = async (
+  email: string,
+  name: string,
+  companyName: string,
   feedback?: string
-}) => {
-  try {
-    const statusColor = status === 'Approved' ? '#22c55e' : status === 'Rejected' ? '#ef4444' : '#3b82f6'
-    const statusMessage = status === 'Approved' 
-      ? 'We are pleased to inform you that your land submission has been approved!'
-      : status === 'Rejected'
-      ? 'After careful review, we regret to inform you that your land submission has been rejected.'
-      : 'Your land submission status has been updated.'
-
-    const dashboardLink = `${baseUrl}/land-submissions`
+) => {
+  const dashboardUrl = `${baseUrl}/developer/dashboard`;
+  
+  const content = `
+    <h2>Congratulations! Your Developer Application is Approved</h2>
+    <p>Dear ${name},</p>
+    <p>We're excited to inform you that your developer application for <strong>${companyName}</strong> has been approved!</p>
     
-    const content = `
-      <div class="content">
-        <h2>Land Submission Status Update</h2>
-        
-        <p>Dear ${userName},</p>
-        
-        <p>${statusMessage}</p>
-        
-        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3>Submission Details:</h3>
-          <p><strong>Location:</strong> ${location}</p>
-          <p><strong>Submission ID:</strong> ${submissionId}</p>
-          <p><strong>Status:</strong> <span style="color: ${statusColor}; font-weight: bold;">${status}</span></p>
-        </div>
-        
-        ${feedback ? `
-        <div style="background-color: ${status === 'Approved' ? '#ecfdf5' : '#fef2f2'}; border: 1px solid ${status === 'Approved' ? '#d1fae5' : '#fecaca'}; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: ${statusColor};">Feedback from our team:</h3>
-          <p style="white-space: pre-wrap;">${feedback}</p>
-        </div>
-        ` : ''}
-        
-        ${status === 'Approved' ? `
-        <p>Our team will be in touch with you soon to discuss the next steps for your land development project.</p>
-        ` : status === 'Rejected' ? `
-        <p>You are welcome to submit a new application in the future with additional information or after addressing the concerns mentioned in the feedback.</p>
-        ` : ''}
-        
-        <a href="${dashboardLink}" class="button">View Submission Details</a>
-      </div>
-      
-      <p>If you have any questions about this decision, please don't hesitate to contact our support team.</p>
-      <p>Thank you for your interest in partnering with STABLEBRICKS.</p>
-    `
-
-    await resend.emails.send({
-      from: "STABLEBRICKS <noreply@stablebricks.com>",
-      to: userEmail,
-      subject: `Land Submission ${status}: ${location}`,
-      html: emailTemplate(content),
-    })
-  } catch (error) {
-    console.error("Error sending land submission status email:", error)
-  }
-}
-
-// Land submission feedback notification email
-export const sendLandSubmissionFeedbackEmail = async ({
-  userEmail,
-  userName,
-  location,
-  submissionId,
-  feedback
-}: {
-  userEmail: string
-  userName: string
-  location: string
-  submissionId: string
-  feedback: string
-}) => {
-  try {
-    const dashboardLink = `${baseUrl}/land-submissions`
+    <div style="margin: 20px 0; border: 1px solid #22c55e; padding: 15px; border-radius: 5px; background-color: #f0fdf4;">
+      <h3 style="color: #22c55e;">Welcome to the StableBricks Developer Network!</h3>
+      <p>You now have access to our exclusive developer platform where you can:</p>
+      <ul>
+        <li>Submit real estate projects for funding</li>
+        <li>Access our network of qualified investors</li>
+        <li>Track project performance and investor interest</li>
+        <li>Manage your developer profile and portfolio</li>
+      </ul>
+    </div>
     
-    const content = `
-      <div class="content">
-        <h2>New Feedback on Your Land Submission</h2>
-        
-        <p>Dear ${userName},</p>
-        
-        <p>We have provided feedback on your land submission. Please review the details below:</p>
-        
-        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3>Submission Details:</h3>
-          <p><strong>Location:</strong> ${location}</p>
-          <p><strong>Submission ID:</strong> ${submissionId}</p>
-        </div>
-        
-        <div style="background-color: #eff6ff; border: 1px solid #dbeafe; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: #3b82f6;">Feedback from our team:</h3>
-          <p style="white-space: pre-wrap;">${feedback}</p>
-        </div>
-        
-        <a href="${dashboardLink}" class="button">View Full Details</a>
-      </div>
-      
-      <p>If you have any questions about this feedback, please feel free to contact our support team.</p>
-      <p>Thank you for your continued interest in partnering with STABLEBRICKS.</p>
-    `
-
-    await resend.emails.send({
-      from: "STABLEBRICKS <noreply@stablebricks.com>",
-      to: userEmail,
-      subject: `New Feedback on Your Land Submission: ${location}`,
-      html: emailTemplate(content),
-    })
-  } catch (error) {
-    console.error("Error sending land submission feedback email:", error)
-  }
-}
-
-// Land submission notification email to admins
-export const sendLandSubmissionNotificationEmail = async ({
-  submissionId,
-  name,
-  email,
-  phone,
-  location,
-  size,
-  titleType,
-  description
-}: {
-  submissionId: string
-  name: string
-  email: string
-  phone: string
-  location: string
-  size: string
-  titleType: string
-  description: string
-}) => {
-  try {
-    const submissionUrl = `${baseUrl}/admin/land-submissions`
+    ${feedback ? `
+    <div style="margin: 20px 0; border: 1px solid #3b82f6; padding: 15px; border-radius: 5px; background-color: #eff6ff;">
+      <h4 style="color: #3b82f6;">Feedback from our team:</h4>
+      <p>${feedback}</p>
+    </div>
+    ` : ''}
     
-    const content = `
-      <div class="content">
-        <h2>New Land Submission Received</h2>
-        
-        <p>A new land submission has been received that requires your review.</p>
-        
-        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3>Submission Details:</h3>
-          <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Phone:</strong> ${phone}</p>
-          <p><strong>Location:</strong> ${location}</p>
-          <p><strong>Size:</strong> ${size}</p>
-          <p><strong>Title Type:</strong> ${titleType}</p>
-          <p><strong>Submission ID:</strong> ${submissionId}</p>
-          <p><strong>Description:</strong></p>
-          <p style="white-space: pre-wrap;">${description.substring(0, 500)}${description.length > 500 ? '...' : ''}</p>
-        </div>
-        
-        <a href="${submissionUrl}" class="button">Review & Respond to Submission</a>
-      </div>
-      
-      <p>Please review this submission promptly and provide appropriate feedback to the landowner.</p>
-    `
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${dashboardUrl}" class="button">Access Your Developer Dashboard</a>
+    </div>
+    
+    <p>To get started:</p>
+    <ol>
+      <li>Log into your account and access your developer dashboard</li>
+      <li>Complete your company profile (if not already done)</li>
+      <li>Submit your first project for funding</li>
+      <li>Start connecting with our investor community</li>
+    </ol>
+    
+    <p>Our developer success team is here to help you maximize your success on the platform. If you have any questions, please don't hesitate to reach out.</p>
+    
+    <p>Welcome aboard!</p>
+  `;
 
-    await resend.emails.send({
-      from: "STABLEBRICKS <noreply@stablebricks.com>",
-      to: "admin@stablebricks.com",
-      subject: `New Land Submission: ${location}`,
-      html: emailTemplate(content),
-    })
-  } catch (error) {
-    console.error("Error sending land submission notification email:", error)
+  await resend.emails.send({
+    from: "StableBricks Developer Relations <developers@stablebricks.com>",
+    to: email,
+    subject: "Developer Application Approved - Welcome to StableBricks!",
+    html: emailTemplate(content),
+  });
+};
+
+export const sendDeveloperApplicationRejection = async (
+  email: string,
+  name: string,
+  companyName: string,
+  feedback?: string
+) => {
+  const applyUrl = `${baseUrl}/developer/apply`;
+  
+  const content = `
+    <h2>Developer Application Update</h2>
+    <p>Dear ${name},</p>
+    <p>Thank you for your interest in joining the StableBricks developer network with <strong>${companyName}</strong>.</p>
+    
+    <div style="margin: 20px 0; border: 1px solid #ef4444; padding: 15px; border-radius: 5px; background-color: #fef2f2;">
+      <p>After careful review, we're unable to approve your developer application at this time.</p>
+    </div>
+    
+    ${feedback ? `
+    <div style="margin: 20px 0; border: 1px solid #3b82f6; padding: 15px; border-radius: 5px; background-color: #eff6ff;">
+      <h4 style="color: #3b82f6;">Feedback from our review team:</h4>
+      <p>${feedback}</p>
+    </div>
+    ` : ''}
+    
+    <p>This decision doesn't reflect on your company's capabilities or potential. Our platform has specific criteria and capacity constraints that influence our approval process.</p>
+    
+    <h3>Next Steps</h3>
+    <p>We encourage you to:</p>
+    <ul>
+      <li>Review the feedback provided (if any)</li>
+      <li>Consider reapplying in 6-12 months</li>
+      <li>Continue building your development portfolio</li>
+      <li>Explore other funding opportunities for your projects</li>
+    </ul>
+    
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${applyUrl}" class="button">Learn About Reapplying</a>
+    </div>
+    
+    <p>We appreciate your interest in StableBricks and wish you success with your real estate development endeavors.</p>
+  `;
+
+  await resend.emails.send({
+    from: "StableBricks Developer Relations <developers@stablebricks.com>",
+    to: email,
+    subject: "Developer Application Update - StableBricks",
+    html: emailTemplate(content),
+  });
+};
+
+export const sendNewDeveloperApplicationNotification = async (
+  adminEmails: string[],
+  applicationDetails: {
+    companyName: string;
+    contactPersonName: string;
+    contactEmail: string;
+    experienceYears: string;
+    totalProjectValue: string;
+    applicationId: string;
   }
-}
+) => {
+  const reviewUrl = `${baseUrl}/admin/developer-applications`;
+  
+  const content = `
+    <h2>New Developer Application Received</h2>
+    <p>A new developer application has been submitted and is ready for review.</p>
+    
+    <div style="margin: 20px 0; border: 1px solid #3b82f6; padding: 15px; border-radius: 5px; background-color: #eff6ff;">
+      <h3>Application Summary</h3>
+      <p><strong>Company:</strong> ${applicationDetails.companyName}</p>
+      <p><strong>Contact Person:</strong> ${applicationDetails.contactPersonName}</p>
+      <p><strong>Email:</strong> ${applicationDetails.contactEmail}</p>
+      <p><strong>Experience:</strong> ${applicationDetails.experienceYears}</p>
+      <p><strong>Total Project Value:</strong> ${applicationDetails.totalProjectValue}</p>
+    </div>
+    
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${reviewUrl}" class="button">Review Application</a>
+    </div>
+    
+    <p>Please review this application within 2-5 business days to maintain our response time commitments.</p>
+  `;
+
+  for (const email of adminEmails) {
+    await resend.emails.send({
+      from: "StableBricks Platform <noreply@stablebricks.com>",
+      to: email,
+      subject: `New Developer Application: ${applicationDetails.companyName}`,
+      html: emailTemplate(content),
+    });
+  }
+};

@@ -21,10 +21,10 @@ export default async function PublicProjectDetailPage({ params }: ProjectDetailP
   const { slug } = await params
   const result = await getProjectBySlug(slug)
 
-  if (!result.success || !result.project) {
+  if (!result) {
     notFound()
   }
-  const project = result.project
+  const project = result
 
   const calculateProjectFundingProgress = () => {
     return calculateFundingProgress(project)
@@ -176,8 +176,8 @@ export default async function PublicProjectDetailPage({ params }: ProjectDetailP
                       ></div>
                     </div>
                     <div className="flex justify-between text-xs text-gray-500">
-                      <span>Raised: {formatCurrencyShort((project.soldShares || 0) * sharePrice)}</span>
-                      <span>Goal: {formatCurrencyShort(project.investmentRequired || 0)}</span>
+                      <span>Raised: {formatCurrencyShort(project.investment?.reduce((sum: number, inv: any) => sum + (Number(inv.investmentAmount) || 0), 0) || 0)}</span>
+                      <span>Goal: {formatCurrencyShort(project.valuation || 0)}</span>
                     </div>
                   </div>
 
@@ -188,7 +188,7 @@ export default async function PublicProjectDetailPage({ params }: ProjectDetailP
                     </div>
                     <div className="flex justify-between">
                       <span className="text-sm text-gray-600">Available Shares</span>
-                      <span className="font-semibold">{(project.totalShares || 0) - (project.soldShares || 0)}</span>
+                      <span className="font-semibold">{Math.max(0, Math.floor((Number(String(project.valuation).replace(/[^\d.]/g, '')) - (project.investment?.reduce((sum: number, inv: any) => sum + (Number(inv.investmentAmount) || 0), 0) || 0)) / (sharePrice || 1)))}</span>
                     </div>
                   </div>
 
@@ -226,14 +226,14 @@ export async function generateMetadata({ params }: ProjectDetailPageProps): Prom
   const { slug } = await params
   const result = await getProjectBySlug(slug)
 
-  if (!result.success || !result.project) {
+  if (!result) {
     return {
       title: 'Project Not Found | StableBricks',
       description: 'The requested project could not be found.',
     }
   }
 
-  const project = result.project
+  const project = result
   const sharePrice = project.sharePrice || 0
   const fundingProgress = calculateFundingProgress(project)
 

@@ -14,6 +14,27 @@ import {
 } from "@/components/ui/navigation-menu"
 import { DarkButton } from "./DarkButton"
 
+// const navLinks = [
+//   {
+//     id: 1,
+//     name: "HOME",
+//     url: "/",
+//     icon: "",
+//   },
+//   {
+//     id: 2,
+//     name: "ABOUT",
+//     url: "/about",
+//     icon: "",
+//   },
+//   {
+//     id: 3,
+//     name: "CONTACT",
+//     url: "/contact",
+//     icon: "",
+//   },
+// ]
+
 const investmentLinks = [
   { name: "Investment Opportunities", url: "/investments", description: "Browse available investment projects" },
   { name: "Portfolio Tracker", url: "/portfolio", description: "Track your investments" },
@@ -23,22 +44,25 @@ const investmentLinks = [
 
 const propertyLinks = [
   { name: "Property Listings", url: "/properties", description: "Browse all properties" },
-  // { name: "Property Search", url: "/properties/search", description: "Advanced property search"},
-  // { name: "Featured Properties", url: "/properties/featured", description: "Premium listings"},
-  { name: "Land Submissions", url: "/land-submissions", description: "Submit your land for development" },
-  { name: "Developer Portal", url: "/developer", description: "For construction partners" },
+  { name: "Property Search", url: "/properties/search", description: "Advanced property search"},
+  { name: "Featured Properties", url: "/properties/featured", description: "Premium listings"},
 ]
 
+const partnershipLinks = [
+    { name: "Land Submissions", url: "/land-submissions", description: "Submit your land for development" },
+    { name: "Developer Portal", url: "/developer", description: "For construction partners" },
+]
 
 const companyLinks = [
     { name: "Become a Partner", url: "/partnerships", description: "Join our partnership program" },
     { name: "Who We Are", url: "/about", description: "Learn more about us" },
     { name: "Contact Us", url: "/contact", description: "Send us a message or visit us.." },
+//   { name: "Partnerships", url: "/partnerships", description: "For construction partners" },
 ]
 
 export const PublicNavigations = () => {
-  const { data: session } = useSession()
-  const user = session?.user?.name
+  const session = useSession()
+  const user = session.data?.user?.name
 
   return (
     <>
@@ -102,7 +126,7 @@ export const PublicNavigations = () => {
                 </NavigationMenuContent>
               </NavigationMenuItem>
 
-              {/* <NavigationMenuItem>
+              <NavigationMenuItem>
                 <NavigationMenuTrigger className="font-poppins font-semibold">Partnerships</NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
@@ -123,7 +147,7 @@ export const PublicNavigations = () => {
                     ))}
                   </ul>
                 </NavigationMenuContent>
-              </NavigationMenuItem> */}
+              </NavigationMenuItem>
 
 
                 <NavigationMenuItem>
@@ -241,7 +265,7 @@ export const PublicNavigations = () => {
             </SheetTrigger>
           </div>
         </div>
-        <SheetContent side={"left"} className="flex flex-col h-full max-h-screen">
+        <SheetContent side={"left"} className="">
           <SheetHeader>
             <SheetTitle className="flex items-center">
               <div className="px-2 flex items-center">
@@ -252,112 +276,104 @@ export const PublicNavigations = () => {
                 />
               </div>
             </SheetTitle>
-            
-            {/* Login/Register buttons at the top for better visibility */}
-            {!user && (
-              <div className="flex flex-col space-y-2 px-2 pt-2">
-                <Link href={"/register"} className="">
-                  <SheetTrigger className="py-2 font-poppins font-semibold text-base w-full rounded-lg bg-yellow-400 hover:bg-yellow-500 text-black">
-                    Register
-                  </SheetTrigger>
-                </Link>
-                <Link href={"/login"} className="">
-                  <SheetTrigger className="py-2 font-poppins font-semibold text-base w-full rounded-lg border-2 border-black text-black hover:bg-gray-50">
-                    Log In
-                  </SheetTrigger>
-                </Link>
-              </div>
-            )}
-
-            {/* Remove SheetDescription to avoid p > h3 nesting issue */}
-          </SheetHeader>
-          
-          {/* Scrollable content area */}
-          <div className="flex-1 overflow-y-auto px-2 py-4">
-            <div className="flex flex-col justify-start text-start items-start space-y-6">
-              <div className="w-full space-y-3">
-                <div className="font-poppins font-bold text-lg text-black">Company</div>
-                {companyLinks.map((link) => (
-                  <Link
-                    key={link.name}
-                    href={link.url}
-                    className="font-poppins font-medium text-base text-gray-600 hover:text-yellow-500 block pl-4"
-                  >
-                    <SheetTrigger>{link.name}</SheetTrigger>
-                  </Link>
-                ))}
-              </div>
-
-              <div className="w-full space-y-3">
-                <div className="font-poppins font-bold text-lg text-black">Investments</div>
-                {investmentLinks.map((link) => (
-                  <Link
-                    key={link.name}
-                    href={link.url}
-                    className="font-poppins font-medium text-base text-gray-600 hover:text-yellow-500 block pl-4"
-                  >
-                    <SheetTrigger>{link.name}</SheetTrigger>
-                  </Link>
-                ))}
-              </div>
-
-              <div className="w-full space-y-3">
-                <div className="font-poppins font-bold text-lg text-black">Properties</div>
-                {propertyLinks.map((link) => (
-                  <Link
-                    key={link.name}
-                    href={link.url}
-                    className="font-poppins font-medium text-base text-gray-600 hover:text-yellow-500 block pl-4"
-                  >
-                    <SheetTrigger>{link.name}</SheetTrigger>
-                  </Link>
-                ))}
-              </div>
-
-              {/* <div className="w-full space-y-3">
-                <div className="font-poppins font-bold text-lg text-black">Partnerships</div>
-                {partnershipLinks.map((link) => (
-                  <Link
-                    key={link.name}
-                    href={link.url}
-                    className="font-poppins font-medium text-base text-gray-600 hover:text-yellow-500 block pl-4"
-                  >
-                    <SheetTrigger>{link.name}</SheetTrigger>
-                  </Link>
-                ))}
-              </div> */}
-
-              {/* User dashboard section at bottom for authenticated users */}
-              {user && (
-                <div className="flex h-full flex-col space-y-4 border-t-2 pt-6 w-full">
-                  <div className="flex flex-col h-full justify-between space-y-4">
-                    <Link href={"/user/dashboard"} className="">
-                      <SheetTrigger className="py-2 font-poppins flex items-center space-x-3 font-semibold text-lg w-full text-black">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={2}
-                          stroke="currentColor"
-                          className="size-6"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                          />
-                        </svg>
-                        <span className="font-poppins">Dashboard</span>
-                      </SheetTrigger>
+            <SheetDescription>
+              <div className="flex flex-col px-2 py-6 justify-start text-start items-start space-y-4">
+                 <div className="w-full space-y-3">
+                  <h3 className="font-poppins font-bold text-lg text-black">Investments</h3>
+                  {companyLinks.map((link) => (
+                    <Link
+                      key={link.name}
+                      href={link.url}
+                      className="font-poppins font-medium text-base text-gray-600 hover:text-yellow-500 block pl-4"
+                    >
+                      <SheetTrigger>{link.name}</SheetTrigger>
                     </Link>
-                    <div className="py-2 font-poppins items-center flex space-x-3 font-semibold text-lg w-full text-black">
-                      <DarkButton />
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              )}
-            </div>
-          </div>
+
+                <div className="w-full space-y-3">
+                  <h3 className="font-poppins font-bold text-lg text-black">Investments</h3>
+                  {investmentLinks.map((link) => (
+                    <Link
+                      key={link.name}
+                      href={link.url}
+                      className="font-poppins font-medium text-base text-gray-600 hover:text-yellow-500 block pl-4"
+                    >
+                      <SheetTrigger>{link.name}</SheetTrigger>
+                    </Link>
+                  ))}
+                </div>
+
+                <div className="w-full space-y-3">
+                  <h3 className="font-poppins font-bold text-lg text-black">Properties</h3>
+                  {propertyLinks.map((link) => (
+                    <Link
+                      key={link.name}
+                      href={link.url}
+                      className="font-poppins font-medium text-base text-gray-600 hover:text-yellow-500 block pl-4"
+                    >
+                      <SheetTrigger>{link.name}</SheetTrigger>
+                    </Link>
+                  ))}
+                </div>
+
+                <div className="w-full space-y-3">
+                  <h3 className="font-poppins font-bold text-lg text-black">Partnerships</h3>
+                  {partnershipLinks.map((link) => (
+                    <Link
+                      key={link.name}
+                      href={link.url}
+                      className="font-poppins font-medium text-base text-gray-600 hover:text-yellow-500 block pl-4"
+                    >
+                      <SheetTrigger>{link.name}</SheetTrigger>
+                    </Link>
+                  ))}
+                </div>
+
+                <div className="flex h-full flex-col space-y-4 border-t-2 py-3 w-full">
+                  {user ? (
+                    <div className="flex flex-col h-full justify-between space-y-4">
+                      <Link href={"/dashboard"} className="">
+                        <SheetTrigger className="py-2 font-poppins flex items-center space-x-3 font-semibold text-lg w-full text-black">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={2}
+                            stroke="currentColor"
+                            className="size-6"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                            />
+                          </svg>
+                          <p className="font-poppins">Dashboard</p>
+                        </SheetTrigger>
+                      </Link>
+                      <div className="py-2 font-poppins items-center flex space-x-3 font-semibold text-lg w-full text-black">
+                        <DarkButton />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col space-y-3">
+                      <Link href={"/register"} className="">
+                        <SheetTrigger className="py-2 font-poppins font-semibold text-lg w-full rounded-lg bg-black text-primary">
+                          Register
+                        </SheetTrigger>
+                      </Link>
+                      <Link href={"/login"} className="">
+                        <SheetTrigger className="py-2 font-poppins font-semibold text-lg w-full rounded-lg border-2 border-black text-black">
+                          Log In
+                        </SheetTrigger>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </SheetDescription>
+          </SheetHeader>
         </SheetContent>
       </Sheet>
     </>

@@ -2,100 +2,100 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { TrendingUp, Wallet, Building2, Eye, Download } from "lucide-react"
 import { getUserDashboardData } from "@/actions/user"
-import { ReferralCard } from "@/components/ReferralCard"
 import Link from "next/link"
 
 export default async function UserDashboard() {
   const dashboardData = await getUserDashboardData()
+
   if (dashboardData.error) {
     return <div>Error loading dashboard data</div>
   }
 
   const { stats, recentInvestments, topProjects, walletBalance } = dashboardData
 
-  // Provide default values if data is undefined
-  const safeStats = stats || { totalInvestments: 0, activeProjects: 0, expectedReturns: 0 }
-  const safeWalletBalance = walletBalance || 0
-  const safeRecentInvestments = recentInvestments || []
-  const safeTopProjects = topProjects || []
+  // Safety check
+  if (!stats || !recentInvestments || !topProjects) {
+    return <div>Dashboard data not available</div>
+  }
+
   return (
-    <div className="space-y-4 md:space-y-8">
-      <div className="text-center md:text-left">
-        <h1 className="text-2xl md:text-3xl font-bold">Welcome back!</h1>
-        <p className="text-gray-600 text-sm md:text-base">Here's an overview of your investment portfolio</p>
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold">Welcome back!</h1>
+        <p className="text-gray-600">Here's an overview of your investment portfolio</p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs md:text-sm font-medium">Total Investments</CardTitle>
-            <TrendingUp className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Total Investments</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-lg md:text-2xl font-bold">₦{safeStats.totalInvestments.toLocaleString()}</div>
+            <div className="text-2xl font-bold">₦{stats.totalInvestments.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">+20.1% from last month</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs md:text-sm font-medium">Active Projects</CardTitle>
-            <Building2 className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Active Projects</CardTitle>
+            <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-lg md:text-2xl font-bold">{safeStats.activeProjects}</div>
+            <div className="text-2xl font-bold">{stats.activeProjects}</div>
             <p className="text-xs text-muted-foreground">+2 new this month</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs md:text-sm font-medium">Wallet Balance</CardTitle>
-            <Wallet className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Wallet Balance</CardTitle>
+            <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-lg md:text-2xl font-bold">₦{safeWalletBalance.toLocaleString()}</div>
+            <div className="text-2xl font-bold">₦{walletBalance.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">Available for investment</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs md:text-sm font-medium">Expected Returns</CardTitle>
-            <TrendingUp className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Expected Returns</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-lg md:text-2xl font-bold">₦{safeStats.expectedReturns.toLocaleString()}</div>
+            <div className="text-2xl font-bold">₦{stats.expectedReturns.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">Projected earnings</p>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Investments */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg md:text-xl">Recent Investments</CardTitle>
-            <CardDescription className="text-sm">Your latest investment activities</CardDescription>
+            <CardTitle>Recent Investments</CardTitle>
+            <CardDescription>Your latest investment activities</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3 md:space-y-4">
-              {safeRecentInvestments.map((investment) => (
+            <div className="space-y-4">
+              {recentInvestments.map((investment) => (
                 <div key={investment.id} className="flex items-center justify-between border-b pb-2">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm truncate">{investment.project.title}</p>
-                    <p className="text-xs md:text-sm text-gray-600">₦{investment.investmentAmount.toLocaleString()}</p>
+                  <div>
+                    <p className="font-medium">{investment.project.title}</p>
+                    <p className="text-sm text-gray-600">₦{investment.investmentAmount.toLocaleString()}</p>
                   </div>
-                  <div className="text-right ml-2">
-                    <p className="text-xs text-gray-500">
+                  <div className="text-right">
+                    <p className="text-sm text-gray-500">
                       {new Date(investment.dateOfInvestment).toLocaleDateString()}
                     </p>
-                    <div className="flex gap-1 mt-1">
-                      <Button size="sm" variant="outline" className="h-6 w-6 p-0">
+                    <div className="flex gap-1">
+                      <Button size="sm" variant="outline">
                         <Eye className="w-3 h-3" />
                       </Button>
-                      <Button size="sm" variant="outline" className="h-6 w-6 p-0">
+                      <Button size="sm" variant="outline">
                         <Download className="w-3 h-3" />
                       </Button>
                     </div>
@@ -105,7 +105,7 @@ export default async function UserDashboard() {
             </div>
             <div className="mt-4">
               <Link href="/user/investments">
-                <Button variant="outline" className="w-full text-sm">
+                <Button variant="outline" className="w-full">
                   View All Investments
                 </Button>
               </Link>
@@ -116,27 +116,27 @@ export default async function UserDashboard() {
         {/* Top Projects */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg md:text-xl">Top Projects</CardTitle>
-            <CardDescription className="text-sm">High-performing investment opportunities</CardDescription>
+            <CardTitle>Top Projects</CardTitle>
+            <CardDescription>High-performing investment opportunities</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3 md:space-y-4">
-              {safeTopProjects.map((project) => (
+            <div className="space-y-4">
+              {topProjects.map((project) => (
                 <div key={project.id} className="flex items-center justify-between border-b pb-2">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm truncate">{project.title}</p>
-                    <p className="text-xs md:text-sm text-gray-600 truncate">{project.location}</p>
+                  <div>
+                    <p className="font-medium">{project.title}</p>
+                    <p className="text-sm text-gray-600">{project.location}</p>
                   </div>
-                  <div className="text-right ml-2">
-                    <p className="font-semibold text-green-600 text-sm">{project.roi}% ROI</p>
-                    <p className="text-xs text-gray-500">₦{project.sharePrice.toLocaleString()}/share</p>
+                  <div className="text-right">
+                    <p className="font-semibold text-green-600">{project.roi}% ROI</p>
+                    <p className="text-sm text-gray-500">₦{project.sharePrice.toLocaleString()}/share</p>
                   </div>
                 </div>
               ))}
             </div>
             <div className="mt-4">
               <Link href="/user/projects">
-                <Button variant="outline" className="w-full text-sm">
+                <Button variant="outline" className="w-full">
                   Browse All Projects
                 </Button>
               </Link>
@@ -145,59 +145,35 @@ export default async function UserDashboard() {
         </Card>
       </div>
 
-      {/* Referral Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-        <div className="lg:col-span-2">
-          <ReferralCard />
-        </div>
-        <div className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base md:text-lg">Need Help?</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <p className="text-xs md:text-sm text-gray-600">
-                  Contact our support team for assistance with your investments.
-                </p>
-                <Button variant="outline" className="w-full text-sm">
-                  Contact Support
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
       {/* Quick Actions */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg md:text-xl">Quick Actions</CardTitle>
-          <CardDescription className="text-sm">Common tasks and shortcuts</CardDescription>
+          <CardTitle>Quick Actions</CardTitle>
+          <CardDescription>Common tasks and shortcuts</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Link href="/user/projects">
-              <Button variant="outline" className="w-full h-16 md:h-20 flex flex-col text-xs md:text-sm">
-                <Building2 className="w-5 h-5 md:w-6 md:h-6 mb-1 md:mb-2" />
+              <Button variant="outline" className="w-full h-20 flex flex-col">
+                <Building2 className="w-6 h-6 mb-2" />
                 Browse Projects
               </Button>
             </Link>
             <Link href="/user/wallet">
-              <Button variant="outline" className="w-full h-16 md:h-20 flex flex-col text-xs md:text-sm">
-                <Wallet className="w-5 h-5 md:w-6 md:h-6 mb-1 md:mb-2" />
+              <Button variant="outline" className="w-full h-20 flex flex-col">
+                <Wallet className="w-6 h-6 mb-2" />
                 Fund Wallet
               </Button>
             </Link>
             <Link href="/user/investments">
-              <Button variant="outline" className="w-full h-16 md:h-20 flex flex-col text-xs md:text-sm">
-                <TrendingUp className="w-5 h-5 md:w-6 md:h-6 mb-1 md:mb-2" />
+              <Button variant="outline" className="w-full h-20 flex flex-col">
+                <TrendingUp className="w-6 h-6 mb-2" />
                 View Investments
               </Button>
             </Link>
             <Link href="/user/profile">
-              <Button variant="outline" className="w-full h-16 md:h-20 flex flex-col text-xs md:text-sm">
-                <Eye className="w-5 h-5 md:w-6 md:h-6 mb-1 md:mb-2" />
+              <Button variant="outline" className="w-full h-20 flex flex-col">
+                <Eye className="w-6 h-6 mb-2" />
                 Update Profile
               </Button>
             </Link>

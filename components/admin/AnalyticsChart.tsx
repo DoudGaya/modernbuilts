@@ -11,10 +11,9 @@ import {
   Pie,
   Cell,
 } from "recharts"
-import { ChartDataPoint } from "@/types/admin"
 
 interface AnalyticsChartProps {
-  data: ChartDataPoint[]
+  data: any[]
   type: "line" | "pie"
 }
 
