@@ -78,8 +78,8 @@ export function LoginForm() {
           form.reset()
           setSuccess(data.success)
           // Handle redirect on client side after successful login
-          if (data?.redirectTo) {
-            router.push(data.redirectTo)
+          if ((data as any)?.redirectTo) {
+            router.push((data as any).redirectTo)
           }
         }
 

@@ -204,8 +204,7 @@ export default function WalletPage() {
       payment_options: 'card,mobilemoney,ussd',
       customer: {
         email: user.email || '',
-        // flutterwave-react-v3 typings expect `phonenumber` (no underscore)
-        phonenumber: user.phone || '',
+        phone_number: user.phone || '',
         name: user.name || '',
       },
       customizations: {
