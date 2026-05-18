@@ -5,10 +5,10 @@ import crypto from "crypto";
 
 // Initialize S3 client
 const s3Client = new S3Client({
-  region: process.env.AWS_REGION || "us-east-1",
+  region: process.env.REGION || process.env.AWS_REGION || "us-east-1",
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+    accessKeyId: process.env.ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID || "",
+    secretAccessKey: process.env.SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY || "",
   },
 });
 
@@ -28,7 +28,7 @@ export async function generatePresignedUrl(
   const uniqueFileName = `${folder}/${generateUniqueFileName(fileName)}`;
   
   const command = new PutObjectCommand({
-    Bucket: process.env.AWS_S3_BUCKET_NAME,
+    Bucket: process.env.BUCKET_NAME || process.env.AWS_S3_BUCKET_NAME,
     Key: uniqueFileName,
     ContentType: fileType,
   });
@@ -39,6 +39,6 @@ export async function generatePresignedUrl(
   
   return {
     uploadUrl: signedUrl,
-    fileUrl: `https://${process.env.AWS_S3_BUCKET_NAME}.s3.amazonaws.com/${uniqueFileName}`,
+    fileUrl: `https://${process.env.BUCKET_NAME || process.env.AWS_S3_BUCKET_NAME}.s3.amazonaws.com/${uniqueFileName}`,
   };
 }

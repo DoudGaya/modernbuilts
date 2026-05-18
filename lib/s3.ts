@@ -3,10 +3,10 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 import crypto from "crypto"
 
 const s3Client = new S3Client({
-  region: process.env.AWS_REGION!,
+  region: process.env.REGION! || process.env.AWS_REGION!,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    accessKeyId: process.env.ACCESS_KEY_ID! || process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.SECRET_ACCESS_KEY! || process.env.AWS_SECRET_ACCESS_KEY!,
   },
 })
 
@@ -16,7 +16,7 @@ export async function uploadToS3(file: File, folder: string): Promise<string> {
     const fileKey = `${folder}/${crypto.randomUUID()}-${file.name.replace(/\s/g, "-")}`
 
     const params = {
-      Bucket: process.env.AWS_BUCKET_NAME!,
+      Bucket: process.env.BUCKET_NAME! || process.env.AWS_BUCKET_NAME!,
       Key: fileKey,
       Body: fileBuffer,
       ContentType: file.type,
@@ -24,7 +24,7 @@ export async function uploadToS3(file: File, folder: string): Promise<string> {
 
     await s3Client.send(new PutObjectCommand(params))
 
-    return `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileKey}`
+    return `https://${process.env.BUCKET_NAME || process.env.AWS_BUCKET_NAME}.s3.${process.env.REGION || process.env.AWS_REGION}.amazonaws.com/${fileKey}`
   } catch (error) {
     console.error("S3 upload error:", error)
     throw new Error("Failed to upload file")
@@ -38,7 +38,7 @@ export async function deleteFromS3(fileUrl: string): Promise<void> {
     const key = url.pathname.substring(1) // Remove leading slash
 
     const params = {
-      Bucket: process.env.AWS_BUCKET_NAME!,
+      Bucket: process.env.BUCKET_NAME! || process.env.AWS_BUCKET_NAME!,
       Key: key,
     }
 
@@ -51,7 +51,7 @@ export async function deleteFromS3(fileUrl: string): Promise<void> {
 
 export async function generatePresignedUrl(key: string, contentType: string): Promise<string> {
   const params = {
-    Bucket: process.env.AWS_BUCKET_NAME!,
+    Bucket: process.env.BUCKET_NAME! || process.env.AWS_BUCKET_NAME!,
     Key: key,
     ContentType: contentType,
   }
