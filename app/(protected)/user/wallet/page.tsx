@@ -204,7 +204,7 @@ export default function WalletPage() {
       payment_options: 'card,mobilemoney,ussd',
       customer: {
         email: user.email || '',
-        phone_number: user.phone || '',
+        phonenumber: user.phone || '', // Flutterwave uses phonenumber
         name: user.name || '',
       },
       customizations: {

@@ -13,7 +13,6 @@ import { FormError } from '@/components/FormError'
 import { FormSuccess } from '@/components/FormSuccess'
 import { z } from "zod"
 import { Checkbox } from "@/components/ui/checkbox"
-import { UploadButton, UploadDropzone } from '@/lib/uploadthing'
 import Link from "next/link";
 import { DEFAULT_LOGGED_IN_REDIRRECT } from "@/routes";
 import Image from 'next/image'
