@@ -1,6 +1,6 @@
 import { Resend } from "resend"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const getResend = () => new Resend(process.env.RESEND_API_KEY)
 const env = process.env.NODE_ENV
 let baseUrl
 
@@ -90,7 +90,7 @@ export const sendTwoFactorEmail = async (email: string, token: string) => {
         <p>If you didn't request this code, please ignore this email.</p>
     `
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: "STABLEBRICKS <noreply@stablebricks.com>",
     to: email,
     subject: "Your Authentication Code",
@@ -109,7 +109,7 @@ export const sendPasswordResetEmail = async (email: string, token: string) => {
         <p>This link will expire in 1 hour.</p>
     `
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: "STABLEBRICKS <noreply@stablebricks.com>",
     to: email,
     subject: "Reset Your Password",
@@ -127,7 +127,7 @@ export const sendVrificationEmail = async (email: string, token: string) => {
         <p>If you didn't create an account with STABLEBRICKS, please ignore this email.</p>
     `
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: "STABLEBRICKS <noreply@stablebricks.com>",
     to: email,
     subject: "Verify Your STABLEBRICKS Account",
@@ -146,7 +146,7 @@ export const sendDeveloperApprovalEmail = async (email: string, name: string) =>
         <p>If you have any questions, please contact our support team.</p>
     `
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: "STABLEBRICKS <noreply@stablebricks.com>",
     to: email,
     subject: "Your Developer Application is Approved",
@@ -165,7 +165,7 @@ export const sendDeveloperRejectionEmail = async (email: string, name: string, r
         <p>If you have any questions, please contact our support team.</p>
     `
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: "STABLEBRICKS <noreply@stablebricks.com>",
     to: email,
     subject: "Your Developer Application Status",
@@ -193,7 +193,7 @@ export const sendInvestmentConfirmationEmail = async (
         <p>If you have any questions about your investment, please contact our support team.</p>
     `
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: "STABLEBRICKS <noreply@stablebricks.com>",
     to: email,
     subject: "Investment Confirmation",
@@ -225,7 +225,7 @@ export const sendBulkEmail = async (
         <div>${message}</div>
       `;
 
-      return resend.emails.send({
+      return getResend().emails.send({
         from: "STABLEBRICKS <noreply@stablebricks.com>",
         to: recipient.email,
         subject: subject,
@@ -287,7 +287,7 @@ export const sendPropertyListingNotification = async (
       <p>If you have any questions or would like to schedule a viewing, please don't hesitate to contact us.</p>
     `;
 
-    await resend.emails.send({
+    await getResend().emails.send({
       from: "STABLEBRICKS <noreply@stablebricks.com>",
       to: recipient.email,
       subject: `New Property Listing: ${property.title}`,
@@ -329,7 +329,7 @@ export const sendDeveloperApplicationConfirmation = async (
     <p>Thank you for choosing StableBricks as your capital raising platform.</p>
   `;
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: "StableBricks Developer Relations <developers@stablebricks.com>",
     to: email,
     subject: "Developer Application Received - StableBricks",
@@ -385,7 +385,7 @@ export const sendDeveloperApplicationApproval = async (
     <p>Welcome aboard!</p>
   `;
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: "StableBricks Developer Relations <developers@stablebricks.com>",
     to: email,
     subject: "Developer Application Approved - Welcome to StableBricks!",
@@ -435,7 +435,7 @@ export const sendDeveloperApplicationRejection = async (
     <p>We appreciate your interest in StableBricks and wish you success with your real estate development endeavors.</p>
   `;
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: "StableBricks Developer Relations <developers@stablebricks.com>",
     to: email,
     subject: "Developer Application Update - StableBricks",
@@ -477,7 +477,7 @@ export const sendNewDeveloperApplicationNotification = async (
   `;
 
   for (const email of adminEmails) {
-    await resend.emails.send({
+    await getResend().emails.send({
       from: "StableBricks Platform <noreply@stablebricks.com>",
       to: email,
       subject: `New Developer Application: ${applicationDetails.companyName}`,
