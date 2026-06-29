@@ -1,72 +1,87 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import React from 'react'
-import { Button } from './ui/button'
-import { cn } from '@/lib/utils'
-import bg from '@/public/img/bg.jpg'
+import Image from "next/image"
+import Link from "next/link"
+import { ArrowRight, ClipboardCheck, HardHat, Map, Ruler } from "lucide-react"
+import bg from "@/public/img/bg.jpg"
+import completed from "@/public/img/completed_homes.jpg"
+import site from "@/public/img/construction-site.jpg"
+import unCompleted from "@/public/img/uncompleted.jpg"
+import slideer1 from "@/public/img/slider1.jpeg"
 
-// images
-import completed from '@/public/img/completed_homes.jpg'
-import site from '@/public/img/construction-site.jpg'
-import unCompleted from '@/public/img/uncompleted.jpg'
-import slideer1 from '@/public/img/slider1.jpeg'
-
-
+const capabilities = [
+  "Property sales and buyer due diligence",
+  "Land submissions, plot sales, and partnership reviews",
+  "Construction planning, supervision, and contractor coordination",
+  "Procurement support for verified materials and site logistics",
+]
 
 export const HomeWhatWeDo = () => {
   return (
-<div style={{
-  backgroundImage: `url(${bg.src})`
-}} className=" flex flex-col w-full bg-cover bg-no-repeat bg-fixed bg-blend-overlay bg-center bg-yellow-50">
-      <div className=' w-full '>
-          <div className=" max-w-6xl mx-auto">
-
-              <div className=" grid grid-cols-1 gap-6 py-10 lg:grid-cols-2">
-                  <div className=" grid grid-cols-1 md:grid-cols-2 px-10 gap-6  lg:h-[400px] rounded-2xl ">
-                      <Image src={site} className=' bg-stone-800 bg-blend-overlay object-cover object-center rounded-2xl lg:mt-10 h-[300px]' alt='' />
-                      <Image src={unCompleted} className=' bg-stone-800 bg-blend-overlay object-cover object-center rounded-2xl lg:-mt-10 h-[300px]' alt='' />
-                  </div>
-                  <div className=" flex justify-center px-10 flex-col space-y-4">
-                    <div className="">
-                      <h1 className=' text-2xl lg:text-3xl font-poppins font-semibold'>Real Estate Crowdfunding</h1>
-                      <small className=' uppercase font-semibold '>Invest with Confidence</small>
-                    </div>
-                      <p className=' text-justify text-lg'>
-                      We carefully select high-potential real estate projects, from residential 
-                      developments to commercial spaces. As an investor, you can browse our listings, 
-                      choose the projects that resonate with you, and buy shares. Your investment grows 
-                      alongside the property value, and you receive dividends once the project is complete.
-                      </p>
-                      <div className=" py-3 font-poppin w-full flex max-w-max font-semibold ">
-                          <Link href={'/register'} className=' px-6 bg-yellow-400 w-full rounded-md py-2'> Get Started  </Link>
-                      </div>
-                  </div>
-              </div>
-              {/* end of crowdfunding */}
-              <div className=" grid grid-cols-1 gap-6 py-10 lg:py-20 lg:grid-cols-2">
-                    <div className=" flex justify-center px-10 flex-col space-y-4">
-                        <div className=" flex flex-col items-start">
-                        <h1 className=' text-2xl lg:text-3xl font-poppins font-semibold'>Property Development</h1>
-                        <small className=' uppercase font-semibold '>Creating Value</small>
-                        </div>
-                        <p className=' text-justify text-lg'>
-                        Our team of architects, engineers, and designers work tirelessly to create exceptional buildings. 
-                        From concept to completion, we focus on quality, 
-                        sustainability, and innovation. When you invest in a StableBricks project, you’re 
-                        investing in a vision that adds value to the community.
-                        </p>
-                        <div className=" py-3 font-poppin w-full max-w-max font-semibold ">
-                            <Link href={'/register'} className=' px-6 bg-yellow-400 rounded-md py-2'> Get Started  </Link>
-                        </div>
-                    </div>
-                    <div className=" grid grid-cols-2 gap-3 md:gap-6 px-3 h-[400px] rounded-2xl ">
-                        <Image src={completed} className=' bg-stone-800 bg-blend-overlay object-cover object-center rounded-2xl mt-10 h-full' alt='' />
-                        <Image src={slideer1} className=' bg-stone-800 bg-blend-overlay object-cover object-center rounded-2xl -mt-10 h-full' alt='' />
-                    </div>
-              </div>
+    <section
+      style={{ backgroundImage: `url(${bg.src})` }}
+      className="w-full bg-primary-50 bg-cover bg-fixed bg-center bg-no-repeat bg-blend-overlay"
+    >
+      <div className="mx-auto max-w-6xl px-5 py-16">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center">
+          <div className="grid grid-cols-2 gap-4">
+            <Image src={site} className="h-[280px] rounded-md object-cover object-center shadow-md" alt="Stablebricks construction site" />
+            <Image src={unCompleted} className="mt-10 h-[280px] rounded-md object-cover object-center shadow-md" alt="Building under construction" />
           </div>
+          <div className="space-y-6">
+            <div>
+              <p className="text-sm font-bold uppercase text-primary-800">What we do</p>
+              <h2 className="mt-3 text-3xl font-bold text-gray-950">Professional real estate and construction operations.</h2>
+            </div>
+            <p className="text-base leading-7 text-gray-700">
+              Stablebricks helps buyers and partners move from interest to inspection, documentation, purchase,
+              construction, and handover. Our role is practical: verify what is being sold, show how to access it,
+              coordinate trusted people, and keep the process clear.
+            </p>
+            <div className="grid gap-3">
+              {capabilities.map((capability) => (
+                <div key={capability} className="flex items-center gap-3 rounded-md bg-white/90 p-3 shadow-sm">
+                  <ClipboardCheck className="h-5 w-5 text-primary-700" />
+                  <span className="text-sm font-medium text-gray-800">{capability}</span>
+                </div>
+              ))}
+            </div>
+            <Link href="/properties" className="inline-flex items-center gap-2 rounded-md bg-gray-950 px-6 py-3 text-sm font-semibold text-primary transition hover:bg-gray-800">
+              View available property
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+
+        <div className="mt-20 grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center">
+          <div className="space-y-6">
+            <div>
+              <p className="text-sm font-bold uppercase text-primary-800">From route to handover</p>
+              <h2 className="mt-3 text-3xl font-bold text-gray-950">Buyers get location context, not just photos.</h2>
+            </div>
+            <p className="text-base leading-7 text-gray-700">
+              Property decisions depend on access, surrounding development, road conditions, services, and practical
+              movement. Our listing details support walk-around review and GIS-style route notes for each featured asset.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded-md bg-white p-4 shadow-sm">
+                <Map className="mb-3 h-5 w-5 text-primary-700" />
+                <p className="text-sm font-semibold">Routes</p>
+              </div>
+              <div className="rounded-md bg-white p-4 shadow-sm">
+                <Ruler className="mb-3 h-5 w-5 text-primary-700" />
+                <p className="text-sm font-semibold">Plot data</p>
+              </div>
+              <div className="rounded-md bg-white p-4 shadow-sm">
+                <HardHat className="mb-3 h-5 w-5 text-primary-700" />
+                <p className="text-sm font-semibold">Site support</p>
+              </div>
+            </div>
+          </div>
+          <div className="grid h-[420px] grid-cols-2 gap-4">
+            <Image src={completed} className="mt-10 h-full rounded-md object-cover object-center shadow-md" alt="Completed property" />
+            <Image src={slideer1} className="h-full rounded-md object-cover object-center shadow-md" alt="Modern property interior" />
+          </div>
+        </div>
       </div>
-      
-</div>
+    </section>
   )
 }

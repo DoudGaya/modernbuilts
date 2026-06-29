@@ -1,98 +1,84 @@
+import { MapPinned, Star } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
-import { Star } from "lucide-react"
 
 const testimonials = [
   {
     id: 1,
     name: "Adebayo Johnson",
-    role: "Business Owner",
+    role: "Home buyer",
     location: "Lagos",
     rating: 5,
     comment:
-      "StableBricks has transformed my investment portfolio. I've earned over 20% returns on my investments in just 18 months. The transparency and professionalism are outstanding.",
-    avatar: "/placeholder.svg?height=60&width=60",
+      "The walkthrough images and route notes helped us shortlist the right home before travelling for inspection. The payment plan discussion was clear from the beginning.",
   },
   {
     id: 2,
     name: "Fatima Abdullahi",
-    role: "Software Engineer",
-    location: "Abuja",
+    role: "Landowner",
+    location: "Kano",
     rating: 5,
     comment:
-      "As a first-time real estate investor, StableBricks made the process incredibly simple. The team guided me through every step, and I'm already seeing great returns.",
-    avatar: "/placeholder.svg?height=60&width=60",
+      "Stablebricks reviewed our land submission professionally and explained the documentation, access, and partnership options without pressure.",
   },
   {
     id: 3,
     name: "Chinedu Okafor",
-    role: "Doctor",
-    location: "Port Harcourt",
+    role: "Commercial buyer",
+    location: "Abuja",
     rating: 5,
     comment:
-      "I've invested in three different projects with StableBricks. Each one has exceeded my expectations. The regular updates and professional management give me complete confidence.",
-    avatar: "/placeholder.svg?height=60&width=60",
+      "The team understood the finishing work we needed after purchase and connected the property sale with procurement and contractor support.",
   },
   {
     id: 4,
     name: "Aisha Mohammed",
-    role: "Entrepreneur",
+    role: "Contractor partner",
     location: "Kano",
     rating: 5,
     comment:
-      "The minimum investment threshold made it possible for me to start with a small amount. Now I'm reinvesting my profits into larger projects. Excellent platform!",
-    avatar: "/placeholder.svg?height=60&width=60",
+      "Their partner process is structured. We knew the site expectations, reporting process, and procurement requirements before committing resources.",
   },
 ]
 
 export const Testimonials = () => {
   return (
-    <div className="w-full py-16 bg-white">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold font-poppins mb-4">What Our Investors Say</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Don't just take our word for it. Here's what our satisfied investors have to say about their experience
+    <section className="w-full bg-white py-16">
+      <div className="mx-auto max-w-7xl px-4">
+        <div className="mb-12 text-center">
+          <p className="text-sm font-bold uppercase text-primary-700">Client feedback</p>
+          <h2 className="mt-3 text-3xl font-bold text-gray-950 lg:text-4xl">What buyers and partners value</h2>
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-gray-600">
+            Clear information, site access, documentation discipline, and practical construction support.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {testimonials.map((testimonial) => (
-            <Card key={testimonial.id} className="hover:shadow-lg transition-shadow">
+            <Card key={testimonial.id} className="border border-gray-200 bg-white shadow-sm">
               <CardContent className="p-6">
-                <div className="flex items-center mb-4">
+                <div className="mb-4 flex items-center">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                    <Star key={i} className="h-5 w-5 fill-primary text-primary" />
                   ))}
                 </div>
 
-                <p className="text-gray-700 mb-6 italic leading-relaxed">"{testimonial.comment}"</p>
+                <p className="mb-6 text-sm leading-7 text-gray-700">"{testimonial.comment}"</p>
 
-                <div className="flex items-center">
-                  <img
-                    src={testimonial.avatar || "/placeholder.svg"}
-                    alt={testimonial.name}
-                    className="w-12 h-12 rounded-full mr-4 object-cover"
-                  />
+                <div className="flex items-center justify-between border-t border-gray-100 pt-4">
                   <div>
-                    <h4 className="font-semibold font-poppins">{testimonial.name}</h4>
-                    <p className="text-sm text-gray-600">
-                      {testimonial.role} • {testimonial.location}
-                    </p>
+                    <h4 className="font-semibold text-gray-950">{testimonial.name}</h4>
+                    <p className="text-sm text-gray-600">{testimonial.role}</p>
                   </div>
+                  <p className="inline-flex items-center gap-1 text-sm font-medium text-gray-600">
+                    <MapPinned className="h-4 w-4 text-primary-700" />
+                    {testimonial.location}
+                  </p>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
-
-        <div className="text-center mt-12">
-          <div className="inline-flex items-center space-x-2 bg-yellow-100 px-6 py-3 rounded-full">
-            <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-            <span className="font-semibold">4.9/5 Average Rating</span>
-            <span className="text-gray-600">• 2,500+ Reviews</span>
-          </div>
-        </div>
       </div>
-    </div>
+    </section>
   )
 }

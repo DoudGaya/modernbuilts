@@ -13,7 +13,7 @@ export const DashboardProfile = () => {
               SB
             </div>
               <div className=" flex flex-col space-y-1">
-                  <span className='text-sm dark:text-[#8F8F8F] text-black/80 text-primary'>private investor</span>
+                  <span className='text-sm dark:text-[#8F8F8F] text-black/80 text-primary'>property client</span>
                   <p className='font-poppins dark:text-primary text-black font-semibold text-xl'>{ user.data?.user.name }</p>
               </div>
          </div>

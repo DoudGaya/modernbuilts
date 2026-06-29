@@ -13,7 +13,8 @@ import { generateVerificationToken,
     } from '@/lib/tokens'
 import { sendVrificationEmail, sendTwoFactorEmail } from '@/lib/mail'
 import { getTwoFactorConfirmationByUserId } from '@/data/two-factor-confirmation'
-import { redirect } from 'next/navigation'
+import { databaseUnavailableMessage, getAuthActionErrorMessage } from '@/lib/auth-errors'
+import { getDatabaseConfigurationError } from '@/lib/db'
 
 export const login = async (values: z.infer<typeof loginSchema>) => {
     const fieldValidation = loginSchema.safeParse(values);
@@ -23,67 +24,70 @@ export const login = async (values: z.infer<typeof loginSchema>) => {
  
     const { email, password, code } = fieldValidation.data
 
-
-    const existingUser = await getUserByEmail(email) 
-
-   
-    if (!existingUser || !existingUser.email || !existingUser.password) {
-        return {error: "Email does not exist!" }
+    if (getDatabaseConfigurationError()) {
+        return {error: databaseUnavailableMessage}
     }
-
-    if (!existingUser.emailVerified) {
-        const verificationToken = generateVerificationToken(existingUser.email)
-        await sendVrificationEmail((await verificationToken).email, (await verificationToken).token)
-        return {success: "Check your email to verify your account!"}
-    }
-
-    if (existingUser.isTwoFactorEnabled && existingUser.email) {
-
-        if (code) {
-            const twoFactorToken = await getTwoFactorTokenByEmail(existingUser.email)
-
-            if (!twoFactorToken) { 
-                return {error: "Invalid OTP Code"}
-            }
-
-            if (twoFactorToken.token !== code) {
-                return {error: "Invalid OTP Code"}
-            }
-            const hasExpired = new Date(twoFactorToken.expires) < new Date()
-
-            if (hasExpired) {
-                return {error: " OTP Code Expired"}
-            }
-
-            await db.twoFactorToken.delete({
-                where: {id: twoFactorToken.id}
-            })
-
-            const existingConfirmation = await getTwoFactorConfirmationByUserId(existingUser.id)
-
-            if (existingConfirmation) {
-                await db.twoFactorConfirmation.delete({
-                    where: {
-                        id: existingConfirmation.id
-                    }
-                })
-            }
-
-            await db.twoFactorConfirmation.create({
-                data: {
-                    userId: existingUser.id,
-                }
-            })
-        } else {
-
-            const twoFactorToken = await generateTwoFactorToken(existingUser.email )
-            await sendTwoFactorEmail(existingUser.email, twoFactorToken.token)
-            return {twoFactor: true}
-        }
-    }
-
 
     try {
+        const existingUser = await getUserByEmail(email)
+
+   
+        if (!existingUser || !existingUser.email || !existingUser.password) {
+            return {error: "Email does not exist!" }
+        }
+
+        if (!existingUser.emailVerified) {
+            const verificationToken = await generateVerificationToken(existingUser.email)
+            await sendVrificationEmail(verificationToken.email, verificationToken.token)
+            return {success: "Check your email to verify your account!"}
+        }
+
+        if (existingUser.isTwoFactorEnabled && existingUser.email) {
+
+            if (code) {
+                const twoFactorToken = await getTwoFactorTokenByEmail(existingUser.email)
+
+                if (!twoFactorToken) {
+                    return {error: "Invalid OTP Code"}
+                }
+
+                if (twoFactorToken.token !== code) {
+                    return {error: "Invalid OTP Code"}
+                }
+                const hasExpired = new Date(twoFactorToken.expires) < new Date()
+
+                if (hasExpired) {
+                    return {error: " OTP Code Expired"}
+                }
+
+                await db.twoFactorToken.delete({
+                    where: {id: twoFactorToken.id}
+                })
+
+                const existingConfirmation = await getTwoFactorConfirmationByUserId(existingUser.id)
+
+                if (existingConfirmation) {
+                    await db.twoFactorConfirmation.delete({
+                        where: {
+                            id: existingConfirmation.id
+                        }
+                    })
+                }
+
+                await db.twoFactorConfirmation.create({
+                    data: {
+                        userId: existingUser.id,
+                    }
+                })
+            } else {
+
+                const twoFactorToken = await generateTwoFactorToken(existingUser.email )
+                await sendTwoFactorEmail(existingUser.email, twoFactorToken.token)
+                return {twoFactor: true}
+            }
+        }
+
+
         await signIn("credentials", {
             email, 
             password,
@@ -100,8 +104,17 @@ export const login = async (values: z.infer<typeof loginSchema>) => {
             }
         }
 
-        throw error;
+        if (error instanceof Error && error.message.includes("NEXT_REDIRECT")) {
+            throw error;
+        }
+
+        const fallback = "Something went wrong while logging in.";
+        const message = getAuthActionErrorMessage(error, fallback);
+
+        if (message === fallback) {
+            console.error("Login failed", error)
+        }
+
+        return {error: message}
     }
-
-
 }

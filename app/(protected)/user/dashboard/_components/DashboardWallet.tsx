@@ -47,12 +47,12 @@ export const DashboardWallet = ({
 
         <button className=' flex flex-col justify-center items-center space-y-2 '>
           <div className='stroke-black md:w-[50px] md:h-[50px] space-x-4 px-6 items-center md:space-x-0 justify-center flex text-center py-1 md:p-3 rounded-lg md:rounded-full bg-green-500/80'>
-          <p className=' flex md:hidden'> Fund Wallet </p>
+                <p className=' flex md:hidden'> Payment Plans </p>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" strokeWidth={1.2} fill="currentColor" className="size-4 transform rotate-180  flex-none md:size-6">
               <path fillRule="evenodd" d="M10 3a.75.75 0 0 1 .75.75v10.638l3.96-4.158a.75.75 0 1 1 1.08 1.04l-5.25 5.5a.75.75 0 0 1-1.08 0l-5.25-5.5a.75.75 0 1 1 1.08-1.04l3.96 4.158V3.75A.75.75 0 0 1 10 3Z" clipRule="evenodd" />
             </svg>
           </div>
-          <p className=' text-xs font-poppins hidden md:block font-medium'>Fund Wallet</p>
+                    <p className=' text-xs font-poppins hidden md:block font-medium'>Payment Plans</p>
         </button>
 
 

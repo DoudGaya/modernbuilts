@@ -1,39 +1,33 @@
-import { AboutBanner } from '@/components/about/AboutBanner'
-import { AboutWelcome } from '@/components/about/AboutWelcome'
-import React from 'react'
-import stablebricks from '@/public/stablebricks.png'
-import Image from 'next/image'
-import Link from 'next/link'
-import { TheTeam } from '@/components/TheTeam'
-import { WhatWeDoAbout } from '@/components/about/WhatWeDoAbout'
+import Image from "next/image"
+import Link from "next/link"
+import { AboutBanner } from "@/components/about/AboutBanner"
+import { AboutWelcome } from "@/components/about/AboutWelcome"
+import { TheTeam } from "@/components/TheTeam"
+import { WhatWeDoAbout } from "@/components/about/WhatWeDoAbout"
+import stablebricks from "@/public/stablebricks.png"
 
-
-
-
-const page = ({ params }: any ) => {
+const AboutPage = () => {
   return (
     <div>
       <AboutBanner />
-      <div className=" w-full flex flex-col py-20 border">
-        <div className=" flex flex-col space-y-4 mx-auto max-w-4xl w-full px-10 items-center text-center ">
-         <div className=" flex ">
-          <Image src={stablebricks} className=' h-20 object-contain object-center' alt='Stable Bricks Logo ' />
-         </div>
-          <p className=' text-lg'>
-            We envisions a world where everyone can participate in real estate growth. 
-            We’re committed to transparency, integrity, and sustainable development. 
-            Join us on this exciting journey!
+      <section className="w-full border-b bg-white py-20">
+        <div className="mx-auto flex w-full max-w-4xl flex-col items-center space-y-5 px-10 text-center">
+          <Image src={stablebricks} className="h-20 w-auto object-contain object-center" alt="Stablebricks logo" />
+          <p className="text-lg leading-8 text-gray-700">
+            Stablebricks is repositioned around direct real estate sales, land and plot sales, construction delivery,
+            procurement, contractors, and property partnerships across Nigeria. We focus on clear documentation,
+            practical site information, and professional service.
           </p>
-          <Link href={'/signup'} className=' w-full font-semibold lg:max-w-max px-6 bg-primary py-2 rounded-lg'>Sign Up Now</Link>
+          <Link href="/properties" className="w-full rounded-md bg-primary px-6 py-3 font-semibold text-gray-950 lg:max-w-max">
+            View properties
+          </Link>
         </div>
-      </div>
+      </section>
       <AboutWelcome />
       <WhatWeDoAbout />
-      <div className="">
-        <TheTeam />
-       </div>
+      <TheTeam />
     </div>
   )
 }
 
-export default page
+export default AboutPage

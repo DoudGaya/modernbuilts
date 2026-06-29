@@ -36,9 +36,11 @@ const experienceYears = [
 const companyTypes = [
   "Real Estate Development Company",
   "Construction Company",
-  "Property Investment Firm",
+  "Property Services Firm",
   "Architectural Firm",
   "Engineering Consultancy",
+  "Procurement Vendor",
+  "Contractor",
   "Other"
 ]
 
@@ -561,12 +563,12 @@ function DeveloperApplicationForm() {
           </div>
 
           <div>
-            <Label htmlFor="marketingStrategy">How do you plan to market your projects to investors? *</Label>
+            <Label htmlFor="marketingStrategy">How do you plan to support StableBricks buyers or projects? *</Label>
             <Textarea 
               id="marketingStrategy" 
               name="marketingStrategy" 
               required 
-              placeholder="Describe your marketing and investor outreach strategy"
+              placeholder="Describe your service delivery, buyer support, procurement, contractor, or project coordination approach"
               rows={4}
             />
           </div>

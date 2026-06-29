@@ -1,73 +1,62 @@
-import React, { ReactElement } from 'react'
-import icon1 from '@/public/img/icons/create-an-account.svg'
-import icon2 from '@/public/img/icons/select-a-project.svg'
-import icon3 from '@/public/img/icons/fund-a-project.svg'
-import icon4 from '@/public/img/icons/wait-for-a-return.svg'
-import Image, { StaticImageData } from 'next/image'
-import Link from 'next/link'
+import Link from "next/link"
+import { BadgeCheck, CalendarCheck, MapPinned, SearchCheck, UserRound } from "lucide-react"
 
-
-interface Icons {
-    id: number
-    title: string
-    message: string
-    icon: StaticImageData
-}
-
-const icons = [
-    {
-        id: 1,
-        title: "Create an Account",
-        icon: icon1,
-        message: "Sign up to our secure and web application to be able to track your investment. Our technology is end-to-end encrypted."
-    },
-    {
-        id: 2,
-        title: "Choose a project",
-        icon: icon2,
-        message: "Chose from all the available projects that best suits your interest. We provide comprehensive details on all options "
-    },
-    {
-        id: 3,
-        title: "Fund a Project",
-        icon: icon3 ,
-        message: "After careful selection of a project. Buy in multiples of share units. Each project have its unique unit price and investment returns"
-    },
-    {
-        id: 4,
-        title: "Wait for your Payout",
-        icon: icon4,
-        message: "Wait for the payout day to get your return on investment (ROI). While you wait you can visit or monitor project progress"
-    }
-
+const steps = [
+  {
+    title: "Create an account",
+    icon: UserRound,
+    message: "Keep property enquiries, inspection requests, payment-plan discussions, and profile details in one place.",
+  },
+  {
+    title: "Shortlist property",
+    icon: SearchCheck,
+    message: "Browse homes, land plots, and commercial spaces by location, access, price, and service needs.",
+  },
+  {
+    title: "Review walk-around and GIS",
+    icon: MapPinned,
+    message: "Check approach images, route notes, access roads, nearby anchors, and practical site context.",
+  },
+  {
+    title: "Book inspection",
+    icon: CalendarCheck,
+    message: "Request a visit, title review, payment-plan quote, procurement support, or contractor consultation.",
+  },
 ]
 
 export const HomeIcons = () => {
   return (
-    <div className=' w-full flex flex-col py-20 px-10 lg:px-0'>
-
-        <div className=" text-center items-center flex flex-col justify-center py-6 max-w-4xl mx-auto w-full">
-           <h1 className=' text-2xl font-semibold'> Follow these Easy Steps to get Started </h1>
-           <hr className=' w-2/12 border-b-2 border-black my-4' />
+    <section className="w-full bg-white px-5 py-16">
+      <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="text-sm font-bold uppercase text-primary-700">How it works</p>
+          <h2 className="mt-3 text-3xl font-bold text-gray-950">A more useful property journey</h2>
+          <p className="mt-4 text-base leading-7 text-gray-600">
+            From search to site visit, the account experience is designed around property service, inspection, and support.
+          </p>
         </div>
-        <div className=" mx-auto grid grid-cols-1 lg:grid-cols-4 gap-10 max-w-6xl">
-            {
-                icons.map(( icon: Icons ) => {
-                    return (
-                        <div key={icon.id} className=" flex items-center space-y-4 justify-center text-center flex-col">
-                            <Image className=' h-20' src={ icon.icon } alt='' height={1000} width={1000} />
-                            <p className=' font-semibold'>{ icon.title }</p>
-                            <p className=' text-sm'> {icon.message}</p>
-                        </div>
-                    )
-                })
-            }
+        <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+          {steps.map((step, index) => {
+            const Icon = step.icon
+            return (
+              <div key={step.title} className="rounded-md border border-gray-200 bg-white p-5 text-center shadow-sm">
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-md bg-primary-100">
+                  <Icon className="h-7 w-7 text-gray-950" />
+                </div>
+                <p className="text-xs font-bold uppercase text-primary-800">Step {index + 1}</p>
+                <h3 className="mt-2 font-semibold text-gray-950">{step.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-gray-600">{step.message}</p>
+              </div>
+            )
+          })}
         </div>
-       <div className=" flex items-center justify-center py-10">
-            <div className=" py-3 font-poppin font-semibold ">
-                <Link href={'/about'} className=' px-8 bg-yellow-400 rounded-md py-3'> Learn More </Link>
-            </div>
-       </div>
-    </div>
+        <div className="mt-10 flex justify-center">
+          <Link href="/register" className="inline-flex items-center gap-2 rounded-md bg-gray-950 px-8 py-3 text-sm font-semibold text-primary transition hover:bg-gray-800">
+            <BadgeCheck className="h-4 w-4" />
+            Start with an account
+          </Link>
+        </div>
+      </div>
+    </section>
   )
 }

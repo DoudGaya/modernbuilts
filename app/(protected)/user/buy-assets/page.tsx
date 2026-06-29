@@ -1,9 +1,5 @@
-import React from 'react'
+import { redirect } from "next/navigation"
 
-const page = () => {
-  return (
-    <div>Buy Assets</div>
-  )
+export default function BuyAssetsPage() {
+  redirect("/user/projects")
 }
-
-export default page

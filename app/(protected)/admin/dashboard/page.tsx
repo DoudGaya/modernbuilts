@@ -78,8 +78,8 @@ export default async function AnalyticsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Investment Trends</CardTitle>
-            <CardDescription>Monthly investment amounts over time</CardDescription>
+            <CardTitle>Sales Request Trends</CardTitle>
+            <CardDescription>Monthly property request value over time</CardDescription>
           </CardHeader>
           <CardContent>
             <AnalyticsChart data={chartData.investments} type="line" />

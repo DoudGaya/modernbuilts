@@ -1,96 +1,68 @@
 "use client"
-import { useState, useEffect } from "react"
+
+import { useMemo, useState } from "react"
+import Image from "next/image"
 import Link from "next/link"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Bath, Bed, Filter, Heart, MapPinned, Route, Search, Square, WalletCards } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Filter, TrendingUp, Clock, DollarSign, MapPin, Heart } from "lucide-react"
-import { getAllProjects } from "@/actions/project"
-import { addToWishlist, removeFromWishlist } from "@/actions/wishlist"
-import { toast } from "@/components/ui/use-toast"
+import { propertyListings } from "@/lib/property-data"
 
 export default function UserProjectsPage() {
-  const [projects, setProjects] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
-  const [sortBy, setSortBy] = useState("newest")
   const [wishlist, setWishlist] = useState<string[]>([])
 
-  useEffect(() => {
-    loadProjects()
-  }, [searchTerm, categoryFilter, sortBy])
+  const filteredProperties = useMemo(() => {
+    return propertyListings.filter((property) => {
+      const query = searchTerm.toLowerCase()
+      const matchesSearch =
+        !query ||
+        property.title.toLowerCase().includes(query) ||
+        property.location.toLowerCase().includes(query) ||
+        property.category.toLowerCase().includes(query) ||
+        property.gis.accessRoads.some((road) => road.toLowerCase().includes(query))
 
-  const loadProjects = async () => {
-    setLoading(true)
-    const result = await getAllProjects({
-      search: searchTerm,
-      category: categoryFilter,
-      status: "ACTIVE", // Only show active projects to users
+      const matchesCategory = categoryFilter === "all" || property.category.toLowerCase() === categoryFilter
+      return matchesSearch && matchesCategory
     })
+  }, [searchTerm, categoryFilter])
 
-    if (result.success) {
-      setProjects(result.projects)
-    } else {
-      toast({
-        title: "Error",
-        description: result.error,
-        variant: "destructive",
-      })
-    }
-    setLoading(false)
-  }
-
-  const handleWishlistToggle = async (projectId: string) => {
-    const isInWishlist = wishlist.includes(projectId)
-
-    if (isInWishlist) {
-      const result = await removeFromWishlist(projectId)
-      if (result.success) {
-        setWishlist(wishlist.filter((id) => id !== projectId))
-        toast({ title: "Removed from wishlist" })
-      }
-    } else {
-      const result = await addToWishlist(projectId)
-      if (result.success) {
-        setWishlist([...wishlist, projectId])
-        toast({ title: "Added to wishlist" })
-      }
-    }
-  }
-
-  if (loading) {
-    return <div>Loading projects...</div>
+  const toggleWishlist = (slug: string) => {
+    setWishlist((current) => (current.includes(slug) ? current.filter((item) => item !== slug) : [...current, slug]))
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
-          <h1 className="text-3xl font-bold">Investment Projects</h1>
-          <p className="text-gray-600">Discover profitable real estate investment opportunities</p>
+          <h1 className="text-3xl font-bold text-gray-950">Properties and land</h1>
+          <p className="mt-2 text-gray-600">Review listings, walk-around media, GIS access, and payment-plan details.</p>
         </div>
+        <Button asChild className="bg-primary text-gray-950 hover:bg-primary-400">
+          <Link href="/properties">Open public catalog</Link>
+        </Button>
       </div>
 
-      {/* Search and Filters */}
-      <Card>
+      <Card className="border border-gray-200 bg-white shadow-sm">
         <CardHeader>
-          <CardTitle className="flex items-center">
-            <Filter className="w-5 h-5 mr-2" />
-            Search & Filter
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Filter className="h-5 w-5 text-primary-700" />
+            Search and filter
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="relative">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+            <div className="relative md:col-span-2">
               <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
-                placeholder="Search projects..."
+                placeholder="Search property, location, access road..."
                 className="pl-10"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(event) => setSearchTerm(event.target.value)}
               />
             </div>
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
@@ -98,134 +70,101 @@ export default function UserProjectsPage() {
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="Residential">Residential</SelectItem>
-                <SelectItem value="Commercial">Commercial</SelectItem>
-                <SelectItem value="Mixed-Use">Mixed-Use</SelectItem>
-                <SelectItem value="Hospitality">Hospitality</SelectItem>
+                <SelectItem value="all">All categories</SelectItem>
+                <SelectItem value="residential">Residential</SelectItem>
+                <SelectItem value="land">Land</SelectItem>
+                <SelectItem value="commercial">Commercial</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger>
-                <SelectValue placeholder="Sort By" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="newest">Newest First</SelectItem>
-                <SelectItem value="roi-high">Highest ROI</SelectItem>
-                <SelectItem value="roi-low">Lowest ROI</SelectItem>
-                <SelectItem value="price-low">Lowest Price</SelectItem>
-                <SelectItem value="price-high">Highest Price</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button variant="outline">
-              <Heart className="w-4 h-4 mr-2" />
-              View Wishlist
+            <Button variant="outline" onClick={() => setWishlist([])}>
+              <Heart className="h-4 w-4" />
+              Clear saved
             </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* Projects Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {projects.map((project) => (
-          <Card key={project.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-            <div className="relative">
-              <img
-                src={project.coverImage || "/placeholder.svg"}
-                alt={project.title}
-                className="w-full h-48 object-cover"
-              />
-              <Badge className="absolute top-4 right-4 bg-green-500">Active</Badge>
-              <Badge className="absolute top-4 left-4 bg-black/70 text-white">{project.category}</Badge>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {filteredProperties.map((property) => (
+          <Card key={property.slug} className="overflow-hidden border border-gray-200 bg-white shadow-sm">
+            <div className="relative h-56">
+              <Image src={property.coverImage} alt={property.title} fill className="object-cover" sizes="(min-width: 1024px) 40vw, 100vw" />
+              <Badge className="absolute left-4 top-4 bg-gray-950 text-white hover:bg-gray-950">{property.category}</Badge>
               <Button
                 size="sm"
                 variant="ghost"
-                className="absolute bottom-4 right-4 bg-white/80 hover:bg-white"
-                onClick={() => handleWishlistToggle(project.id)}
+                className="absolute right-4 top-4 bg-white/90 hover:bg-white"
+                onClick={() => toggleWishlist(property.slug)}
               >
-                <Heart className={`w-4 h-4 ${wishlist.includes(project.id) ? "fill-red-500 text-red-500" : ""}`} />
+                <Heart className={`h-4 w-4 ${wishlist.includes(property.slug) ? "fill-red-500 text-red-500" : ""}`} />
               </Button>
             </div>
-
             <CardHeader>
-              <CardTitle className="text-lg font-poppins">{project.title}</CardTitle>
-              <CardDescription className="flex items-center">
-                <MapPin className="w-4 h-4 mr-1" />
-                {project.location}
-              </CardDescription>
+              <CardTitle className="text-xl font-bold text-gray-950">{property.title}</CardTitle>
+              <p className="flex items-center gap-2 text-sm text-gray-600">
+                <MapPinned className="h-4 w-4" />
+                {property.location}
+              </p>
             </CardHeader>
+            <CardContent className="space-y-5">
+              <p className="text-sm leading-6 text-gray-600">{property.description}</p>
 
-            <CardContent className="space-y-4">
-              <p className="text-sm text-gray-600 line-clamp-2">{project.description}</p>
-
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="flex items-center">
-                  <TrendingUp className="w-4 h-4 mr-2 text-green-500" />
-                  <span className="font-semibold">{project.roi}% ROI</span>
-                </div>
-                <div className="flex items-center">
-                  <Clock className="w-4 h-4 mr-2 text-blue-500" />
-                  <span>{project.length}</span>
-                </div>
-                <div className="flex items-center">
-                  <DollarSign className="w-4 h-4 mr-2 text-yellow-500" />
-                  <span>₦{project.sharePrice.toLocaleString()}/share</span>
-                </div>
-                <div className="text-sm text-gray-500">Value: {project.valuation}</div>
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <span className="rounded-md bg-primary-50 p-3 font-semibold text-gray-950">{property.price}</span>
+                <span className="flex items-center gap-2 rounded-md bg-gray-100 p-3 text-gray-700">
+                  <Square className="h-4 w-4" />
+                  {property.area}
+                </span>
+                {property.bedrooms ? (
+                  <span className="flex items-center gap-2 rounded-md bg-gray-100 p-3 text-gray-700">
+                    <Bed className="h-4 w-4" />
+                    {property.bedrooms} beds
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2 rounded-md bg-gray-100 p-3 text-gray-700">
+                    <Route className="h-4 w-4" />
+                    Plot access
+                  </span>
+                )}
+                {property.bathrooms ? (
+                  <span className="flex items-center gap-2 rounded-md bg-gray-100 p-3 text-gray-700">
+                    <Bath className="h-4 w-4" />
+                    {property.bathrooms} baths
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2 rounded-md bg-gray-100 p-3 text-gray-700">
+                    <MapPinned className="h-4 w-4" />
+                    {property.gis.coordinates}
+                  </span>
+                )}
               </div>
 
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Funding Progress</span>
-                  <span>{Math.floor(Math.random() * 100)}%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-yellow-400 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${Math.floor(Math.random() * 100)}%` }}
-                  ></div>
-                </div>
+              <div className="rounded-md bg-gray-50 p-4">
+                <p className="flex items-center gap-2 text-sm font-bold text-gray-950">
+                  <WalletCards className="h-4 w-4 text-primary-700" />
+                  {property.paymentPlan.deposit}
+                </p>
+                <p className="mt-1 text-sm text-gray-600">{property.paymentPlan.tenor} - {property.paymentPlan.monthly}</p>
               </div>
 
-              <div className="flex gap-2 pt-2 border-t">
-                <Link href={`/user/projects/${project.slug}`} className="flex-1">
-                  <Button variant="outline" className="w-full" size="sm">
-                    View Details
-                  </Button>
-                </Link>
-                <Link href={`/user/projects/${project.slug}/invest`} className="flex-1">
-                  <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black" size="sm">
-                    Invest Now
-                  </Button>
-                </Link>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <Button asChild variant="outline" className="flex-1">
+                  <Link href={`/properties/${property.slug}`}>Walk-around and GIS</Link>
+                </Button>
+                <Button asChild className="flex-1 bg-primary text-gray-950 hover:bg-primary-400">
+                  <Link href="/user/enquiries">Request details</Link>
+                </Button>
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      {projects.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-gray-500">No projects found</p>
+      {filteredProperties.length === 0 && (
+        <div className="rounded-md border border-gray-200 bg-white py-12 text-center">
+          <p className="text-gray-500">No properties match your search.</p>
         </div>
       )}
     </div>
   )
 }
-
-// import React from 'react'
-// import skyScrapper from '@/public/stablebricks_calipha.svg'
-// import Image from 'next/image'
-// import Link from 'next/link'
-
-// const page = () => {
-//   return (
-//     <div className='flex flex-col items-center w-full h-full text-center space-y-3 justify-center'>
-//     <Image src={skyScrapper} height={600} width={600} className=' h-[400px] w-[400px] object-contain' alt='Stablebricks Inc' />
-//     <p className=' text-2xl font-poppins bg-gray-200/70 rounded-md text-gray-700 px-2 py-1'>There is currently no active project</p>
-//     <Link href={'/user/dashboard'} className=' px-6 py-2 text-lg rounded-lg font-poppins bg-primary'>Go Home</Link>
-// </div>
-//   )
-// }
-
-// export default page

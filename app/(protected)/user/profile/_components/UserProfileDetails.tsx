@@ -28,7 +28,7 @@ export const UserProfileDetails = ({ changeModal }) => {
                             )}
                         </div>
                 <div className=" flex flex-col items-center justify-center">
-                    <p className=' text-xs'>Private Investor </p>
+                    <p className=' text-xs'>Property client</p>
                     <h3 className=' font-poppins text-lg font-semibold text-primary'> { user.name } </h3>
                 </div>
                 </div>
@@ -39,7 +39,7 @@ export const UserProfileDetails = ({ changeModal }) => {
                     </div>
                     <div className=" flex flex-col justify-center w-full text-center">
                         <p className=' text-2xl font-semibold font-poppins'>30</p>
-                        <span className=' text-xs font-poppins'>Investment</span>
+                        <span className=' text-xs font-poppins'>enquiries</span>
                     </div>
                 </div> 
            </div>

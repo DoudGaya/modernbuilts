@@ -1,84 +1,88 @@
+import Link from "next/link"
+import { Award, Clock, FileCheck2, MapPinned, Shield, Users, WalletCards } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Shield, TrendingUp, Users, Award, Clock, HeartHandshake } from "lucide-react"
 
 const benefits = [
   {
-    icon: Shield,
-    title: "Secure Investments",
-    description: "All investments are backed by real assets and legal documentation for maximum security.",
+    icon: FileCheck2,
+    title: "Documentation-first sales",
+    description: "Property and land opportunities are presented with practical title, survey, and purchase context.",
   },
   {
-    icon: TrendingUp,
-    title: "High Returns",
-    description: "Enjoy competitive returns ranging from 15-25% annually on your real estate investments.",
+    icon: MapPinned,
+    title: "GIS-style access insight",
+    description: "Routes, access roads, nearby anchors, and drive-time notes help buyers understand movement before visits.",
+  },
+  {
+    icon: WalletCards,
+    title: "Flexible payment plans",
+    description: "Qualified buyers can request deposit and instalment structures tied to clear documentation milestones.",
   },
   {
     icon: Users,
-    title: "Expert Team",
-    description: "Our team of real estate professionals ensures every project meets the highest standards.",
+    title: "Partner network",
+    description: "We work with landowners, contractors, suppliers, and professional service providers.",
+  },
+  {
+    icon: Shield,
+    title: "Practical buyer protection",
+    description: "Inspections, documentation review, and service support reduce avoidable transaction surprises.",
   },
   {
     icon: Award,
-    title: "Proven Track Record",
-    description: "Over 10,000 satisfied investors and ₦50B+ in successful project completions.",
-  },
-  {
-    icon: Clock,
-    title: "Transparent Process",
-    description: "Real-time updates on your investments with detailed progress reports and analytics.",
-  },
-  {
-    icon: HeartHandshake,
-    title: "Trusted Partnership",
-    description: "Building long-term relationships with investors through reliability and integrity.",
+    title: "Construction competence",
+    description: "Our team understands site realities, procurement pressure, and finishing standards after purchase.",
   },
 ]
 
 export const WhyChooseUs = () => {
   return (
-    <div className="w-full py-16 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold font-poppins mb-4">Why Choose StableBricks?</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            We're committed to making real estate investment accessible, profitable, and secure for everyone
+    <section className="w-full bg-gray-50 py-16">
+      <div className="mx-auto max-w-7xl px-4">
+        <div className="mb-12 text-center">
+          <p className="text-sm font-bold uppercase text-primary-700">Why Stablebricks</p>
+          <h2 className="mt-3 text-3xl font-bold text-gray-950 lg:text-4xl">Professional enough for partners. Clear enough for buyers.</h2>
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-gray-600">
+            We focus on information quality, site access, construction support, and accountable real estate service.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {benefits.map((benefit, index) => {
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {benefits.map((benefit) => {
             const IconComponent = benefit.icon
             return (
-              <Card key={index} className="text-center hover:shadow-lg transition-shadow border-0 bg-white">
+              <Card key={benefit.title} className="border border-gray-200 bg-white shadow-sm">
                 <CardHeader>
-                  <div className="mx-auto w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mb-4">
-                    <IconComponent className="w-8 h-8 text-yellow-600" />
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-md bg-primary-100">
+                    <IconComponent className="h-6 w-6 text-gray-950" />
                   </div>
-                  <CardTitle className="text-xl font-poppins">{benefit.title}</CardTitle>
+                  <CardTitle className="text-lg font-bold text-gray-950">{benefit.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 leading-relaxed">{benefit.description}</p>
+                  <p className="text-sm leading-6 text-gray-600">{benefit.description}</p>
                 </CardContent>
               </Card>
             )
           })}
         </div>
 
-        <div className="mt-16 bg-yellow-400 rounded-2xl p-8 text-center">
-          <h3 className="text-2xl font-bold font-poppins mb-4">Ready to Start Investing?</h3>
-          <p className="text-lg mb-6 max-w-2xl mx-auto">
-            Join thousands of investors who trust StableBricks for their real estate investment needs
+        <div className="mt-16 rounded-md bg-primary p-8 text-center text-gray-950">
+          <Clock className="mx-auto mb-4 h-8 w-8" />
+          <h3 className="text-2xl font-bold">Ready to inspect a property or discuss a payment plan?</h3>
+          <p className="mx-auto mt-3 max-w-2xl text-base leading-7 text-gray-800">
+            Create an account to keep enquiries organized, or speak with the team about site visits, land submissions,
+            procurement, and construction partnerships.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-black text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors">
-              Start Investing Today
-            </button>
-            <button className="border-2 border-black text-black px-8 py-3 rounded-lg font-semibold hover:bg-black hover:text-white transition-colors">
-              Schedule a Consultation
-            </button>
+          <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+            <Link href="/register" className="rounded-md bg-gray-950 px-7 py-3 text-sm font-semibold text-primary">
+              Create account
+            </Link>
+            <Link href="/contact" className="rounded-md border border-gray-950 px-7 py-3 text-sm font-semibold text-gray-950">
+              Contact sales team
+            </Link>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   )
 }

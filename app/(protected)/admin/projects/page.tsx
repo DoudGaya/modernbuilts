@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Filter, Plus, Eye, Edit, Trash2, TrendingUp, Clock, DollarSign, MapPin } from "lucide-react"
+import { Search, Filter, Plus, Eye, Edit, Trash2, BadgePercent, Clock, DollarSign, MapPin } from "lucide-react"
 import { getAllProjects, deleteProject } from "@/actions/project"
 import { toast } from "@/components/ui/use-toast"
 
@@ -81,8 +81,8 @@ export default function ProjectsPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Investment Projects</h1>
-          <p className="text-gray-600">Manage all investment projects and opportunities</p>
+          <h1 className="text-3xl font-bold">Development Projects</h1>
+          <p className="text-gray-600">Manage construction, property, and development records</p>
         </div>
         <Link href="/admin/projects/create">
           <Button className="bg-yellow-400 hover:bg-yellow-500 text-black">
@@ -177,8 +177,8 @@ export default function ProjectsPage() {
 
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div className="flex items-center">
-                  <TrendingUp className="w-4 h-4 mr-2 text-green-500" />
-                  <span className="font-semibold">{project.roi}% ROI</span>
+                  <BadgePercent className="w-4 h-4 mr-2 text-green-500" />
+                  <span className="font-semibold">{project.roi}% sales margin</span>
                 </div>
                 <div className="flex items-center">
                   <Clock className="w-4 h-4 mr-2 text-blue-500" />

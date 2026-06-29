@@ -1,33 +1,53 @@
-import React from 'react'
-import Image from "next/image";
-import Link from "next/link";
-import badAss from '@/public/img/female-engineer-standing-like-a-baddass.jpg'
+import Link from "next/link"
+import { CheckCircle2, ClipboardList, HardHat, PackageCheck } from "lucide-react"
+import badAss from "@/public/img/female-engineer-standing-like-a-baddass.jpg"
+
+const operations = [
+  { label: "Material procurement", icon: PackageCheck },
+  { label: "Contractor coordination", icon: HardHat },
+  { label: "Site documentation", icon: ClipboardList },
+]
 
 export const HomeMarketing2 = () => {
   return (
-    <div style={{
-        backgroundImage: `url(${badAss.src})`
-      }} className=" bg-fixed bg-cover  w-full h-full bg-stone-600/40 bg-blend-multiply">
-       <div className="grid lg:grid-cols-2 max-w-5xl grid-cols-1 mx-auto w-full ">
-        <div className="">
-
-        </div>
-          <div className=" flex flex-col bg py-20 bg-black/70 lg:bg-black/80 space-y-6 px-10 text-white">
-           <div className=" space-y-2 ">
-            <h1 className=" font-bold text-3xl ">The <span className=" text-yellow-400">secret</span> of <span className=" text-yellow-400">success</span> is doing it right</h1>
-              <p className=" ">Make the right choice <span>Invest With US</span> </p>
-           </div>
-
-            <p className="">
-            With our innovative model, you can invest in projects that you are passionate about
-             and watch as they come to life. Once a project is completed and sold, we pay back our 
-            investors their return on investment. It's a win-win situation for everyone involved!
+    <section
+      style={{ backgroundImage: `url(${badAss.src})` }}
+      className="w-full bg-cover bg-fixed bg-center bg-no-repeat"
+    >
+      <div className="w-full bg-black/60">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 lg:grid-cols-2">
+          <div className="min-h-[420px]" />
+          <div className="flex flex-col justify-center bg-gray-950/90 px-6 py-16 text-white lg:px-10">
+            <p className="text-sm font-bold uppercase text-primary">Procurement and contractor support</p>
+            <h2 className="mt-3 text-3xl font-bold leading-tight">
+              Build with a team that understands the property after the sale.
+            </h2>
+            <p className="mt-5 text-base leading-7 text-white/75">
+              Stablebricks supports buyers, landowners, and partners with practical construction coordination:
+              materials, vetted contractors, technical documentation, and handover planning.
             </p>
-            <div className=" py-3 text-black font-poppin font-semibold ">
-                  <Link href={''} className=' px-6 bg-yellow-400 rounded-md py-2'> Learn More </Link>
-              </div>
+
+            <div className="mt-7 grid gap-3">
+              {operations.map((operation) => {
+                const Icon = operation.icon
+                return (
+                  <div key={operation.label} className="flex items-center gap-3 rounded-md border border-white/10 bg-white/5 p-3">
+                    <Icon className="h-5 w-5 text-primary" />
+                    <span className="text-sm font-semibold">{operation.label}</span>
+                    <CheckCircle2 className="ml-auto h-4 w-4 text-success" />
+                  </div>
+                )
+              })}
+            </div>
+
+            <div className="mt-8">
+              <Link href="/partnerships" className="inline-flex rounded-md bg-primary px-6 py-3 text-sm font-semibold text-gray-950 transition hover:bg-primary-400">
+                Work with Stablebricks
+              </Link>
+            </div>
           </div>
-       </div>
+        </div>
       </div>
+    </section>
   )
 }

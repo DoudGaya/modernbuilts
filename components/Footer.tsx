@@ -1,97 +1,76 @@
-import Image from 'next/image'
-import React from 'react'
-import logo from '@/public/stable-bricks-white.png'
-import Link from 'next/link'
+import Image from "next/image"
+import Link from "next/link"
+import { Building2, ChevronRight, Mail, MapPin, Phone } from "lucide-react"
+import logo from "@/public/stable-bricks-white.png"
 
-interface SocialLinks {
-    id: number,
-    link: string 
-    icon: string
-}
+const footerLinks = [
+  { label: "Properties", href: "/properties" },
+  { label: "Land submissions", href: "/land-submissions" },
+  { label: "Partnerships", href: "/partnerships" },
+  { label: "Developer portal", href: "/developer" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
+]
 
-
+const services = ["Property sales", "Land and plot sales", "Construction", "Procurement", "Contractors", "Payment plans"]
 
 export const Footer = () => {
   return (
-    <div className=' w-full bg-black py-10 px-4 '>
-        <div className=" grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto py-10">
-            <div className=" flex flex-col">
-                <div className=" border-b-2 py-1">
-                    <Image src={logo} className=' object-contain object-left flex-none h-20' alt='' />
-                </div>
-                <div className=" space-y-4 my-4">
-                    {/* <h1 className=' font-poppins text-yellow-500  '>ABOUT US</h1> */}
-                    <p className=' w-full text-sm text-justify text-white'>
-                        We are Nigeria's most reliable construction company. We raise funds  from investors for a reliable and lucrative construction project in urban areas 
-                        with no risk and high return on investment. 
-                    </p>
-                </div>
-                <div className=" flex flex-row space-x-2">
-                    Follow us: Social media links
-                </div>
-            </div>
-                <div className=" text-white font-poppins lg:pr-10">
-                <div className=" space-y-4 my-4">
-                    <h1 className=' font-poppins text-3xl text-yellow-500  '>useful Links </h1>
-                  <ul className=' flex flex-col space-y-3'>
-                    <li>
-                        <Link className=' flex space-x-3 items-center hover:text-yellow-600 transition-all ease-in-out' href={'/'}>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                            </svg>
-
-                            <p>HOME</p>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link className=' flex space-x-3 items-center hover:text-yellow-600 transition-all ease-in-out' href={'/about'}>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                            </svg>
-
-                            <p>ABOUT</p>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link className=' flex space-x-3 items-center hover:text-yellow-600 transition-all ease-in-out' href={'/contact'}>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                            </svg>
-
-                            <p>CONTACT</p>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link className=' flex space-x-3 items-center hover:text-yellow-600 transition-all ease-in-out' href={'/blog'}>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                            </svg>
-
-                            <p>BLOG</p>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link className=' flex space-x-3 items-center hover:text-yellow-600 transition-all ease-in-out' href={'/store'}>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                            </svg>
-
-                            <p>STORE</p>
-                        </Link>
-                    </li>
-                  </ul>
-                </div>
-                </div>
-                <div className=" flex flex-col text-white space-y-4">
-                    <div className="">
-                        <h1 className=' text-2xl text-yellow-500'>Office Location:</h1>
-                        <p>Hamisu Abba Plaza, Tarauni, Kano</p>
-                        <p>Contact: 080 6224 9834 </p>
-                    </div>
-                <iframe className=' w-full rounded-md' src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31223.64261811877!2d8.515904689540227!3d11.977593059661778!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x11ae8199ae590507%3A0x466f5cb1734cb983!2sTarauni%2C%20Kano%20700102%2C%20Kano!5e0!3m2!1sen!2sng!4v1714818643021!5m2!1sen!2sng" 
-                 height="200" style={{border:"10px"}}  loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
-                </div>
+    <footer className="w-full bg-gray-950 px-4 py-12 text-white">
+      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
+        <div>
+          <div className="border-b border-white/15 pb-4">
+            <Image src={logo} className="h-16 w-auto object-contain object-left" alt="Stablebricks" />
+          </div>
+          <p className="mt-5 text-sm leading-7 text-white/70">
+            Stablebricks is a Nigerian real estate and construction company focused on property sales, land and plot
+            sales, procurement, contractor partnerships, and buyer support with clear documentation.
+          </p>
+          <div className="mt-5 inline-flex items-center gap-2 rounded-md bg-white/10 px-3 py-2 text-sm text-primary">
+            <Building2 className="h-4 w-4" />
+            Stable. Professional. Built for real property decisions.
+          </div>
         </div>
-    </div>
+
+        <div>
+          <h2 className="text-xl font-bold text-primary">Useful links</h2>
+          <ul className="mt-5 grid gap-3">
+            {footerLinks.map((link) => (
+              <li key={link.href}>
+                <Link className="flex items-center gap-2 text-sm text-white/75 transition hover:text-primary" href={link.href}>
+                  <ChevronRight className="h-4 w-4" />
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h2 className="text-xl font-bold text-primary">Office location</h2>
+          <div className="mt-5 space-y-3 text-sm text-white/75">
+            <p className="flex items-start gap-3">
+              <MapPin className="mt-0.5 h-4 w-4 flex-none text-primary" />
+              Hamisu Abba Plaza, Tarauni, Kano
+            </p>
+            <p className="flex items-center gap-3">
+              <Phone className="h-4 w-4 text-primary" />
+              080 6224 9834
+            </p>
+            <p className="flex items-center gap-3">
+              <Mail className="h-4 w-4 text-primary" />
+              Contact the sales and services team
+            </p>
+          </div>
+          <div className="mt-6 flex flex-wrap gap-2">
+            {services.map((service) => (
+              <span key={service} className="rounded-md border border-white/10 px-3 py-2 text-xs text-white/70">
+                {service}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </footer>
   )
 }

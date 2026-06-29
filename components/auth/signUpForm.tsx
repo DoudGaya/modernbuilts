@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { useTransition } from "react";
 import Link from "next/link";
 import { signUpSchema } from "@/lib/schema";
-import { signIn } from "@/auth";
+import { signIn } from "next-auth/react";
 import { DEFAULT_LOGGED_IN_REDIRRECT } from "@/routes";
 
 import { Button } from "@/components/ui/button"
@@ -23,10 +23,9 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-// import { register, regsiter } from "@/actions/regsiter";
 import { FormSuccess } from "../FormSuccess";
 import { FormError } from "../FormError";
-import { regsiter } from "@/actions/register";
+import { register } from "@/actions/register";
 
 
 export function SignUpForm() {
@@ -69,12 +68,21 @@ export function SignUpForm() {
     startTransition(() => {
       if(values.password !== values.passwordConfirmation) {
         setError('Password does not matched')
+        return
+      }
+
+      if (!terms) {
+        setError('Please accept the terms and conditions')
+        return
       }
       
-      regsiter(values)
+      register(values)
       .then((data) => {
-        setError(data.error)
-        setSuccess(data.success)
+        setError(data?.error)
+        setSuccess(data?.success)
+      })
+      .catch(() => {
+        setError("Something went wrong while creating your account.")
       })
     })
 

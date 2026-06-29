@@ -177,7 +177,7 @@ useEffect(() => {
             <Card>
               <CardHeader>
                 <CardTitle>Project Information</CardTitle>
-                <CardDescription>Enter the basic details of the investment project</CardDescription>
+                  <CardDescription>Enter the basic details of the property or construction project</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Same form fields as before */}
@@ -231,8 +231,8 @@ useEffect(() => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="roi">Expected ROI (%)</Label>
-                    <Input id="roi" name="roi" type="number" placeholder="Expected return" required />
+                    <Label htmlFor="roi">Estimated sales margin (%)</Label>
+                    <Input id="roi" name="roi" type="number" placeholder="Estimated margin" required />
                   </div>
                 </div>
 

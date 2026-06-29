@@ -7,7 +7,7 @@ import { HomeSales } from "@/components/HomeSales"
 import { PublicNavigations } from "@/components/PublicNavigations"
 import { Footer } from "@/components/Footer"
 import { FeaturedProperties } from "@/components/FeaturedProperties"
-import { InvestmentHighlights } from "@/components/InvestmentHighlights"
+import { PropertyShowcase } from "@/components/PropertyShowcase"
 import { Testimonials } from "@/components/Testimonials"
 import { NewsletterSignup } from "@/components/NewsletterSignup"
 import { WhyChooseUs } from "@/components/WhyChooseUs"
@@ -22,7 +22,7 @@ export default async function Home() {
 
         <div className="w-full flex flex-col">
           <HomeWhatWeDo />
-          <InvestmentHighlights />
+          <PropertyShowcase />
 
           <div className="my-10">
             <HomeSales />

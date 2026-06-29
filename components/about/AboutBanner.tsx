@@ -1,17 +1,17 @@
-import React from 'react'
-import aboutImage from '@/public/city-view.jpg'
-import Link from 'next/link'
+import aboutImage from "@/public/city-view.jpg"
 
 export const AboutBanner = () => {
   return (
-    <div style={{
-      backgroundImage: `url(${aboutImage.src})`
-    }} className=" bg-gray-900/90 text-yellow-500 mt-10 bg-no-repeat bg-cover h-[200px] md:h-full bg-center bg-blend-multiply w-full">
-      <div className=" mx-auto w-full max-w-6xl py-20 px-10 h-full flex align-baseline my-auto ">
-         <div className=" flex space-x-3 h-full my-auto w-full justify-center lg:justify-start self-center items-center lg:items-start text-center">
-            <h1><Link href={""}  className=" font-semibold">{"HOME < ABOUT"}</Link></h1>
-         </div>
+    <section
+      style={{ backgroundImage: `url(${aboutImage.src})` }}
+      className="mt-10 w-full bg-gray-950/80 bg-cover bg-center bg-no-repeat bg-blend-multiply text-white"
+    >
+      <div className="mx-auto flex min-h-[260px] w-full max-w-6xl flex-col justify-center px-10 py-20">
+        <p className="text-sm font-bold uppercase text-primary">About Stablebricks</p>
+        <h1 className="mt-3 max-w-3xl text-4xl font-bold tracking-normal lg:text-5xl">
+          Real estate, construction, and property partnerships for practical buyers.
+        </h1>
       </div>
-    </div>
+    </section>
   )
 }

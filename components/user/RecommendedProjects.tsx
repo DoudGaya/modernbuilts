@@ -1,87 +1,51 @@
+import Image from "next/image"
+import Link from "next/link"
+import { MapPin, Route } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { TrendingUp, MapPin } from "lucide-react"
-
-const recommendedProjects = [
-  {
-    id: "1",
-    title: "Kano Shopping Mall",
-    location: "Sabon Gari, Kano",
-    expectedReturn: "20%",
-    minInvestment: "₦750,000",
-    funded: 30,
-    status: "New",
-    image: "/placeholder.svg?height=150&width=200",
-  },
-  {
-    id: "2",
-    title: "Ibadan Mixed-Use Development",
-    location: "Bodija, Ibadan",
-    expectedReturn: "19%",
-    minInvestment: "₦400,000",
-    funded: 55,
-    status: "Active",
-    image: "/placeholder.svg?height=150&width=200",
-  },
-]
+import { propertyListings } from "@/lib/property-data"
 
 export const RecommendedProjects = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Recommended for You</CardTitle>
-        <CardDescription>Investment opportunities based on your preferences</CardDescription>
+        <CardTitle>Recommended properties</CardTitle>
+        <CardDescription>Listings with payment plans, walkthrough media, and route access details</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {recommendedProjects.map((project) => (
-            <div key={project.id} className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="relative">
-                <img
-                  src={project.image || "/placeholder.svg"}
-                  alt={project.title}
-                  className="w-full h-32 object-cover"
-                />
-                <Badge
-                  className={`absolute top-2 right-2 ${project.status === "New" ? "bg-green-500" : "bg-blue-500"}`}
-                >
-                  {project.status}
-                </Badge>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          {propertyListings.slice(0, 2).map((property) => (
+            <div key={property.slug} className="overflow-hidden rounded-md border transition hover:shadow-lg">
+              <div className="relative h-36">
+                <Image src={property.coverImage} alt={property.title} fill className="object-cover" sizes="(min-width: 768px) 50vw, 100vw" />
+                <Badge className="absolute right-2 top-2 bg-primary text-gray-950 hover:bg-primary">{property.category}</Badge>
               </div>
-              <div className="p-4 space-y-3">
+              <div className="space-y-3 p-4">
                 <div>
-                  <h4 className="font-semibold">{project.title}</h4>
-                  <p className="text-sm text-gray-600 flex items-center">
-                    <MapPin className="w-3 h-3 mr-1" />
-                    {project.location}
+                  <h4 className="font-semibold">{property.title}</h4>
+                  <p className="flex items-center text-sm text-gray-600">
+                    <MapPin className="mr-1 h-3 w-3" />
+                    {property.location}
                   </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div>
-                    <span className="text-gray-500">Expected ROI:</span>
-                    <div className="font-semibold text-green-600">{project.expectedReturn}</div>
+                    <span className="text-gray-500">Price:</span>
+                    <div className="font-semibold">{property.price}</div>
                   </div>
                   <div>
-                    <span className="text-gray-500">Min Investment:</span>
-                    <div className="font-semibold">{project.minInvestment}</div>
+                    <span className="text-gray-500">Plan:</span>
+                    <div className="font-semibold">{property.paymentPlan.tenor}</div>
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <div className="flex justify-between text-sm">
-                    <span>Funded</span>
-                    <span>{project.funded}%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-yellow-400 h-2 rounded-full" style={{ width: `${project.funded}%` }}></div>
-                  </div>
-                </div>
-
-                <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black">
-                  <TrendingUp className="w-4 h-4 mr-2" />
-                  Invest Now
+                <Button asChild className="w-full bg-primary text-gray-950 hover:bg-primary-400">
+                  <Link href={`/properties/${property.slug}`}>
+                    <Route className="mr-2 h-4 w-4" />
+                    Walk-around and GIS
+                  </Link>
                 </Button>
               </div>
             </div>

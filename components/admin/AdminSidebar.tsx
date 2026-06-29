@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Building2, TrendingUp, Users, MapPin, AlertTriangle, Mail, BarChart3, Settings } from "lucide-react"
+import { Home, Building2, ClipboardList, Users, MapPin, AlertTriangle, Mail, BarChart3, Settings } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const sidebarItems = [
@@ -21,9 +21,9 @@ const sidebarItems = [
     icon: MapPin,
   },
   {
-    title: "Investments",
+    title: "Sales Requests",
     href: "/admin/investments",
-    icon: TrendingUp,
+    icon: ClipboardList,
   },
   {
     title: "Users",

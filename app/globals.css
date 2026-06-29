@@ -8,13 +8,28 @@
 
 @layer base {
   :root {
+    --primary: #F2B705;
+    --primary-hover: #FFC107;
+    --primary-active: #E09A00;
+    --primary-light: #FFE8B3;
+    --primary-50: #FFF5E0;
+    --white: #FFFFFF;
+    --off-white: #FFFAF0;
+    --gray-100: #F3F4F6;
+    --gray-400: #9CA3AF;
+    --gray-700: #4B5563;
+    --text: #111827;
+    --success: #10B981;
+    --warning: #F59E0B;
+    --error: #EF4444;
+    --info: #3B82F6;
+
     --background: 0 0% 100%;
     --foreground: 20 14.3% 4.1%;
     --card: 0 0% 100%;
     --card-foreground: 20 14.3% 4.1%;
     --popover: 0 0% 100%;
     --popover-foreground: 20 14.3% 4.1%;
-    --primary: 47.9 95.8% 53.1%;
     --primary-foreground: 26 83.3% 14.1%;
     --secondary: 60 4.8% 95.9%;
     --secondary-foreground: 24 9.8% 10%;

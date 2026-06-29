@@ -6,9 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Building2, FileText, CheckCircle, Clock } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Apply as Developer | StableBricks",
-  description: "Submit your application to join StableBricks as a verified real estate developer. Get access to capital raising opportunities and grow your development business.",
-  keywords: ["developer application", "real estate developer", "property development", "project funding application"],
+  title: "Apply as Partner | Stablebricks",
+  description: "Apply to join Stablebricks as a verified construction, procurement, property, or development partner.",
+  keywords: ["contractor application", "real estate developer", "property services", "construction partner"],
 }
 
 export default function DeveloperApplyPage() {
@@ -20,10 +20,10 @@ export default function DeveloperApplyPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Apply to Become a Developer
+            Apply to Become a Partner
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Join our network of verified real estate developers and gain access to capital raising opportunities for your projects.
+            Join our network of verified developers, contractors, procurement vendors, and technical service partners.
           </p>
         </div>
 
@@ -57,7 +57,7 @@ export default function DeveloperApplyPage() {
             <CardContent className="p-6">
               <Building2 className="h-12 w-12 text-purple-600 mx-auto mb-4" />
               <h3 className="font-semibold mb-2">4. Start Building</h3>
-              <p className="text-sm text-gray-600">Submit your projects and start raising capital from our investor network</p>
+              <p className="text-sm text-gray-600">Submit property, service, procurement, or construction work for review</p>
             </CardContent>
           </Card>
         </div>
@@ -65,7 +65,7 @@ export default function DeveloperApplyPage() {
         {/* Application Form */}
         <Card className="max-w-4xl mx-auto">
           <CardHeader>
-            <CardTitle>Developer Application Form</CardTitle>
+            <CardTitle>Partner Application Form</CardTitle>
             <CardDescription>
               Please provide accurate information about your company and development experience. All fields marked with * are required.
             </CardDescription>

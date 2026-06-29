@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { FileText, DollarSign, Clock, CheckCircle, Upload, AlertCircle } from "lucide-react"
+import { FileText, Handshake, Clock, CheckCircle, Upload, AlertCircle } from "lucide-react"
 
 const submissionProcess = [
   {
@@ -21,9 +21,9 @@ const submissionProcess = [
   },
   {
     step: 3,
-    title: "Development Proposal",
-    description: "We create a detailed development proposal with projected returns and timeline.",
-    icon: DollarSign,
+    title: "Sales or Development Proposal",
+    description: "We prepare a sale, joint development, or service proposal with route, title, and timeline context.",
+    icon: Handshake,
   },
   {
     step: 4,
@@ -44,9 +44,9 @@ const requirements = [
 
 const benefits = [
   {
-    title: "Guaranteed Returns",
-    description: "Earn 15-30% of the project value upon completion",
-    icon: DollarSign,
+    title: "Clear Partnership Options",
+    description: "Choose between sale, joint development, or managed property service options",
+    icon: Handshake,
   },
   {
     title: "Professional Development",
@@ -75,8 +75,8 @@ export default function LandSubmissionsPage() {
           <div className="max-w-7xl mx-auto px-4 text-center">
             <h1 className="text-4xl lg:text-5xl font-bold font-poppins mb-6 text-black">Land Submissions</h1>
             <p className="text-xl text-black/80 max-w-3xl mx-auto mb-8">
-              Partner with us to develop your land into profitable real estate projects. Submit your land for evaluation
-              and earn guaranteed returns.
+              Submit land for sale, joint development, plot planning, or professional property service review.
+              We assess documentation, access, surrounding development, and practical next steps.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-black text-white hover:bg-gray-800">
@@ -94,7 +94,7 @@ export default function LandSubmissionsPage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl lg:text-4xl font-bold font-poppins mb-4">Why Submit Your Land to StableBricks?</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Transform your unused land into a profitable investment with our proven development expertise
+              Turn unused land into a clear sale, development, or partnership opportunity with professional review
             </p>
           </div>
 

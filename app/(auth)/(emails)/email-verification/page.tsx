@@ -31,7 +31,7 @@ const EmailVerification = () => {
     }).catch(() => {
       setError("Something Went Wrong!")
     })
-  }, [token, success, error])
+  }, [token])
 
   useEffect(() => {
     onSubmit()
@@ -48,19 +48,15 @@ const EmailVerification = () => {
             </div>
           )}
 
-          {
-            success ? (
-              <FormError message={error} />
-              ) : (
-                <>
-                  <FormSuccess message={success}/>
-                    <Link href={'/login'} className=' bg-primary px-6 py-2 rounded-md'>
-                        Back to Log In
-                    </Link>
-             </>
-              )
-          
-          }
+          <FormError message={error} />
+          {success && (
+            <>
+              <FormSuccess message={success}/>
+              <Link href={'/login'} className=' bg-primary px-6 py-2 rounded-md'>
+                  Back to Log In
+              </Link>
+            </>
+          )}
        
       </div>
     </div>
@@ -68,4 +64,3 @@ const EmailVerification = () => {
 }
 
 export default EmailVerification
- 

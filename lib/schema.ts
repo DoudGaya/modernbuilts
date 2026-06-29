@@ -147,14 +147,14 @@ export const settingsSecurityDetailsSchema = z.object({
     fullName: z.string().min(2, {
       message: "Please provide your Full Name",
     }),
-    email: z.string().min(3, {
-      message: "Email address must be less than 2 characters",
+    email: z.string().email({
+      message: "Please provide a valid email address",
     }),
     password: z.string().min(6, {
       message: "Password must be at least 6 characters",
     }),
-    phone: z.string().min(2, {
-      message: "Password confirmation must match characters.",
+    phone: z.string().min(7, {
+      message: "Please provide a valid phone number",
     }),
     passwordConfirmation: z.string().min(6, {
       message: "Password confirmation must match",
@@ -162,4 +162,3 @@ export const settingsSecurityDetailsSchema = z.object({
     ref: z.optional(z.string())
   })
 
-  
